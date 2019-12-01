@@ -1,0 +1,512 @@
+#Iteraties oftewel loops
+
+#imports
+from pcinput import getInteger
+from pcinput import getString
+from sys import exit
+from random import randint
+
+#While loop
+'''
+num1 = getInteger("Nummer 1: ")
+num2 = getInteger("Nummer 2: ")
+num3 = getInteger("Nummer 3: ")
+num4 = getInteger("Nummer 4: ")
+num5 = getInteger("Nummer 5: ")
+
+print("Totaal is nu", num1 + num2 + num3 + num4 + num5)
+print() #Lege regel
+'''
+'''
+num = 1
+while num <= 9:
+	print(num)
+	num += 1
+print("Klaar")
+print() 
+
+#Opgave Wijzig de code hierboven zodat de getallen 1, 3, 5, 7, en 9 afgedrukt worden.
+num = 1
+while num <= 9:
+	print(num)
+	num += 2
+print("Klaar")
+print()
+
+#De gebruiker 5 keer om input vragen
+totaal = 0
+teller = 0
+while teller < 5:
+	totaal += getInteger("Geef een getal: ")
+	teller += 1
+print("Het totaal van de ingevoerde getallen is", totaal)
+print()
+
+#Opgave Wijzig de code hierboven zodat niet alleen het totaal maar ook het gemiddelde
+#wordt afgedrukt.
+totaal = 0
+teller = 0
+while teller < 5:
+	totaal += getInteger("Geef een getal: ")
+	teller += 1
+print("Het totaal van de ingevoerde getallen is", totaal, ". Het gemiddelde is", totaal / 5)
+print()
+
+
+#Opgave De eerste voorbeeldcode in dit hoofdstuk vroeg de gebruiker om vijf getallen
+#in te geven. In dat voorbeeld werd steeds de prompt “Geef nummer x: ” gebruikt, waarbij
+#x een cijfer is. Kun je de code hierboven, waarin een loop gebruikt wordt, zo veranderen
+#dat ook steeds een veranderende prompt wordt gebruikt voor de getallen?
+
+i = 0
+aantal = 1
+while i <= 5:
+	getInteger(aantal)
+	aantal += 1
+	i += 1
+print("KLaar")
+
+#De gebruiker laten bepalen hoevaak de loop wordt uitgevoerd. Wanneer de waard 0 wordt ingevoerd stopt de while lus
+
+num = -1
+totaal = 0
+while num != 0:
+	num = getInteger("Voer een getal in: ")
+	totaal += num
+print("Totaal is: ", totaal)
+
+#Een verbeterde versie van de bovenstaande code
+num = getInteger("Voer een getal in: ")
+totaal = 0
+while num != 0:
+	num = getInteger("Voer een getal in: ")
+	totaal += num
+print("Totaal is: ", totaal)
+
+#Opgave Maak een loop die de gebruiker een aantal getallen laat ingeven, totdat hij nul
+#ingeeft, en dan het totaal en het gemiddelde afdrukt. Vergeet niet te testen met nul getallen
+#ingeven, en met een aantal keer hetzelfde getal ingeven.
+num = -1
+totaal = 0
+subtotaal = 1
+while num != 0:
+	num = getInteger("Voer een getal in: ")
+	if num ==  " ":
+		exit()
+	else:
+		totaal += num
+		subtotaal += 1
+
+if totaal <= 0:
+	print("Het gemiddelde kan niet worden berekend")
+else: 
+	print(subtotaal)
+	print(totaal)
+	print(totaal/subtotaal)
+	print("Het gemiddelde van de ingevoerde getallen is ", totaal/(subtotaal - 1))
+
+#Aanpassen code zodat het geen eindeloze loop meer is
+
+nummer = 1
+totaal = 0
+while (nummer * nummer) % 1000 != 0:
+	totaal += nummer
+	nummer += 1
+print( "Totaal is", totaal )
+
+
+#Opgave Schrijf code die aftelt. Er wordt begonnen met een speciﬁek nummer, 
+#bijvoor- beeld 10. Dan telt de code af naar nul, 
+#waarbij ieder nummer geprint wordt (10, 9, 8, ...). Nul wordt niet geprint, 
+#maar in plaats daarvan drukt het programma de tekst “Start!” af.
+getal = 10
+while getal >= 1:
+	print(getal)
+	getal -= 1
+print("Start")
+
+
+#For-loop
+for letter in "Banaan":
+	print(letter)
+print("Klaar")
+
+#For-loop met een variabele
+fruit = "banaan"
+for letter in fruit:
+	print(letter)
+print("Done")
+
+#Wijzigen van de variabele die gebruikt wordt in een for loop
+fruit = "banaan"
+for letter in fruit:
+	print(letter)
+	if letter == "n":
+		fruit = "mango"
+print("Done")
+
+#De for-loop met een getallen reeks
+for x in range(10):
+	print(x)
+
+#De stapgrootte instellen in de range functie
+for x in range(1, 11, 2):
+	print(x)
+
+#Opgave Wijzig in bovenstaande code de drie parameters een paar keer, 
+#om het effect van deze wijzigingen te bestuderen. Ga door totdat je 
+#de range() functie begrijpt.
+for x in range(0, 20, 8):
+	print(x)
+
+
+#Opgave Gebruik een for loop en een range() functie om veelvouden 
+#van 3 af te drukken, beginnend bij 21, aftellend tot 3, in slechts twee regels code.
+for i in range(21, 3, -3):
+	print(i)
+
+#Handmatige collectie (Tuple)
+for i in (10, 100, 1000, 10000):
+	print(i)
+
+for x in ("appel","peer","druif","banaan","mango","kers"): 
+	print( x ) 
+
+for y in (1,2):
+	print(y)
+
+
+#Opgave Je hebt al code gecreëerd voor een while loop waarin om vijf 
+#getallen wordt gevraagd en het totaal getoond wordt. Doe dat nu met een for loop.
+totaal = 0
+for i in range(5):
+	num = getInteger("Voer een getal in: ")
+	totaal += num
+print("Het toaal van de ingevoerde getallen is: ", totaal)
+
+#Opgave Je hebt ook code gecreëerd voor een while loop 
+#die aftelt tot nul, en dan “Start!” print. Doe dat nu met een for loop.
+for i in range(10, 0, -1):
+	print(i)
+print("Start")
+
+#else met een while-loop gecombineerd
+i = 0
+while i < 5:
+	print(i)
+	i += 1
+else:
+	print("De loop eindigt, i is nu", i)
+print("Klaar") 
+
+#else met een for-loop
+for fruit in ("appel", "mango", "aardbei"):
+	print("fruit")
+else:
+	print("De loop eindigt fruit is nu", fruit)
+print("Klaar")
+
+
+#break statement in een for-loop
+i = 1
+while 1 < 1000000:
+	num1 = int("1" + str(i))
+	num2 = int(str(i) + "1")
+	if num2 == 3 * num1:
+		print(num2, "is 3 x", num1)
+		break
+	i += 1
+else:
+	print("Geen antwoord gevonden")
+
+
+#Controle van een cijferlijst van een student met een for-loop
+for cijfer in (8, 7.5, 9, 6, 6, 6, 5.5, 7, 5, 8, 7.5):
+	if cijfer < 5.5:
+		print("Student is gezakt")
+		break
+else:
+	print("Student is geslaagd")
+
+
+#De volgende code drukt alle getallen tussen 1 en 100 af die niet door 2 of 3 gedeeld kunnen
+#worden, en die niet eindigen op een 7 of 9.
+num = 0
+while num < 100:
+	num += 1
+	if num % 2 == 0:
+		continue
+	if num % 3 == 0:
+		continue
+	if num % 10 == 7:
+		continue
+	if num % 10 == 9:
+		continue
+	print(num)
+
+
+#Opgave Schrijf een programma dat een reeks getallen doorloopt via een for loop. Als
+#er een nul wordt aangetroffen in de lijst getallen, dan moet het programma 
+#onmiddellijk eindigen, en alleen het woord “Klaar” afdrukken 
+#(gebruik een break om dit te implementeren). 
+#Negatieve getallen moeten overgeslagen worden (gebruik een continue om
+#dit te implementeren; ik weet dat het ook kan met een conditie, maar ik wil dat je oefent
+#met continue). Als er geen nul in de reeks getallen staat, moet het programma de som
+#van alle positieve getallen afdrukken (doe dit met een else). Druk altijd “Klaar” af als het
+#programma eindigt. Test het programma met de reeks ( 12, 4, 3, 33, -2, -5, 7, 0,
+#22, 4 ). Met deze getallen moet het programma alleen “Klaar” afdrukken. Als je de nul
+#verwijdert, moet het programma 85 afdrukken (en “Klaar”).
+totaal = 0
+output = 0
+for i in (12, 4, 3, 33, -2, -5, 7,0, 22, 4):
+	if i < 0:
+		continue
+	if i == 0:
+		break
+	else:
+		totaal += i
+		output = 1
+
+if output == 1:
+	print(totaal)
+
+print("Klaar")
+
+
+#Geneste for-loop
+for i in range(3):
+	print("De buitenste loop begint met i =", i)
+	for j in range(3):
+		print("De binnenste loop begint met j =", j)
+		print("(i,j) = ({},{})".format(i,j))
+		print("De binnenste loop eindigt met j =", j)
+	print("De buitenste loop eindigt met i =", i)
+
+#Als eerste wordt loop 1, 1x doorlopen en vervolgens 3x loop 2. Daarna weer loop 1 en weer 3x loop 2
+for j in range(3):
+	print("Loop 1", j)
+	for k in range(3):
+		print("Loop 2", k)
+
+#Het gebruik van een variabele binnen een nieuwe loop
+for i in range( 4 ):
+	for j in range( i+1, 4 ):
+		print( "({},{})".format( i, j ) )
+
+#Opgave Schrijf een programma dat alle paren (i,j) afdrukt, waarbij i en j de waardes
+#0 tot en met 3 kunnen aannemen, maar ze nooit dezelfde waarde mogen hebben.
+for i in range(4):
+	for j in range(i+1, 4):
+		print(i,j)
+
+
+#3-voudig geneste loops
+for i in range( 3 ):
+	for j in range( 3 ):
+		for k in range( 3 ):
+			print( "({},{},{})".format( i, j, k ) )
+
+
+x = 3
+y = 7
+
+while (x != 0) and (y != 0) and (x%y != 0) and (y%x != 0):
+	x = getInteger("Geef nummer 1: ")
+	y = getInteger("Geef nummer 2: ")
+	if (x > 1000) or (y > 1000) or (x < 0) or (y < 0):
+		print("Nummers moeten tussen 0 en 1000 zijn")
+		continue
+	print(x, "keer", y, "=", x * y)
+
+if (x == 0) or (y == 0):
+	print("Klaar!")
+else:
+	print("Fout: de nummers mogen geen delers zijn")
+
+
+#Verbeterde versie van bovenstaande code. While True
+while True:
+	x = getInteger("Geef nummer 1: ")
+	if x == 0:
+		break
+	y = getInteger("Geef nummer 2: ")
+	if y == 0:
+		break
+	if (x < 0) or (x >1000) or (y < 0) or (y > 1000):
+		print("De getallen moeten tussen 0 en 1000 zijn")
+		continue
+	if (x%y == 0) or (y%x == 0):
+		print("Fout: De nummers moeten delers zijn")
+		exit()
+	print(x, "x", y, "=", x * y)
+print("Klaar")
+
+
+
+#Opgave De gebruiker geeft een positief geheel getal. Je gebruikt daarvoor de
+#getInteger() functie van pcinput. Deze functie staat het echter ook toe om negatieve
+#getallen in te geven. Als de gebruiker een negatief getal ingeeft, wil je melden dat dat niet
+#mag, en hem opnieuw een getal laten ingeven. Dit blijf je doen totdat daadwerkelijk een
+#positief getal is ingegeven. Zodra een positief getal is ingegeven, druk je dat af en stopt het
+#programma. Een dergelijk probleem wordt typisch aangepakt met een loop-en-een-half,
+#omdat je geen idee hebt van hoe vaak een gebruiker een negatief getal ingeeft totdat hij
+#wijs wordt. Schrijf zo’n loop-en-een-half. Je heb precies één break nodig, en hoogstens
+#één continue. Druk het positieve getal dat de gebruiker heeft ingegeven af na de loop. De
+#reden om het erna te doen is dat de loop alleen bedoeld is om de input onder controle te
+#krijgen, en niet voor het verwerken van de correcte ingave.
+
+while True:
+	x = getInteger("Voer getal 1 in: ")
+	if x < 0:
+		print("Voer een positief getal in")
+		continue
+	if x == 0:
+		break
+	print(x)
+print("Klaar")
+
+#Bereken hoe groot de kans is dat je met 6 dobbelstenen 6 gooit
+worpen = 100
+succes = 0
+
+for i in range(worpen):
+	d1 = randint(1,6)
+	d2 = randint(1,6)
+	d3 = randint(1,6)
+	d4 = randint(1,6)
+	d5 = randint(1,6)
+	d6 = randint(1,6)
+	if d1 == 6 and d2 == 6 and d3 == 6 and d4 == 6 and d5 == 6 and d6 == 6:
+		succes += 1
+
+print("De waarschijnlijkheid van 5 zessen is", succes / worpen)
+
+
+#Verbeterde versie van bovenstaande code
+worpen = 1000
+succes = 0
+for i in range(worpen):
+	for j in range(5):
+		if randint(1,6) != 6:
+			break
+		else:
+			succes += 1
+print("De waarschijnlijkheid van 5 zessen is", succes / worpen)		
+
+
+#Opgave 7.1 Schrijf een programma dat de gebruiker een getal laat ingeven. 
+#Het programma geeft de tafel van vermenigvuldiging van het getal voor 1 tot en met 10. 
+#Bijvoorbeeld, als de gebruiker 12 ingeeft, dan is de eerste regel die afgedrukt 
+#wordt “1 * 12 = 12” en de laatste regel “10 * 12 = 120”.
+getal = getInteger("Voer een getal in: ")
+
+for i in range(1,11):
+	print(i, "x", getal, "=", i * getal)
+
+
+#Opgave 7.2 Als je de vorige opgave met een while loop hebt gedaan, doe hem dan
+#nogmaals met een for loop. Als je hem met een for loop hebt gedaan, doe hem dan
+#nogmaals met een while loop. Als je hem gedaan hebt zonder loop, dan moet je je schamen.
+getal = getInteger("Voer een getal in: ")
+i = 1
+while i < 11:
+	print(i, "x", getal, "=", i * getal)
+	i += 1
+
+#Opgave 7.3 Schrijf een programma dat de gebruiker vraagt om 10 getallen, en dan
+#de grootste, de kleinste, en het aantal deelbaar door 3 afdrukt. Gebruik het algoritme dat
+#eerder in dit hoofdstuk beschreven is.
+
+deelbaar = 0
+
+for i in range(10):
+	getal = getInteger("Voer een getal in: ")
+	if i == 0:
+		grootste = getal
+		kleinste = getal
+	if getal > grootste:
+		grootste = getal
+	if getal < kleinste:
+		kleinste = getal
+	if getal%3 == 0:
+		deelbaar += 1
+	if getal == 0:
+		exit()
+
+print("Het grooste getal is:", grootste)
+print("Het kleinste getal is:", kleinste)
+print("Het aantal getallen deelbaar door 3 is:", deelbaar)
+
+
+#Opgave 7.4 “99 bottles of beer” is a traditioneel liedje gezongen in Amerika en Canada.
+#Het wordt vaak gezongen op lange reizen omdat het gemakkelijk te onthouden en mee
+#te zingen is, en lang duurt. In vertaling is de tekst: “99 flesjes met bier op de muur, 99
+#flesjes met bier. Open er een, drink hem meteen, 98 flesjes met bier op de muur.” Deze
+#tekst wordt herhaald, steeds met één flesje minder. Het lied is voorbij als de zangers nul
+#bereiken. Schrijf een programma dat het hele lied afdrukt (ik raad je aan te beginnen met
+#niet meer dan 10 flesjes). Kijk uit dat je je loop niet eindeloos maakt. Zorg er ook voor dat
+#je het juiste meervoud voor het woord “flesje” gebruikt
+i = 10
+while i >= 0:
+	if i > 1:
+		print(i, "flesjes met bier op de muur", i, "flesjes met bier.")
+		i -= 1
+		print("Open er een, drink hem meteen,", i, "flesjes met bier op de muur.")
+	elif i < 2:
+		print(i, "flesje met bier op de muur", i, "flesje met bier.")
+		i -= 1
+		print("Open er een, drink hem meteen,", i, "flesje met bier op de muur.")
+	else:
+		break
+
+
+#Opgave 7.5 De Fibonacci reeks is een serie getallen die start met 1, gevolgd door nogmaals 1. 
+#Ieder volgende getal is de som van de twee voorgaande getallen. De reeks start
+#dus met 1, 1, 2, 3, 5, 8, 13, 21,... Schrijf een programma dat de Fibonacci reeks afdrukt totdat
+#de getallen groter dan 1000 zijn
+getal1 = 1
+
+
+for i in range(10):
+	if i == 0:
+		getal2 = 1
+		getal3 = getal1 + getal2
+		print(getal1, getal2, getal3)
+	else:
+		getal = getal3 + getal2
+		print(getal)
+		getal3 = getal
+
+num1 = 0
+num2 = 1
+print( 1, end=" " )
+while True:
+    num3 = num1 + num2
+    if num3 > 1000:
+        break
+    print( num3, end=" " )
+    num1 = num2
+    num2 = num3		
+
+'''
+#Opgave 7.6 Schrijf een programma dat vraagt om twee woorden. Druk alle letters af die
+#de woorden gemeen hebben. Je mag hoofletters beschouwen als verschillend van kleine
+#letters, maar iedere letter die je rapporteert, mag slechts één keer gerapporteerd worden
+#(bijvoorbeeld, de strings “een” en “peer” hebben slechts één letter gemeen, namelijk de
+#letter “e”). Hint: Sla de letters die de woorden gemeen hebben op in een derde string, en
+#als je een letter vindt die beide woorden gemeen hebben, test je of de letter al in de derde
+#string staat alvorens je hem rapporteert.
+
+
+woord1 = getString("Voer woord 1 in: ")
+woord2 = getString("Voer woord 2 in: ")
+totaal = ""
+
+for letter in woord1:
+	if (letter in woord2) and (letter not in totaal):
+		totaal += letter
+
+if totaal == "":
+	print("De woorden hebben geen tekens gemeen")
+else:
+	print("De woorden hebben de volgende letters gemeen:", totaal)

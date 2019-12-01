@@ -1,0 +1,20 @@
+# Basis functionaleiten
+- Gebruikers toevoegen aan Windows (via invoervelden en import csv)
+- Security policy toepassen op Windows (extern config bestand)
+- Overbodige software verwijderen (extern Powershell script)
+- Disable wintracking (extern Python script, moet geintergreerd worden)
+	- Via geavanceerd menu moeten onderdelen aan/uit gezet kunnen worden
+- Firewall aanpassen
+	- Ping
+	- NTP
+	- Netwerk discovery
+- Energiebeheer instellen (extern config bestand)
+- Windows update uitschakelen
+- Remote desktop activeren
+- Computernaam weergeven en aanpassen
+- NTP server instellen (nog in onderzoek)
+
+
+# Extra functionaliteiten
+- Weergeven systeeminformatie
+- Netwerkscanner (ARP scanner)

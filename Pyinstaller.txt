@@ -1,0 +1,16 @@
+Pyinstaller
+
+pyinstaller network-connect.spec --onefile
+
+
+pyinstaller network-connect.py --onefile --add-data="C:\Users\Jeroen\OneDrive\development\projects\network-connect\nc.ui:." --uac-admin
+
+# Template maken (Onefile)
+pyi-makespec --onefile network-connect.py --uac-admin --noconsole --uac-uiaccess --clean
+pyi-makespec --onefile main.py --uac-admin --noconsole --uac-uiaccess --clean
+
+# Template secured
+pyi-makespec --onefile network-connect.py --uac-admin --noconsole --uac-uiaccess --clean --key KEY
+
+# Uitvoeren
+pyinstaller network-connect.spec --onefile --uac-admin -W

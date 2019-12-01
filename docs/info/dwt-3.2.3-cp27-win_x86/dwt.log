@@ -1,0 +1,6 @@
+20:24:56 INFO: Python 2.7.15 (v2.7.15:ca079a3ea3, Apr 30 2018, 16:22:17) [MSC v.1500 32 bit (Intel)] on win32
+20:24:56 INFO: ('Windows', 'MYDESKTOP', '7', '6.1.7601', 'AMD64', 'Intel64 Family 6 Model 70 Stepping 1, GenuineIntel')
+20:24:56 INFO: DisableWinTracking version 3.2.3
+19:55:48 INFO: Python 2.7.15 (v2.7.15:ca079a3ea3, Apr 30 2018, 16:22:17) [MSC v.1500 32 bit (Intel)] on win32
+19:55:49 INFO: ('Windows', 'MYDESKTOP', '10', '10.0.17134', 'AMD64', 'Intel64 Family 6 Model 158 Stepping 9, GenuineIntel')
+19:55:49 INFO: DisableWinTracking version 3.2.3
