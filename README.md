@@ -1,2 +1,2 @@
 # Windows Deployment Tool (WDT)
-Script to deploy Windows 10 / Windows Server 2016
+Programma voor het uitrollen van Windows 10 en Windows Server 2016
