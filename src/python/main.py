@@ -5,6 +5,9 @@ import os
 import locale  # Controleren van de OS taal
 import ctypes  # Controleren OS taal
 import subprocess
+import getpass
+import logging
+import shutil
 
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
@@ -12,12 +15,18 @@ from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
+
 try:
     os.chdir(os.path.dirname(sys.argv[0]))
 except Exception:
     pass
 
+# Set logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.disable(logging.DEBUG)
 
+
+# Resource path bepalen
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -25,9 +34,12 @@ def resource_path(relative_path):
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.environ.get("_MEIPASS2", os.path.abspath("."))
+    # logging.info('Pyinstaller file location {}'.format(base_path))
     return os.path.join(base_path, relative_path)
 
 
+
+# Programm uitvoeren als Administrator
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
@@ -47,8 +59,7 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help)
-        pixmap = QPixmap(resource_path('../icons/circle-info.png'))
-        self.pushButton_info_hostname.setIcon(QIcon(pixmap))
+        self.pushButton_info_hostname.setIcon(QIcon(QPixmap(resource_path('../icons/circle-info.png'))))
         self.pushButton_info_hostname.setToolTip('Klik voor informatie over computernaam')
         self.label_hostname.setText('Huidige computernaam: {}'.format(os.getenv('COMPUTERNAME')))
         self.pushButton_set_hostname.clicked.connect(self.set_hostname)
@@ -58,13 +69,16 @@ class MainPage(QtWidgets.QMainWindow):
         self.tableWidget_add_users.resizeRowsToContents()
         self.pushButton_users_clear.clicked.connect(self.clear_users)
 
+        # Security policy
+        self.pushButton_sec_policy.clicked.connect(self.import_sec_policy)
+
         # USB-storage
         self.pushButton_usb_enable.clicked.connect(self.enable_usb)
         self.pushButton_usb_disable.clicked.connect(self.disable_usb)
 
         # Firewall instellingen
         self.pushButton_firewall_ping.clicked.connect(self.firewall_ping)
-        self.pushButton_firewall_discovery.clicked.connect(self.firewall_network_discovery())
+        self.pushButton_firewall_discovery.clicked.connect(self.firewall_network_discovery)
 
         # Remote desktop (RDP)
         self.pushButton_rdp_enable.clicked.connect(self.enable_rdp)
@@ -84,6 +98,12 @@ class MainPage(QtWidgets.QMainWindow):
         # Controleer USB activering
         self.usb_check()
 
+    # Functie voor het controleren op Windows 7 versie
+    def windows7_check(self):
+        if "Windows-7" in self.os_version:
+            self.warningbox('Windows 7 wordt niet meer ondersteund')
+            sys.exit()
+
     # Firewall
     def firewall_ping(self):
         if "nl" in self.os_language:
@@ -102,8 +122,6 @@ class MainPage(QtWidgets.QMainWindow):
                 self.criticalbox('De firewall instelling is niet uitgevoerd!')
             self.infobox('Ping (ICMP) is geactiveerd')
 
-    # WIP: Testen of de firewall regel werkt in een NL en EN Windows
-    # WIP: Functie kopppelen aan knop
     def firewall_network_discovery(self):
         if "nl" in self.os_language:
             try:
@@ -119,12 +137,6 @@ class MainPage(QtWidgets.QMainWindow):
             except subprocess.CalledProcessError:
                 self.criticalbox('De firewall instelling is niet uitgevoerd!')
             self.infobox('Network detecteren is geactiveerd')
-
-    # Functie voor het controleren van de Windows versie
-    def os_check(self):
-        if "Windows-7" in self.os_version:
-            self.warningbox('Windows 7 wordt niet meer ondersteund')
-            sys.exit()
 
     # Functie voor het wijzigen van de computernaam
     def checkout_hostname(self, hostname):
@@ -152,11 +164,77 @@ class MainPage(QtWidgets.QMainWindow):
             self.add_text_to_log('Computernaam is aangepast naar {}'.format(new_hostname))
             self.infobox('De computernaam is aangepast naar: {}'.format(self.lineEdit_hostname.text()))
         except Exception as e:
-            self.add_text_to_log(str(e))
-        except subprocess.CalledProcessError:
             self.criticalbox('De uitvoering is mislukt!')
+            self.add_text_to_log(str(e))
 
     # Security
+    def import_sec_policy(self):
+        secpol_new = resource_path('\\src\\resources\\security\\secpol_new.inf')
+        if not os.path.exists(secpol_new):
+            self.criticalbox('Kan secpol_new.inf niet vinden \nFunctie kan niet uitgevoerd worden!')
+            logging.info('Kan secpol_new.inf niet vinden, import_sec_policy kan niet uitgevoerd worden')
+        else:
+            current_user_Desktop = 'c:\\users\\{}\\desktop'.format(getpass.getuser())
+            program_cwd = os.getcwd()
+
+            # Backup maken van de huidige security policy
+            try:
+                os.chdir("c:\\windows\\system32")
+                subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit '
+                                                         '/export /cfg backup_secpol.inf /log c:\\windows\\system32\\secpol_backup.log /quiet'])
+                logging.info('Backup van default security policy is geslaagd')
+                try:
+                    shutil.copy('backup_secpol.inf', current_user_Desktop)  # Copy secpol_backup to user desktop
+                    logging.info('backup_secpol.inf is verplaatst naar {}'.format(current_user_Desktop))
+                except Exception as e:
+                    self.criticalbox('Kopieeren van backup_secpol.inf is mislukt')
+            except Exception as e:
+                logging.info('Het maken van de security policy backup is mislukt!\n Foutmelding {}'.format(str(e)))
+            finally:
+                os.chdir(program_cwd)
+
+            # Testen op een NL systeem
+            try:
+                # Copy secpol_new to c:\windows\system32
+                shutil.copy(secpol_new, 'c:\\windows\\system32')
+                # Import secpol_new policy
+                try:
+                    subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit /configure '
+                                                             '/db c:\\windows\\system32\\defltbase.sdb /cfg {} '
+                                                             '/overwrite /log c:\\windows\\system32\\secpol_import.log '
+                                                             '/quiet'.format(secpol_new)])
+                    logging.info('Import security policy geslaagd')
+                    try:
+                        subprocess.check_call(['powershell.exe', 'echo y | gpupdate /force /wait:0'])
+                        # FIXME: Nagaan of de gebruiker uitgelogd moet worden na het aanpassen van de policy of
+                        # FIXME: pas na het doorlopen van het programma
+                        # try:
+                        #     subprocess.check_call(['powershell.exe', 'shutdown -L'])
+                        # except Exception as e:
+                        #     logging.info(str(e))
+                    except Exception as e:
+                        logging.info(str(e))
+                except Exception as e:
+                    logging.info('Importeren van security policy is mislukt. {}'.format(str(e)))
+            except Exception as e:
+                logging.info('Het kopieeren van {} naar c:\\windows\\system32 is mislukt!\n '
+                             'Foutmelding {}'.format(secpol_new, str(e)))
+
+        # try:
+        #     os.chdir("c:\\windows\\system32")
+        #     print(os.getcwd())
+        #     subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit /export /db /cfg backup.inf /log backup.log'.format(backup_secpol, backup_secpol_log)])
+        #     subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit /configure /cfg secpol_new.inf /overwrite'])
+        # except Exception as e:
+        #     self.criticalbox('De uitvoering is mislukt\n Foutmelding {}'.format(str(e)))
+        #     self.add_text_to_log(str(e))
+        # finally:
+        #     os.chdir(program_cwd)
+        #     logging.info(os.getcwd())
+
+    # secedit /export /DB %temp%\temp.sdb /cfg %~dp0\secpol_backup.inf /quiet >nul
+    # secedit /configure /DB %temp%\temp.sdb /cfg %policy% /overwrite /quiet >nul
+
     # Functie voor het contoleren van de USB activering
     def usb_check(self):
         self.usb_register_path = "Registry::HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR"
@@ -215,6 +293,7 @@ class MainPage(QtWidgets.QMainWindow):
                 except subprocess.CalledProcessError:
                     self.criticalbox('De firewall instellingen zijn niet uitgevoerd')
             try:
+                # WIP instellingen testen en eventueel aanpassen in de programmering
                 register = [
                 'reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f',
                 'reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp\" /v SecurityLayer /t REG_DWORD /d 0 /f',
@@ -340,8 +419,7 @@ def main():
     widget = MainPage()
     widget.show()
     sys.exit(app.exec())
-    # os_check()
-
+    windows7_check()
 
 if __name__ == '__main__':
     if is_admin():  # Check admin rights
