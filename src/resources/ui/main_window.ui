@@ -409,7 +409,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="label_fw_netdiscover">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -445,7 +445,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_sec_policy_3">
+         <widget class="QLabel" name="label_fw_ping">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -489,32 +489,20 @@
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="1" column="1">
-         <widget class="QPushButton" name="pushButton_usb_disable_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
-          </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_energy_on">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Uitvoeren</string>
+           <string>Altijd aan</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_sec_policy_set_4">
+         <widget class="QPushButton" name="pushButton_energy_on">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -555,20 +543,8 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_sec_policy_4">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Altijd aan</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="label_energy_lock">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -576,6 +552,66 @@
           </property>
           <property name="text">
            <string>Automatisch vergrendelen</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pushButton_energy_lock">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Uitvoeren</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_energy_default">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Standaard energieplan</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="pushButton_energy_default">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Uitvoeren</string>
           </property>
          </widget>
         </item>
@@ -756,7 +792,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_9">
+         <widget class="QLabel" name="label_remove_bloatware">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -768,7 +804,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_10">
+         <widget class="QLabel" name="label_disable_wintracking">
           <property name="font">
            <font>
             <pointsize>10</pointsize>

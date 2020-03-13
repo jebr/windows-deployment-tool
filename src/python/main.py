@@ -83,6 +83,11 @@ class MainPage(QtWidgets.QMainWindow):
         # Remote desktop (RDP)
         self.pushButton_rdp_enable.clicked.connect(self.enable_rdp)
 
+        # Energy settings
+        self.pushButton_energy_on.clicked.connect(self.energy_on)
+        self.pushButton_energy_lock.clicked.connect(self.energy_lock)
+        self.pushButton_energy_default.clicked.connect(self.energy_restore)
+
         # Controleer systeemtaal
         windll = ctypes.windll.kernel32
         windll.GetUserDefaultUILanguage()
@@ -298,6 +303,118 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info('Register edit: {}'.format(key))
             except subprocess.CalledProcessError:
                 logging.info('De register instellingen voor RDP zijn niet uitgevoerd')
+
+    # Energy Settings
+    def energy_on(self):
+        energy_config = resource_path('../resources/energy/energy-full.pow')
+        energy_on_scheme = '00000000-0000-0000-0000-000000000000'
+
+        scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
+        scheme_list = scheme_list.decode('utf-8')
+
+        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
+        active_scheme = active_scheme.decode('utf-8')
+
+        # Check active scheme
+        if energy_on_scheme in active_scheme:
+            logging.info('Dit energieplan is al actief')
+            return
+
+        if energy_on_scheme in scheme_list:
+            try:
+                subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_on_scheme)])
+                logging.info('Oude energieplan verwijderd')
+                try:
+                    subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
+                                          .format(energy_config, energy_on_scheme)])
+                    subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_on_scheme)])
+                    logging.info('Instellen van het energieplan is geslaagd')
+                except Exception as e:
+                    logging.info('Import energieplan is mislukt.')
+            except Exception as e:
+                logging.info('Oude energieplan kan niet verwijderd worden')
+        else:
+            try:
+                subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
+                                      .format(energy_config, energy_on_scheme)])
+                subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_on_scheme)])
+                logging.info('Instellen van het energieplan is geslaagd')
+            except Exception as e:
+                logging.info('Import energieplan is mislukt.')
+
+    def energy_lock(self):
+        energy_config = resource_path('../resources/energy/energy-auto-lock.pow')
+        energy_lock_scheme = '39ff2e23-e11c-4fc3-ab0f-da25fadb8a89'
+
+        scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
+        scheme_list = scheme_list.decode('utf-8')
+
+        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
+        active_scheme = active_scheme.decode('utf-8')
+
+        # Check active scheme
+        if energy_lock_scheme in active_scheme:
+            logging.info('Dit energieplan is al actief')
+            return
+
+        if energy_lock_scheme in scheme_list:
+            try:
+                subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_lock_scheme)])
+                logging.info('Oude energieplan verwijderd')
+                try:
+                    subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
+                                          .format(energy_config, energy_lock_scheme)])
+                    subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_lock_scheme)])
+                    logging.info('Instellen van het energieplan is geslaagd')
+                except Exception as e:
+                    logging.info('Import energieplan is mislukt.')
+            except Exception as e:
+                logging.info('Oude energieplan kan niet verwijderd worden')
+        else:
+            try:
+                subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
+                                      .format(energy_config, energy_lock_scheme)])
+                subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_lock_scheme)])
+                logging.info('Instellen van het energieplan is geslaagd')
+            except Exception as e:
+                logging.info('Import energieplan is mislukt.')
+
+    def energy_restore(self):
+        energy_config = resource_path('../resources/energy/energy-default.pow')
+        energy_default_scheme = '381b4222-f694-41f0-9685-ff5bb260df2e'
+
+        scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
+        scheme_list = scheme_list.decode('utf-8')
+
+        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
+        active_scheme = active_scheme.decode('utf-8')
+
+        # Check active scheme
+        if energy_default_scheme in active_scheme:
+            logging.info('Dit energieplan is al actief')
+            return
+
+        if energy_default_scheme in scheme_list:
+            try:
+                subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_default_scheme)])
+                logging.info('Oude energieplan verwijderd')
+                try:
+                    subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
+                                          .format(energy_config, energy_default_scheme)])
+                    subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_default_scheme)])
+                    logging.info('Instellen van het energieplan is geslaagd')
+                except Exception as e:
+                    logging.info('Import energieplan is mislukt.')
+            except Exception as e:
+                logging.info('Oude energieplan kan niet verwijderd worden')
+        else:
+            try:
+                subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
+                                      .format(energy_config, energy_default_scheme)])
+                subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_default_scheme)])
+                logging.info('Instellen van het energieplan is geslaagd')
+            except Exception as e:
+                logging.info('Import energieplan is mislukt.')
 
     # Log
     def add_text_to_log(self, text):
