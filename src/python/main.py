@@ -220,18 +220,6 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info('Het kopieeren van {} naar c:\\windows\\system32 is mislukt!\n '
                              'Foutmelding {}'.format(secpol_new, str(e)))
 
-        # try:
-        #     os.chdir("c:\\windows\\system32")
-        #     print(os.getcwd())
-        #     subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit /export /db /cfg backup.inf /log backup.log'.format(backup_secpol, backup_secpol_log)])
-        #     subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit /configure /cfg secpol_new.inf /overwrite'])
-        # except Exception as e:
-        #     self.criticalbox('De uitvoering is mislukt\n Foutmelding {}'.format(str(e)))
-        #     self.add_text_to_log(str(e))
-        # finally:
-        #     os.chdir(program_cwd)
-        #     logging.info(os.getcwd())
-
     # secedit /export /DB %temp%\temp.sdb /cfg %~dp0\secpol_backup.inf /quiet >nul
     # secedit /configure /DB %temp%\temp.sdb /cfg %policy% /overwrite /quiet >nul
 
@@ -260,7 +248,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.infobox('USB-opslagapparaten zijn geactiveerd')
             self.usb_check()
         except subprocess.CalledProcessError:
-            self.criticalbox('De uitvoering is mislukt! \n\n Is het programma uitgevoerd als Administrator?')
+            self.criticalbox('De uitvoering is mislukt')
 
     def disable_usb(self):
         try:
@@ -273,38 +261,43 @@ class MainPage(QtWidgets.QMainWindow):
 
     # Wimndows settings
     def enable_rdp(self):
-        if "Windows-7" in self.os_version:
-            self.infobox('Windows 7 wordt niet langer ondersteund. \n \n Neem contact op met de ontwikkelaar, helpdeskbeveiliging@heijmans.nl')
-        else:
-            if "nl" in self.os_language:
-                try:
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - Gebruikersmodus (TCP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - Gebruikersmodus (UDP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - Schaduw (TCP-In)\" -Profile Any -Enabled True'])
-                    # self.infobox('De firewall instellingen zijn geactiveerd')
-                except subprocess.CalledProcessError:
-                    self.criticalbox('De firewall instellingen zijn niet uitgevoerd')
-            elif "en" in self.os_language:
-                try:
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - User Mode (TCP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - User Mode (UDP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - Shadow (TCP-In)\" -Profile Any -Enabled True'])
-                    # self.infobox('De firewall instellingen zijn geactiveerd')
-                except subprocess.CalledProcessError:
-                    self.criticalbox('De firewall instellingen zijn niet uitgevoerd')
+        if "nl" in self.os_language:
             try:
-                # WIP instellingen testen en eventueel aanpassen in de programmering
-                register = [
-                'reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f',
-                'reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp\" /v SecurityLayer /t REG_DWORD /d 0 /f',
-                'reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp\" /v UserAuthentication /t REG_DWORD /d 0 /f']
-                # for settings in register:
-                #     try:
-                #         subprocess.check_call(settings.split(' '))
-                #     except subprocess.CalledProcessError:
+                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
+                                                         'Gebruikersmodus (TCP-In)\" -Profile Any -Enabled True'])
+                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
+                                                         'Gebruikersmodus (UDP-In)\" -Profile Any -Enabled True'])
+                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
+                                                         'Schaduw (TCP-In)\" -Profile Any -Enabled True'])
+                logging.info('Firewall instellingen voor RDP zijn geactiveerd')
             except subprocess.CalledProcessError:
-                self.criticalbox('De register instellingen zijn mislukt!')
-            self.infobox('Remote desktop is geactiveerd')
+                self.criticalbox('De firewall instellingen voor RDP zijn niet uitgevoerd')
+        elif "en" in self.os_language:
+            try:
+                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
+                                                         'User Mode (TCP-In)\" -Profile Any -Enabled True'])
+                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
+                                                         'User Mode (UDP-In)\" -Profile Any -Enabled True'])
+                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
+                                                         'Shadow (TCP-In)\" -Profile Any -Enabled True'])
+                logging.info('Firewall instellingen voor RDP zijn geactiveerd')
+            except subprocess.CalledProcessError:
+                self.criticalbox('De firewall instellingen voor RDP zijn niet uitgevoerd')
+
+        # Register settings for RDP
+        register = [
+        'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" '
+        '/v fDenyTSConnections /t REG_DWORD /d 0 /f',
+        'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" '
+        '/v SecurityLayer /t REG_DWORD /d 0 /f',
+        'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" '
+        '/v UserAuthentication /t REG_DWORD /d 0 /f']
+        for key in register:
+            try:
+                subprocess.check_call(key)
+                logging.info('Register edit: {}'.format(key))
+            except subprocess.CalledProcessError:
+                logging.info('De register instellingen voor RDP zijn niet uitgevoerd')
 
     # Log
     def add_text_to_log(self, text):
