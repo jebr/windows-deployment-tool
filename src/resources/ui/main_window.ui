@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>963</width>
-    <height>804</height>
+    <width>1068</width>
+    <height>913</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,22 +32,16 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <property name="minimumSize">
     <size>
      <width>900</width>
-     <height>700</height>
+     <height>850</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>900</width>
-     <height>700</height>
+     <height>850</height>
     </size>
    </property>
    <widget class="QTabWidget" name="tabWidget">
@@ -58,8 +52,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>891</width>
-      <height>701</height>
+      <width>900</width>
+      <height>850</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -80,6 +74,9 @@
     <widget class="QWidget" name="tab_workstation">
      <property name="enabled">
       <bool>true</bool>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
      <attribute name="title">
       <string>Workstation</string>
@@ -975,7 +972,7 @@
         <x>10</x>
         <y>400</y>
         <width>421</width>
-        <height>241</height>
+        <height>151</height>
        </rect>
       </property>
       <property name="font">
@@ -995,13 +992,25 @@
          <x>10</x>
          <y>30</y>
          <width>401</width>
-         <height>176</height>
+         <height>181</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_6">
         <property name="bottomMargin">
          <number>99</number>
         </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_hostname_new">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Nieuwe computernaam:</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_hostname">
           <property name="font">
@@ -1050,6 +1059,12 @@
             <normalon>../data/glyphicons-halflings-104-circle-info.png</normalon>
            </iconset>
           </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
           <property name="flat">
            <bool>true</bool>
           </property>
@@ -1079,18 +1094,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_hostname_new">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Nieuwe computernaam:</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </widget>
@@ -1100,7 +1103,7 @@
         <x>430</x>
         <y>400</y>
         <width>421</width>
-        <height>241</height>
+        <height>151</height>
        </rect>
       </property>
       <property name="font">
@@ -1132,6 +1135,9 @@
         </property>
         <item row="1" column="1">
          <widget class="QPushButton" name="pushButton_disable_wintracking">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -1180,6 +1186,9 @@
         </item>
         <item row="0" column="1">
          <widget class="QPushButton" name="pushButton_remove_bloatware">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -1203,6 +1212,83 @@
          </widget>
         </item>
        </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_restart_system">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>550</y>
+        <width>421</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Herstart workstation</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <widget class="QPushButton" name="pushButton_restart_system">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>100</y>
+         <width>171</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Herstarten</string>
+       </property>
+      </widget>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>391</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:16pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Om alle instellingen toe te passen moet het systeem herstart worden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
       </widget>
      </widget>
     </widget>
@@ -1578,7 +1664,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>963</width>
+     <width>1068</width>
      <height>21</height>
     </rect>
    </property>
@@ -1616,7 +1702,7 @@
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>

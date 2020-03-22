@@ -50,7 +50,7 @@ class MainPage(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         loadUi(resource_path('../resources/ui/main_window.ui'), self)
-        self.setFixedSize(900, 700)
+        self.setFixedSize(900, 760)
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
         self.actionAbout.triggered.connect(self.open_about_popup)
         self.actionLicence.triggered.connect(self.open_licence_popup)
@@ -107,6 +107,9 @@ class MainPage(QtWidgets.QMainWindow):
         self.pushButton_energy_on.clicked.connect(self.energy_on)
         self.pushButton_energy_lock.clicked.connect(self.energy_lock)
         self.pushButton_energy_default.clicked.connect(self.energy_restore)
+
+        # Restart system
+        self.pushButton_restart_system.clicked.connect(self.restart_system)
 
 
     # System checks
@@ -563,6 +566,15 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info('Instellen van het energieplan is geslaagd')
             except Exception as e:
                 logging.info('Import energieplan is mislukt.')
+
+    # Restart system
+    def restart_system(self):
+        try:
+            subprocess.check_call(['powershell.exe', 'shutdown -r -t 10'])
+            self.infobox('Het systeeem zal over 10 seconden herstarten')
+        except Exception as e:
+            self.warningbox('Door een onbekende fout kan het systeem niet herstart worden')
+            logging.info('Systeem kan niet herstart worden. {}'.format(e))
 
     # Log
     def add_text_to_log(self, text):
