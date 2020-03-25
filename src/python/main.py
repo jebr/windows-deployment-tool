@@ -188,8 +188,6 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             return
 
-
-
     def fw_discovery_check(self):
         # Netwerk detecteren (NB-Datagram-In)
         # Network Discovery (NB-Datagram-In)
