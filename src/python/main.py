@@ -8,7 +8,6 @@ import subprocess
 import getpass
 import logging
 import shutil
-import threading
 
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
@@ -77,9 +76,6 @@ class MainPage(QtWidgets.QMainWindow):
         self.rdp_check()
         self.fw_icmp_check()
         self.fw_discovery_check()
-        # WIP Threading
-        # t = threading.Thread(target=self.rdp_check())
-        # t.start()
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help)
@@ -105,7 +101,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.pushButton_firewall_discovery.clicked.connect(self.firewall_network_discovery)
 
         # Remote desktop (RDP)
-        self.pushButton_rdp_enable.clicked.connect(self.thread_enable_rdp)
+        self.pushButton_rdp_enable.clicked.connect(self.enable_rdp)
 
         # Energy settings
         self.pushButton_energy_on.clicked.connect(self.energy_on)
@@ -114,7 +110,6 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Restart system
         self.pushButton_restart_system.clicked.connect(self.restart_system)
-
 
 
     # System checks
@@ -157,10 +152,8 @@ class MainPage(QtWidgets.QMainWindow):
         self.check_rdp = str(subprocess.check_output(['powershell.exe', 'Get-ItemProperty -Path {} -Name {}'.format(self.rdp_register_path, self.rdp_reg_dword)]))
         if "0" in self.check_rdp:
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            return True
         else:
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            return False
 
     def fw_icmp_check(self):
         icmp_rule_nl = str('Get-NetFirewallRule -DisplayName \"Bestands- en printerdeling '
@@ -396,12 +389,6 @@ class MainPage(QtWidgets.QMainWindow):
             self.criticalbox('De uitvoering is mislukt! \n\n Is het programma uitgevoerd als Administrator?')
 
     # Wimndows settings
-    # WIP testen of threading werkt
-    def thread_enable_rdp(self):
-        logging.info('Thread gestart')
-        t = threading.Thread(target=self.enable_rdp())
-        t.start()
-
     def enable_rdp(self):
         if self.rdp_check():
             logging.info('RDP is al geactiveerd op deze computer')
@@ -429,6 +416,15 @@ class MainPage(QtWidgets.QMainWindow):
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
                 except subprocess.CalledProcessError:
                     self.criticalbox('De firewall instellingen voor RDP zijn niet uitgevoerd')
+
+            # Register settings for RDP
+            # register = [
+            # 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" '
+            # '/v fDenyTSConnections /t REG_DWORD /d 0 /f',
+            # 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" '
+            # '/v SecurityLayer /t REG_DWORD /d 0 /f',
+            # 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" '
+            # '/v UserAuthentication /t REG_DWORD /d 0 /f']
             try:
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f'])
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\" /v SecurityLayer /t REG_DWORD /d 0 /f'])
@@ -671,6 +667,7 @@ class MainPage(QtWidgets.QMainWindow):
         HostnamePopup_.exec_()
 
 
+
 class AboutPopup(QDialog):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
@@ -700,7 +697,6 @@ class HostnamePopup(QDialog):
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
 
 
-
 def main():
     app = QApplication(sys.argv)
     widget = MainPage()
@@ -711,8 +707,6 @@ def main():
 if __name__ == '__main__':
     if is_admin():  # Check admin rights
         main()
-
     else:
         # Re-run the program with admin rights
         ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
-
