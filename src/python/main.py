@@ -181,12 +181,24 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             return
 
-    # WIP Firwall discovery check NL maken
     def fw_discovery_check(self):
         # Netwerk detecteren (NB-Datagram-In)
         # Network Discovery (NB-Datagram-In)
         if "nl" in self.os_language:
-            pass
+            try:
+                check_en = subprocess.check_output(['powershell.exe', 'Get-NetFirewallRule -DisplayName '
+                                                                      '"Netwerk detecteren (NB-Datagram-In)"  | '
+                                                                      'select DisplayName, Enabled'])
+                check_en = check_en.decode('utf-8')
+                check_true = check_en.count("True")
+                if check_true < 3:
+                    self.pushButton_check_fw_discovery.setIcon(
+                        QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+                if check_true == 3:
+                    self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/'
+                                                                                           'circle-check.png'))))
+            except Exception as e:
+                logging.info(e)
         elif "en" in self.os_language:
             try:
                 check_en = subprocess.check_output(['powershell.exe', 'Get-NetFirewallRule -DisplayName '
