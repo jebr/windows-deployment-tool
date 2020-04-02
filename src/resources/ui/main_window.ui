@@ -1332,7 +1332,10 @@ p, li { white-space: pre-wrap; }
         <enum>Qt::StrongFocus</enum>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
        </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -1347,19 +1350,13 @@ p, li { white-space: pre-wrap; }
         <bool>true</bool>
        </property>
        <property name="selectionMode">
-        <enum>QAbstractItemView::NoSelection</enum>
+        <enum>QAbstractItemView::SingleSelection</enum>
        </property>
        <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
+        <enum>QAbstractItemView::SelectItems</enum>
        </property>
        <property name="verticalScrollMode">
         <enum>QAbstractItemView::ScrollPerItem</enum>
-       </property>
-       <property name="sortingEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="cornerButtonEnabled">
-        <bool>false</bool>
        </property>
        <property name="rowCount">
         <number>20</number>
@@ -1477,12 +1474,20 @@ p, li { white-space: pre-wrap; }
          <set>AlignLeading|AlignVCenter</set>
         </property>
        </column>
+       <item row="0" column="4">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </item>
       </widget>
       <widget class="QWidget" name="gridLayoutWidget_8">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>530</y>
+         <y>570</y>
          <width>861</width>
          <height>80</height>
         </rect>
@@ -2931,40 +2936,6 @@ p, li { white-space: pre-wrap; }
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_log">
-     <attribute name="title">
-      <string>Log</string>
-     </attribute>
-     <widget class="QTextBrowser" name="textBrowser_log">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>891</width>
-        <height>681</height>
-       </rect>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_export_log">
-      <property name="geometry">
-       <rect>
-        <x>724</x>
-        <y>610</y>
-        <width>111</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Export log</string>
-      </property>
-     </widget>
-    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -2981,6 +2952,7 @@ p, li { white-space: pre-wrap; }
      <string>File</string>
     </property>
     <addaction name="actionSettings"/>
+    <addaction name="actionSysteem_Informatie_Advanced"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -3011,17 +2983,22 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionLicence">
    <property name="text">
-    <string>Licence</string>
+    <string>Licentie</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>Over deze Applicatie</string>
    </property>
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>Instellingen</string>
+   </property>
+  </action>
+  <action name="actionSysteem_Informatie_Advanced">
+   <property name="text">
+    <string>Systeem Informatie (Advanced)</string>
    </property>
   </action>
  </widget>

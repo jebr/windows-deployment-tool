@@ -97,8 +97,14 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Import users
         self.pushButton_import_csv.clicked.connect(self.load_csv_file)
-        self.tableWidget_add_users.resizeRowsToContents()
+        # self.tableWidget_add_users.resizeRowsToContents()
         self.pushButton_users_clear.clicked.connect(self.clear_users)
+
+        for row in range(0,20):
+            check_box_users = QTableWidgetItem()
+            check_box_users.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            check_box_users.setCheckState(QtCore.Qt.Unchecked)
+            self.tableWidget_add_users.setItem(row, 4, check_box_users)
 
         # Security policy
         self.pushButton_sec_policy.clicked.connect(self.import_sec_policy_thread)
@@ -762,32 +768,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.warningbox('Door een onbekende fout kan het systeem niet herstart worden')
             logging.info('Systeem kan niet herstart worden. {}'.format(e))
 
-    # Log
-    def add_text_to_log(self, text):
-        '''Adds text to the log tab. Make sure to end each line with a \n
-        '''
-        self.textBrowser_log.append(text)
-        desktop_loc = os.environ['USERPROFILE'] + '\\Desktop'
-        os.path.isdir(desktop_loc)
-        with open(desktop_loc + 'wtdlog.txt', 'w') as file:
-            file.write(self.textBrowser_log.toPlainText())
-
-    # Messageboxen
-    def infobox(self, message):
-        buttonReply = QMessageBox.information(self, 'Info', message, QMessageBox.Ok)
-
-    def warningbox(self, message):
-        buttonReply = QMessageBox.warning(self, 'Warning', message, QMessageBox.Close)
-
-    def criticalbox(self, message):
-        buttonReply = QMessageBox.critical(self, 'Error', message, QMessageBox.Close)
-
-    def question(self, message):
-        buttonReply = QMessageBox.question(self, 'Question', message, QMessageBox.Ok)
-
-    def noicon(self, message):
-        buttonReply = QMessageBox.noicon(self, '', message, QMessageBox.Ok)
-
+    # Add Local Windows Users
     def load_csv_file(self):
         fileName, _ = QFileDialog.getOpenFileName(self,
             "selecteer cvs bestand", "", "csv (*.csv)")
@@ -814,10 +795,40 @@ class MainPage(QtWidgets.QMainWindow):
     def clear_users(self):
         self.tableWidget_add_users.clearContents()
 
+    # WIP Knop maken om lokale gebruikers op te halen
+    def get_local_users(self):
+        pass
+
     # WIP Gerbuikers toevoegen aan Windows
     # WIP https://winaero.com/blog/create-user-account-windows-10-powershell/
     def add_windows_users(self):
         pass
+
+    # Log
+    def add_text_to_log(self, text):
+        '''Adds text to the log tab. Make sure to end each line with a \n
+        '''
+        self.textBrowser_log.append(text)
+        desktop_loc = os.environ['USERPROFILE'] + '\\Desktop'
+        os.path.isdir(desktop_loc)
+        with open(desktop_loc + 'wtdlog.txt', 'w') as file:
+            file.write(self.textBrowser_log.toPlainText())
+
+    # Messageboxen
+    def infobox(self, message):
+        buttonReply = QMessageBox.information(self, 'Info', message, QMessageBox.Ok)
+
+    def warningbox(self, message):
+        buttonReply = QMessageBox.warning(self, 'Warning', message, QMessageBox.Close)
+
+    def criticalbox(self, message):
+        buttonReply = QMessageBox.critical(self, 'Error', message, QMessageBox.Close)
+
+    def question(self, message):
+        buttonReply = QMessageBox.question(self, 'Question', message, QMessageBox.Ok)
+
+    def noicon(self, message):
+        buttonReply = QMessageBox.noicon(self, '', message, QMessageBox.Ok)
 
     def open_about_popup(self):
         AboutPopup_ = AboutPopup()
