@@ -99,14 +99,7 @@ class MainPage(QtWidgets.QMainWindow):
         # Import users
         self.pushButton_import_csv.clicked.connect(self.load_csv_file)
         self.pushButton_users_add.clicked.connect(self.add_windows_users)
-
-        # self.tableWidget_add_users.resizeRowsToContents()
-
-        # for row in range(0,20):
-        #     check_box_users = QTableWidgetItem()
-        #     check_box_users.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-        #     check_box_users.setCheckState(QtCore.Qt.Unchecked)
-        #     self.tableWidget_add_users.setItem(row, 4, check_box_users)
+        self.pushButton_clear_users_table.clicked.connect(self.clear_users_table)
 
         # Security policy
         self.pushButton_sec_policy.clicked.connect(self.import_sec_policy_thread)
@@ -840,8 +833,6 @@ class MainPage(QtWidgets.QMainWindow):
 
             i += 1
 
-    # WIP Gerbuikers toevoegen aan Windows
-    # WIP https://winaero.com/blog/create-user-account-windows-10-powershell/
     def add_windows_users(self):
         w_users = subprocess.check_output(['powershell.exe', '(Get-LocalUser).name']).decode('utf-8').splitlines()
         w_users = [element.lower() for element in w_users]  # Gebruikers naar lowercase
@@ -880,27 +871,32 @@ class MainPage(QtWidgets.QMainWindow):
                 self.warningbox(f'De volgende velden zijn niet ingevuld in rij {i+1}: ' + ', '.join(empty_fields))
                 continue
 
+            # Admin veld Ja/ja en anders nee
             admin = True if admin.lower() == 'ja' else False
 
+            # Check of de gebruiker al voorkomt op de computer
             if user.lower() in w_users:
                 self.warningbox(f'De gebruiker "{user}" komt al voor op deze computer en kan niet toegevoegd. '
                                 f'Verander de gebruikersnaam.')
+                continue
             else:
-                # WIP gebruiker toevoegen aan Windows
                 try:
-                    subprocess.check_call(['powershell.exe', f'net user "{user}" "{password}" /add /active:yes /fullname:"{fullname}" /comment:"{desc}" /expires:never'])
+                    subprocess.check_call(['powershell.exe', f'net user "{user}" "{password}" /add /active:yes '
+                                                             f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
+                    subprocess.check_call(['powershell.exe', f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
                     if admin == True:
                         try:
                             subprocess.check_call(['powershell.exe', f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
                         except Exception as e:
                             logging.error(f'Gebruiker {user} kan niet toegevoegd worden aan de groep administrators')
-                    self.infobox(f'De gerbuiker {user} is succesvol toegevoegd aan deze computer')
+                    logging.info(f'De gebruiker {user} is succesvol toegevoegd aan deze computer')
                 except Exception as e:
                     logging.error(f'Gebruiker {user} kan niet toegevoegd worden {e} ')
                 finally:
                     self.tableWidget_add_users.clearContents()
 
-
+    def clear_users_table(self):
+        self.tableWidget_add_users.clearContents()
 
     # Log
     def add_text_to_log(self, text):
