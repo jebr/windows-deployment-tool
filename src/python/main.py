@@ -765,6 +765,7 @@ class MainPage(QtWidgets.QMainWindow):
 
     # Add Local Windows Users
     def load_csv_file(self):
+        self.clear_users_table()
         fileName, _ = QFileDialog.getOpenFileName(self,
             "selecteer cvs bestand", "", "csv (*.csv)")
         if not fileName:
@@ -874,26 +875,67 @@ class MainPage(QtWidgets.QMainWindow):
             # Admin veld Ja/ja en anders nee
             admin = True if admin.lower() == 'ja' else False
 
+            if not self.checkout_username(user):
+                self.criticalbox(self.username_fault)
+                continue
+
             # Check of de gebruiker al voorkomt op de computer
             if user.lower() in w_users:
                 self.warningbox(f'De gebruiker "{user}" komt al voor op deze computer en kan niet toegevoegd. '
                                 f'Verander de gebruikersnaam.')
-                continue
-            else:
-                try:
-                    subprocess.check_call(['powershell.exe', f'net user "{user}" "{password}" /add /active:yes '
-                                                             f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
-                    subprocess.check_call(['powershell.exe', f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
-                    if admin == True:
-                        try:
-                            subprocess.check_call(['powershell.exe', f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
-                        except Exception as e:
-                            logging.error(f'Gebruiker {user} kan niet toegevoegd worden aan de groep administrators')
-                    logging.info(f'De gebruiker {user} is succesvol toegevoegd aan deze computer')
-                except Exception as e:
-                    logging.error(f'Gebruiker {user} kan niet toegevoegd worden {e} ')
-                finally:
-                    self.tableWidget_add_users.clearContents()
+                return False
+
+            try:
+                subprocess.check_call(['powershell.exe', f'net user "{user}" "{password}" /add /active:yes '
+                                                         f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
+                subprocess.check_call(['powershell.exe', f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
+                # subprocess.check_call(['powershell.exe', f'$password = {password} -AsSecureString && New-LocalUser "{user}" -Password $password -Fullname {fullname} -Description {desc}'])
+                self.tableWidget_add_users.setItem(i, 0, QTableWidgetItem(''))
+                self.tableWidget_add_users.setItem(i, 1, QTableWidgetItem(''))
+                self.tableWidget_add_users.setItem(i, 2, QTableWidgetItem(''))
+                self.tableWidget_add_users.setItem(i, 3, QTableWidgetItem(''))
+                self.tableWidget_add_users.setItem(i, 4, QTableWidgetItem(''))
+                if admin == True:
+                    try:
+                        subprocess.check_call(['powershell.exe', f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
+                    except Exception as e:
+                        logging.error(f'Gebruiker {user} kan niet toegevoegd worden aan de groep administrators')
+                logging.info(f'De gebruiker {user} is succesvol toegevoegd aan deze computer')
+            except Exception as e:
+                logging.error(f'Gebruiker {user} kan niet toegevoegd worden {e} ')
+            # finally:
+            #     self.tableWidget_add_users.clearContents()
+
+    def checkout_username(self, username):
+        self.username_fault = ''
+        if len(username) > 20:
+            self.username_fault = ('De gebruikersnaam bevat teveel karakters. Maximaal 20 karakters toegestaan')
+            return False
+        prohobited = '\\/:*?\"<>| ,@[];=+'
+        # " / \ [ ] : ; | = , + * ? < > @
+        for elem in prohobited:
+            if elem in username:
+                self.username_fault = ('De gebruikersnaam bevat ongeldige tekens.')
+                return False
+        if username.replace(' ','') == '':
+            self.username_fault = ('De gebruikersnaam mag niet uit spaties bestaan.')
+            return False
+        if username.replace('.','.') == '.':
+            self.username_fault = ('De gebruikersnaam mag niet uit punten bestaan.')
+            return False
+        return True
+
+    def checkout_password(self, password):
+        self.password_fault = ''
+        if len(password) < 10:
+            self.password_fault = ('Password voldoet niet aan de eisen.\nMinimaal 10 karakters')
+            return False
+        alphabet = 'abcdefghijklmnopqtrsuvwxyz1234567890'
+        if (password in alphabet or password in alphabet.upper()):
+            self.password_fault = ('Password voldoet niet aan de eisen.\nMinimaal 1 symbool')
+            return False
+        return True
+
 
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
