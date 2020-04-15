@@ -87,6 +87,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.windows7_check()
         self.usb_check_thread()
         threading.Thread(target=self.energy_check, daemon=True).start()
+        # threading.Thread(target=self.get_local_users, daemon=True).start()
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help)
@@ -97,14 +98,15 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Import users
         self.pushButton_import_csv.clicked.connect(self.load_csv_file)
-        # self.tableWidget_add_users.resizeRowsToContents()
-        self.pushButton_users_clear.clicked.connect(self.clear_users)
+        self.pushButton_users_add.clicked.connect(self.add_windows_users)
 
-        for row in range(0,20):
-            check_box_users = QTableWidgetItem()
-            check_box_users.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-            check_box_users.setCheckState(QtCore.Qt.Unchecked)
-            self.tableWidget_add_users.setItem(row, 4, check_box_users)
+        # self.tableWidget_add_users.resizeRowsToContents()
+
+        # for row in range(0,20):
+        #     check_box_users = QTableWidgetItem()
+        #     check_box_users.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+        #     check_box_users.setCheckState(QtCore.Qt.Unchecked)
+        #     self.tableWidget_add_users.setItem(row, 4, check_box_users)
 
         # Security policy
         self.pushButton_sec_policy.clicked.connect(self.import_sec_policy_thread)
@@ -785,24 +787,120 @@ class MainPage(QtWidgets.QMainWindow):
             try:
                 for row in readCSV:
                     for j in range(5):
-                        self.tableWidget_add_users.setItem(i,
-                            j,
-                            QTableWidgetItem(row[j]))
+                        if j == 4:
+                            if row[j].lower() == 'ja':
+                                self.tableWidget_add_users.setItem(i, j, QTableWidgetItem('Ja'))
+                            else:
+                                self.tableWidget_add_users.setItem(i, j, QTableWidgetItem('Nee'))
+                        else:
+                            self.tableWidget_add_users.setItem(i,j, QTableWidgetItem(row[j]))
                     i += 1
             except Exception as e:
                 self.warningbox('Let op, bestand niet geimporteerd')
 
-    def clear_users(self):
-        self.tableWidget_add_users.clearContents()
+    # creating a tw cell (voor functie get_local_users)
+    def cell(self, var=""):
+        item = QtWidgets.QTableWidgetItem()
+        item.setText(var)
+        return item
 
-    # WIP Knop maken om lokale gebruikers op te halen
     def get_local_users(self):
-        pass
+        # w_users_full = subprocess.check_output(['powershell.exe', 'Get-LocalUser | select name, enabled, description'])
+        w_users = subprocess.check_output(['powershell.exe', '(Get-LocalUser).name']).decode('utf-8').splitlines()
+        w_users_enabled = subprocess.check_output(['powershell.exe', '(Get-LocalUser).enabled']).decode('utf-8').splitlines()
+        w_users_desc = subprocess.check_output(['powershell.exe', '(Get-LocalUser).description']).decode('utf-8').splitlines()
+        w_users_fullname = subprocess.check_output(['powershell.exe', '(get-wmiobject -class Win32_USeraccount).fullname']).decode('utf-8').splitlines()
+        w_group_admin = subprocess.check_output(['powershell.exe', 'net localgroup administrators'])
+        w_group_admin = w_group_admin.decode('utf-8')
+        self.tableWidget_add_users.clearContents()
+        i = 0
+
+        # Diable cell voor gevonden gerbuikers
+        # item = self.cell("text")
+        # item.setFlags(QtCore.Qt.ItemIsEnabled)
+
+        for j in range(len(w_users)):
+            user = w_users[j]
+            enabled = w_users_enabled[j]
+            desc = w_users_desc[j]
+            fullname = w_users_fullname[j]
+            if enabled == 'False':
+                continue
+            self.tableWidget_add_users.setItem(i, 0, QTableWidgetItem(user))
+            self.tableWidget_add_users.setItem(i, 1, QTableWidgetItem('********'))
+            self.tableWidget_add_users.setItem(i, 2, QTableWidgetItem(fullname))
+            self.tableWidget_add_users.setItem(i, 3, QTableWidgetItem(desc))
+            # execute the line below to every item you need locked
+            # self.tableWidget_add_users.setItem(i, 0, item)
+            if user in w_group_admin:
+                self.tableWidget_add_users.setItem(i, 4, QTableWidgetItem('Ja'))
+            else:
+                self.tableWidget_add_users.setItem(i, 4, QTableWidgetItem('Nee'))
+            self.tableWidget_add_users.setEnabled(False)
+
+            i += 1
 
     # WIP Gerbuikers toevoegen aan Windows
     # WIP https://winaero.com/blog/create-user-account-windows-10-powershell/
     def add_windows_users(self):
-        pass
+        w_users = subprocess.check_output(['powershell.exe', '(Get-LocalUser).name']).decode('utf-8').splitlines()
+        w_users = [element.lower() for element in w_users]  # Gebruikers naar lowercase
+        for i in range(20):
+            empty_fields = []
+            try:
+                user = self.tableWidget_add_users.item(i, 0).text().lower()
+                if not user: raise
+            except Exception as e:
+                empty_fields.append('Gebruikersnaam')
+            try:
+                password = self.tableWidget_add_users.item(i, 1).text()
+                if not password: raise
+            except Exception as e:
+                empty_fields.append('Wachtwoord')
+            try:
+                fullname = self.tableWidget_add_users.item(i, 2).text()
+                if not fullname: raise
+            except Exception as e:
+                empty_fields.append('Volledige naam')
+            try:
+                desc = self.tableWidget_add_users.item(i, 3).text()
+                if not desc: raise
+            except Exception as e:
+                empty_fields.append('Beschrijving')
+            try:
+                admin = self.tableWidget_add_users.item(i, 4).text()
+                if not admin: raise
+            except Exception as e:
+                empty_fields.append('Administrator')
+
+            if len(empty_fields) == 5:
+                continue
+
+            if empty_fields:
+                self.warningbox(f'De volgende velden zijn niet ingevuld in rij {i+1}: ' + ', '.join(empty_fields))
+                continue
+
+            admin = True if admin.lower() == 'ja' else False
+
+            if user.lower() in w_users:
+                self.warningbox(f'De gebruiker "{user}" komt al voor op deze computer en kan niet toegevoegd. '
+                                f'Verander de gebruikersnaam.')
+            else:
+                # WIP gebruiker toevoegen aan Windows
+                try:
+                    subprocess.check_call(['powershell.exe', f'net user "{user}" "{password}" /add /active:yes /fullname:"{fullname}" /comment:"{desc}" /expires:never'])
+                    if admin == True:
+                        try:
+                            subprocess.check_call(['powershell.exe', f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
+                        except Exception as e:
+                            logging.error(f'Gebruiker {user} kan niet toegevoegd worden aan de groep administrators')
+                    self.infobox(f'De gerbuiker {user} is succesvol toegevoegd aan deze computer')
+                except Exception as e:
+                    logging.error(f'Gebruiker {user} kan niet toegevoegd worden {e} ')
+                finally:
+                    self.tableWidget_add_users.clearContents()
+
+
 
     # Log
     def add_text_to_log(self, text):
@@ -845,6 +943,10 @@ class MainPage(QtWidgets.QMainWindow):
     def open_hostname_help(self):
         HostnamePopup_ = HostnamePopup()
         HostnamePopup_.exec_()
+
+
+def powershell(command):
+    return subprocess.check_call(['powershell.exe', command])
 
 
 class AboutPopup(QDialog):
