@@ -139,6 +139,5 @@ git status
 /dist/
 /__pycache__
 /example_data
-todo.md
 /src/build
 System Volume Information
