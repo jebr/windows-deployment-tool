@@ -158,7 +158,8 @@ class MainPage(QtWidgets.QMainWindow):
         try:
             timeout = urllib3.Timeout(connect=2.0, read=7.0)
             http = urllib3.PoolManager(timeout=timeout)
-            response = http.request('GET', 'https://raw.githubusercontent.com/jebr/windows-deployment-tool/update-check/version.txt')
+            response = http.request('GET',
+                                    'https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/version.txt')
             data = response.data.decode('utf-8')
 
             self.new_version = float(data)
