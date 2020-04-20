@@ -16,7 +16,7 @@ import webbrowser
 from PyQt5.QtCore import QDateTime, QDate, Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem, QLabel
+    QTableWidgetItem, QLabel, QScrollArea
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -63,7 +63,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.setFixedSize(900, 760)
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
         self.actionAbout.triggered.connect(self.open_info_window)
-        self.actionLicence.triggered.connect(self.open_licence_popup)
+        self.actionLicence.triggered.connect(self.open_license_window)
         self.actionSettings.triggered.connect(self.open_settings_popup)
 
         # Controleer systeemtaal
@@ -145,6 +145,7 @@ class MainPage(QtWidgets.QMainWindow):
         # Set counter for started threads
         self.counter_threads = 0
 
+    # Button to check on updates
     def check_update_wdt_button(self):
         if self.check_update_wdt():
             self.infobox_update(
@@ -1045,6 +1046,10 @@ class MainPage(QtWidgets.QMainWindow):
         info_window_ = InfoWindow()
         info_window_.exec_()
 
+    def open_license_window(self):
+        license_window_ = LicenceWindow()
+        license_window_.exec_()
+
 
 def powershell(command):
     return subprocess.check_call(['powershell.exe', command])
@@ -1098,6 +1103,30 @@ class InfoWindow(QDialog):
         self.label_info_link.setOpenExternalLinks(True)
         self.label_info_dev.setText('Developers\nJeroen Brauns / Niels van den Bos')
         self.pushButton_update_check.clicked.connect(website_update)
+
+
+class LicenceWindow(QDialog):
+    def __init__(self):
+        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
+        loadUi(resource_path('../resources/ui/license_dialog.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        self.setFixedSize(420, 500)
+        # Logo
+        self.label_info_logo.setText("")
+        self.label_info_logo = QLabel(self)
+        info_icon = QPixmap(resource_path('../icons/wdt.ico'))
+        info_icon = info_icon.scaledToWidth(40)
+        self.label_info_logo.setPixmap(info_icon)
+        self.label_info_logo.move(180, 10)
+        # Labels
+        self.label_info_title.setText(f'Windows Deployment Tool v{current_version}')
+        self.label_info_link.setText('<a href="https://github.com/jebr/windows-deployment-tool">GitHub repository</a>')
+        self.label_info_link.setOpenExternalLinks(True)
+        with open('../../LICENSE') as file:
+            license_text = file.read()
+        self.plainTextEdit_license.setPlainText(license_text)
+        self.plainTextEdit_license.centerCursor()
+        self.plainTextEdit_license.centerOnScroll()
 
 
 def main():

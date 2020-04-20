@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>330</height>
+    <width>420</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Windows Deployment Tool - Info</string>
+   <string>Windows Deployment Tool - License</string>
   </property>
   <widget class="QLabel" name="label_info_logo">
    <property name="geometry">
@@ -29,10 +29,10 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>40</y>
-     <width>261</width>
-     <height>201</height>
+     <x>20</x>
+     <y>60</y>
+     <width>381</width>
+     <height>411</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -70,37 +70,28 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_info_dev">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-       </font>
+     <widget class="QPlainTextEdit" name="plainTextEdit_license">
+      <property name="enabled">
+       <bool>true</bool>
       </property>
-      <property name="text">
-       <string>Developers</string>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContents</enum>
+      </property>
+      <property name="plainText">
+       <string>self.scrollArea_license</string>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::NoTextInteraction</set>
       </property>
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QPushButton" name="pushButton_update_check">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>260</y>
-     <width>151</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
-   </property>
-   <property name="text">
-    <string>Controleer op updates</string>
-   </property>
   </widget>
  </widget>
  <resources/>
