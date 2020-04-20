@@ -19,3 +19,4 @@ Programma voor het uitrollen van Windows 10 en Windows Server 2016
 - [ ] Group policy toevoegen
 - [ ] Geavanceerde logging
 - [ ] Logging wegschrijven naar bestand en via window op te vragen `** branch:  wdt/1.0/feat/1001/loggin-export **`
+- [x] Toevoegen licentie met nieuw window
