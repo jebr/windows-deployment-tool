@@ -7,9 +7,9 @@
 - [x] Over de applicatie window `** branch:  wdt/1.0/feat/1000/update-check **`
 - [ ] Geavanceerde systeeminformatie `** branch: wdt/2.0/feat/2002/advanced-system-info`
 - [ ] Geavanceerde systeeminformatie window `** branch: wdt/2.0/feat/2002/advanced-system-info`
-- [ ] Exporteren systeeminformatie
-- [ ] Controle op gebruikerswachtwoord
+- [ ] Exporteren systeeminformatie `** branch:  wdt/1.0/feat/1000/export-system-info **`
+- [ ] Controle op gebruikerswachtwoord `** branch:  wdt/2.0/feat/2003/check-user-password **`
 - [ ] Disable wintracking intergratie
 - [ ] Group policy toevoegen
 - [ ] Geavanceerde logging
-- [ ] Logging wegschrijven naar bestand en via window op te vragen
+- [ ] Logging wegschrijven naar bestand en via window op te vragen `** branch:  wdt/1.0/feat/1001/loggin-export **`
