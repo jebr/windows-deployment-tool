@@ -2,3 +2,5 @@
 Programma voor het uitrollen van Windows 10 en Windows Server 2016
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
+
+[TODO](https://github.com/jebr/windows-deployment-tool/blob/master/TODO.md)
