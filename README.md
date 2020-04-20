@@ -5,7 +5,6 @@ Programma voor het uitrollen van Windows 10 en Windows Server 2016
 
 
 # TODO
-# TODO
 - [ ] Administrator activeren via window `** branch:  wdt/2.0/feat/2001/activate-admin **`
 - [ ] Administrator wachtwoord aanmaken via window `** branch:  wdt/2.0/feat/2001/activate-admin **`
 - [ ] Administrator activeren window `** branch:  wdt/2.0/feat/2001/activate-admin **`
