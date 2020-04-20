@@ -10,6 +10,8 @@ import logging
 import shutil
 import time
 import threading
+import urllib3
+import webbrowser
 
 from PyQt5.QtCore import QDateTime, QDate, Qt
 from PyQt5.QtGui import QPixmap, QIcon
@@ -48,6 +50,7 @@ def is_admin():
     except:
         return False
 
+current_version = float(1.0)
 
 class MainPage(QtWidgets.QMainWindow):
     def __init__(self):
@@ -86,8 +89,8 @@ class MainPage(QtWidgets.QMainWindow):
         # Pre-system checks
         self.windows7_check()
         self.usb_check_thread()
-        threading.Thread(target=self.energy_check, daemon=True).start()
-        # threading.Thread(target=self.get_local_users, daemon=True).start()
+        threading.Thread(target=self.energy_check, daemon=True).start()  # Check energy settings
+        threading.Thread(target=self.check_update_wdt, daemon=True).start()  # Check for update WDT
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help)
@@ -130,6 +133,39 @@ class MainPage(QtWidgets.QMainWindow):
         # Set counter for started threads
         self.counter_threads = 0
 
+    # WDT update check
+    def check_update_wdt(self):
+        try:
+            timeout = urllib3.Timeout(connect=2.0, read=7.0)
+            http = urllib3.PoolManager(timeout=timeout)
+            response = http.request('GET', 'https://raw.githubusercontent.com/jebr/MergePDF/master/version.txt')
+            data = response.data.decode('utf-8')
+
+            new_version = float(data)
+
+            if current_version < new_version:
+                logging.info('Current software version: v{}'.format(current_version))
+                logging.info('New software version available v{}'.format(new_version))
+                logging.info('https://github.com/jebr/windows-deployment-tool/releases')
+                self.infobox_update(self.update_available)
+                self.statusBar().showMessage(self.statusbar_update_msg + str(new_version))
+                self.actionUpdate_software.setEnabled(True)
+            else:
+                logging.info('Current software version: v{}'.format(current_version))
+                logging.info('Latest release: v{}'.format(new_version))
+                logging.info('Software up-to-date')
+                self.statusBar().showMessage(self.statusbar.msg + str(new_version))
+                self.actionUpdate_software.setEnabled(False)
+
+        except urllib3.exceptions.MaxRetryError:
+            logging.error('No internet connection, max retry error')
+        except urllib3.exceptions.ResponseError:
+            logging.error('No internet connection, no response error')
+
+    def check_update_wdt_thread(self):
+        threading.Thread(target=self.check_update_wdt, daemon=True).start()  # Check for update WDT
+
+    # System checks
     def system_checks(self):
         self.counter_threads = 0
         self.pushButton_system_check.setEnabled(False)
@@ -141,7 +177,7 @@ class MainPage(QtWidgets.QMainWindow):
         threading.Thread(target=self.energy_check, daemon=True).start()
         threading.Thread(target=self.get_users, daemon=True).start()
         while True:
-            if self.counter_threads == 7:
+            if self.counter_threads == 7:  # Verhogen als er meer threads in deze functie geplaatst worden
                 break
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
@@ -151,7 +187,6 @@ class MainPage(QtWidgets.QMainWindow):
         thread = threading.Thread(target=self.system_checks, daemon=True)
         thread.start()
 
-    # System checks
     def windows7_check(self):
         os_version = platform.platform()
         if "Windows-7" in os_version:
