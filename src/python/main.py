@@ -10,11 +10,13 @@ import logging
 import shutil
 import time
 import threading
+import urllib3
+import webbrowser
 
 from PyQt5.QtCore import QDateTime, QDate, Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem
+    QTableWidgetItem, QLabel
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -48,6 +50,11 @@ def is_admin():
     except:
         return False
 
+current_version = float(1.0)
+
+# Release page
+def website_update():
+    webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
 
 class MainPage(QtWidgets.QMainWindow):
     def __init__(self):
@@ -55,7 +62,7 @@ class MainPage(QtWidgets.QMainWindow):
         loadUi(resource_path('../resources/ui/main_window.ui'), self)
         self.setFixedSize(900, 760)
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
-        self.actionAbout.triggered.connect(self.open_about_popup)
+        self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_licence_popup)
         self.actionSettings.triggered.connect(self.open_settings_popup)
 
@@ -86,8 +93,16 @@ class MainPage(QtWidgets.QMainWindow):
         # Pre-system checks
         self.windows7_check()
         self.usb_check_thread()
-        threading.Thread(target=self.energy_check, daemon=True).start()
-        # threading.Thread(target=self.get_local_users, daemon=True).start()
+        if self.check_update_wdt():  # Check for update WDT
+            self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
+            self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
+        else:
+            self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
+
+        # Update button
+        self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_button)
+
+        threading.Thread(target=self.energy_check, daemon=True).start()  # Check energy settings
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help)
@@ -130,6 +145,45 @@ class MainPage(QtWidgets.QMainWindow):
         # Set counter for started threads
         self.counter_threads = 0
 
+    def check_update_wdt_button(self):
+        if self.check_update_wdt():
+            self.infobox_update(
+                f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
+            self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
+        else:
+            self.infobox(f'Je maakt momenteel gebruik van de nieuwste versie (v{current_version})')
+
+    # WDT update check
+    def check_update_wdt(self):
+        try:
+            timeout = urllib3.Timeout(connect=2.0, read=7.0)
+            http = urllib3.PoolManager(timeout=timeout)
+            response = http.request('GET', 'https://raw.githubusercontent.com/jebr/windows-deployment-tool/update-check/version.txt')
+            data = response.data.decode('utf-8')
+
+            self.new_version = float(data)
+
+            if current_version < self.new_version:
+                # logging.info('Current software version: v{}'.format(current_version))
+                # logging.info('New software version available v{}'.format(new_version))
+                # logging.info('https://github.com/jebr/windows-deployment-tool/releases')
+                # self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
+                # self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
+                return True
+            else:
+                # logging.info('Current software version: v{}'.format(current_version))
+                # logging.info('Latest release: v{}'.format(new_version))
+                # logging.info('Software up-to-date')
+                # self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
+                # self.infobox(f'Je maakt momenteel gebruik van de nieuwste versie (v{current_version})')
+                return False
+
+        except urllib3.exceptions.MaxRetryError:
+            logging.error('No internet connection, max retry error')
+        except urllib3.exceptions.ResponseError:
+            logging.error('No internet connection, no response error')
+
+    # System checks
     def system_checks(self):
         self.counter_threads = 0
         self.pushButton_system_check.setEnabled(False)
@@ -141,7 +195,7 @@ class MainPage(QtWidgets.QMainWindow):
         threading.Thread(target=self.energy_check, daemon=True).start()
         threading.Thread(target=self.get_users, daemon=True).start()
         while True:
-            if self.counter_threads == 7:
+            if self.counter_threads == 7:  # Verhogen als er meer threads in deze functie geplaatst worden
                 break
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
@@ -151,7 +205,6 @@ class MainPage(QtWidgets.QMainWindow):
         thread = threading.Thread(target=self.system_checks, daemon=True)
         thread.start()
 
-    # System checks
     def windows7_check(self):
         os_version = platform.platform()
         if "Windows-7" in os_version:
@@ -936,7 +989,6 @@ class MainPage(QtWidgets.QMainWindow):
             return False
         return True
 
-
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
 
@@ -982,6 +1034,16 @@ class MainPage(QtWidgets.QMainWindow):
         HostnamePopup_ = HostnamePopup()
         HostnamePopup_.exec_()
 
+    def infobox_update(self, message):
+        title = f'Windows Deployment Tool v{current_version}'
+        buttonReply = QMessageBox.information(self, title, message, QMessageBox.Yes, QMessageBox.No)
+        if buttonReply == QMessageBox.Yes:
+            webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
+
+    def open_info_window(self):
+        info_window_ = InfoWindow()
+        info_window_.exec_()
+
 
 def powershell(command):
     return subprocess.check_call(['powershell.exe', command])
@@ -1014,6 +1076,27 @@ class HostnamePopup(QDialog):
         self.setFixedSize(600, 400)
         loadUi(resource_path('../resources/ui/hostname_help_popup.ui'), self)
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+
+
+class InfoWindow(QDialog):
+    def __init__(self):
+        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
+        loadUi(resource_path('../resources/ui/info_dialog.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        self.setFixedSize(320, 300)
+        # Logo
+        self.label_info_logo.setText("")
+        self.label_info_logo = QLabel(self)
+        info_icon = QPixmap(resource_path('../icons/wdt.ico'))
+        info_icon = info_icon.scaledToWidth(40)
+        self.label_info_logo.setPixmap(info_icon)
+        self.label_info_logo.move(140, 10)
+        # Labels
+        self.label_info_title.setText(f'Windows Deployment Tool v{current_version}')
+        self.label_info_link.setText('<a href="https://github.com/jebr/windows-deployment-tool">GitHub repository</a>')
+        self.label_info_link.setOpenExternalLinks(True)
+        self.label_info_dev.setText('Developers\nJeroen Brauns / Niels van den Bos')
+        self.pushButton_update_check.clicked.connect(website_update)
 
 
 def main():

@@ -1223,7 +1223,7 @@
         <x>10</x>
         <y>550</y>
         <width>421</width>
-        <height>151</height>
+        <height>141</height>
        </rect>
       </property>
       <property name="font">
@@ -2951,6 +2951,7 @@ p, li { white-space: pre-wrap; }
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actioncheck_update_wdt"/>
     <addaction name="separator"/>
     <addaction name="actionLicence"/>
    </widget>
@@ -2991,6 +2992,19 @@ p, li { white-space: pre-wrap; }
   <action name="actionSysteem_Informatie_Advanced">
    <property name="text">
     <string>Systeem Informatie (Advanced)</string>
+   </property>
+  </action>
+  <action name="actionUpdate_WDT">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Update WDT</string>
+   </property>
+  </action>
+  <action name="actioncheck_update_wdt">
+   <property name="text">
+    <string>Controleer op updates</string>
    </property>
   </action>
  </widget>
