@@ -971,15 +971,48 @@ class MainPage(QtWidgets.QMainWindow):
             return False
         return True
 
-    def checkout_password(self, password):
-        self.password_fault = ''
-        if len(password) < 10:
-            self.password_fault = ('Password voldoet niet aan de eisen.\nMinimaal 10 karakters')
+    def password_check(password, samAccountName: str, displayName: str) -> bool:
+        """Password requirements based on
+        https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+        """
+        if samAccountName.lower() in password.lower() and len\
+                    (samAccountName) > 3:
+            logging.info('accountname in password')
             return False
-        alphabet = 'abcdefghijklmnopqtrsuvwxyz1234567890'
-        if (password in alphabet or password in alphabet.upper()):
-            self.password_fault = ('Password voldoet niet aan de eisen.\nMinimaal 1 symbool')
+
+        splits = ',. \t_+/\\$'
+        for split in splits:
+            splitted_items = displayName.split(split)
+            for elem in splitted_items:
+                if len(elem) < 3:
+                    continue
+                if elem in password:
+                    logging.info('part of displayname in password')
+                    return False
+
+        if displayName.lower() in password.lower():
+            logging.info('displayname in password')
             return False
+
+        if len(password) < 8:
+            logging.info('password too short')
+            return False
+
+        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        alphabet_up = alphabet.upper()
+        special = '~!@#$%^&*_-+=`|\\(){}[]:;"`\'<>,.?/'
+        letter = '1234567890'
+
+        categories_in_password = 0
+        for category in [alphabet, alphabet_up, special, letter]:
+            for char in category:
+                if char in password:
+                    categories_in_password += 1
+                    break
+        if categories_in_password < 3:
+            logging.info('password not diverse enough')
+            return False
+        
         return True
 
     def clear_users_table(self):
