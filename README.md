@@ -20,4 +20,3 @@ Programma voor het uitrollen van Windows 10 en Windows Server 2016
 - [ ] Geavanceerde logging
 - [ ] Logging wegschrijven naar bestand en via window op te vragen `wdt/1.0/feat/1001/loggin-export`
 - [x] Toevoegen licentie met nieuw window
-- [ ] Uitzetten sticky keys https://blog.duklabs.com/disabling-stickykeys-for-good/ `wdt/1.0/feat/1001/sticky-keys`
