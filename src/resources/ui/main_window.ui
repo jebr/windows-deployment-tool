@@ -1314,7 +1314,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="title">
-       <string>Gebruikers toevoegen aan Windows</string>
+       <string>Lokale Windows gebruikers toevoegen</string>
       </property>
       <widget class="QTableWidget" name="tableWidget_add_users">
        <property name="enabled">
@@ -2952,6 +2952,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actioncheck_update_wdt"/>
+    <addaction name="actionLogging"/>
     <addaction name="separator"/>
     <addaction name="actionLicence"/>
    </widget>
@@ -3005,6 +3006,11 @@ p, li { white-space: pre-wrap; }
   <action name="actioncheck_update_wdt">
    <property name="text">
     <string>Controleer op updates</string>
+   </property>
+  </action>
+  <action name="actionLogging">
+   <property name="text">
+    <string>WDT logging</string>
    </property>
   </action>
  </widget>

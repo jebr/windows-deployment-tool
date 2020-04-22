@@ -12,8 +12,9 @@ import time
 import threading
 import urllib3
 import webbrowser
+from datetime import datetime
 
-from PyQt5.QtCore import QDateTime, QDate, Qt
+from PyQt5.QtCore import QDateTime, QDate, Qt, QThread
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
     QTableWidgetItem, QLabel, QScrollArea
@@ -26,11 +27,6 @@ try:
 except Exception:
     pass
 
-# Set logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logging.disable(logging.DEBUG)
-
-
 # Resource path bepalen
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -42,7 +38,6 @@ def resource_path(relative_path):
     # logging.info('Pyinstaller file location {}'.format(base_path))
     return os.path.join(base_path, relative_path)
 
-
 # Programm uitvoeren als Administrator
 def is_admin():
     try:
@@ -50,7 +45,33 @@ def is_admin():
     except:
         return False
 
+# Software version
 current_version = float(1.0)
+
+# Create temp folder
+current_user = getpass.getuser()
+if not os.path.exists(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT'):
+    os.makedirs(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT')
+
+# Set logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename=f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log',
+                    filemode='a')
+date_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+# logging.disable(logging.DEBUG)
+# FIXME Console logging alleen voor ontwikkeling, uitzetten bij een release
+# define a Handler which writes INFO messages or higher to the sys.stderr
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
+
+
 
 # Release page
 def website_update():
@@ -65,6 +86,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
         self.actionSettings.triggered.connect(self.open_settings_popup)
+        self.actionLogging.triggered.connect(self.open_logging_window)
 
         # Controleer systeemtaal
         windll = ctypes.windll.kernel32
@@ -91,17 +113,19 @@ class MainPage(QtWidgets.QMainWindow):
         self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
 
         # Pre-system checks
-        self.windows7_check()
-        self.usb_check_thread()
+        logging.info(f'========{date_time}========')
+
         if self.check_update_wdt():  # Check for update WDT
             self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
             self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
+            logging.info(f'Initial check: Current software version v{current_version}')
+            logging.info(f'Initial check: New version available v{self.new_version}')
         else:
             self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
+            logging.info(f'Initial check: Current software version v{current_version}')
 
-        # Update button
-        self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_button)
-
+        self.windows7_check()
+        self.usb_check_thread()
         threading.Thread(target=self.energy_check, daemon=True).start()  # Check energy settings
 
         # Hostname
@@ -138,7 +162,10 @@ class MainPage(QtWidgets.QMainWindow):
         # Restart system
         self.pushButton_restart_system.clicked.connect(self.restart_system)
 
-        # Additional data
+        # Update button
+        self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_button)
+
+        # Set date for report
         datetime = QDateTime.currentDateTime()
         self.dateEdit_date.setDateTime(datetime)
 
@@ -151,8 +178,11 @@ class MainPage(QtWidgets.QMainWindow):
             self.infobox_update(
                 f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
             self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
+            logging.info(f'Update button: Current software version v{current_version}')
+            logging.info(f'Update button: New version available v{self.new_version}')
         else:
             self.infobox(f'Je maakt momenteel gebruik van de nieuwste versie (v{current_version})')
+            logging.info(f'Update button: Current software version v{current_version}')
 
     # WDT update check
     def check_update_wdt(self):
@@ -194,10 +224,10 @@ class MainPage(QtWidgets.QMainWindow):
         threading.Thread(target=self.rdp_check, daemon=True).start()
         threading.Thread(target=self.fw_icmp_check, daemon=True).start()
         threading.Thread(target=self.fw_discovery_check, daemon=True).start()
-        threading.Thread(target=self.energy_check, daemon=True).start()
+        # threading.Thread(target=self.energy_check, daemon=True).start() # WIP controleren in VM of deze check nog nodig is
         threading.Thread(target=self.get_users, daemon=True).start()
         while True:
-            if self.counter_threads == 7:  # Verhogen als er meer threads in deze functie geplaatst worden
+            if self.counter_threads == 6:  # Verhogen als er meer threads in deze functie geplaatst worden
                 break
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
@@ -210,7 +240,8 @@ class MainPage(QtWidgets.QMainWindow):
     def windows7_check(self):
         os_version = platform.platform()
         if "Windows-7" in os_version:
-            self.warningbox('Windows 7 wordt niet meer ondersteund')
+            self.warningbox('Windows 7 wordt niet meer ondersteund\nDe applicatie zal afgesloten worden')
+            logging.error(f'Initial check: Windows 7 is not supported')
             sys.exit()
 
     def energy_check(self):
@@ -223,24 +254,24 @@ class MainPage(QtWidgets.QMainWindow):
         if energy_on_scheme in active_scheme:
             self.label_energie_settings.setText('Altijd aan')
             self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            # self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            # self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            logging.info('Initial check: Energy plan - Always on')
         elif energy_lock_scheme in active_scheme:
             self.label_energie_settings.setText('Automatisch vergrendelen')
-            # self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            # self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            logging.info('Initial check: Energy plan - Lock automatically')
         else:
             self.label_energie_settings.setText('Standaard energieplan')
-            # self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            # self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            logging.info('Initial check: Energy plan - Default')
         self.counter_threads += 1
 
     def secpol_check(self):
         if os.path.exists('c:\\windows\\system32\secpol_new.inf'):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            logging.info('System check: Security policy applied ')
+        else:
+            logging.info('System check: Security policy not applied')
         self.counter_threads += 1
 
     def rdp_check(self):
@@ -251,6 +282,9 @@ class MainPage(QtWidgets.QMainWindow):
         if "0" in self.check_rdp:
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            logging.info('System check: RDP activated')
+        else:
+            logging.info('System check: RDP not activated')
         self.counter_threads += 1
 
     def fw_icmp_check(self):
@@ -264,16 +298,22 @@ class MainPage(QtWidgets.QMainWindow):
                 if "True" in check_nl:
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    logging.info('System check: Firewall ICMP allowed')
+                else:
+                    logging.info('System check: Firewall ICMP blocked')
             except Exception as e:
-                logging.info('Firewall check failed with error code {}'.format(e))
-        elif "en" in self.os_language:
+                logging.info(f'System check: Firewall ICMP check failed with message: {e}')
+        else:
             try:
                 check_en = str(subprocess.check_output(['powershell.exe', icmp_rule_en]))
                 if "True" in check_en:
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    logging.info('System check: Firewall ICMP allowed')
+                else:
+                    logging.info('System check: Firewall ICMP blocked')
             except Exception as e:
-                logging.info('Firewall check failed with error code {}'.format(e))
+                logging.info(f'System check: Firewall ICMP check failed with message {e}')
         self.counter_threads += 1
 
     def fw_discovery_check(self):
@@ -290,9 +330,12 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/'
                                                                                            'circle-check.png'))))
                     self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    logging.info('System check: Firewall discovery allowed')
+                else:
+                    logging.info('System check: Firewall discovery blocked')
             except Exception as e:
-                logging.info(e)
-        elif "en" in self.os_language:
+                logging.info(f'System check: Firewall discovery check failed with message: {e}')
+        else:
             try:
                 check_en = subprocess.check_output(['powershell.exe', 'Get-NetFirewallRule -DisplayName '
                                                            '"Network Discovery (NB-Datagram-In)"  | '
@@ -303,29 +346,39 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/'
                                                                                            'circle-check.png'))))
                     self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    logging.info('System check: Firewall discovery allowed')
+                else:
+                    logging.info('System check: Firewall discovery blocked')
             except Exception as e:
-                logging.info(e)
+                logging.info(f'System check: Firewall discovery check failed with message: {e}')
         self.counter_threads += 1
 
     def windows_chars(self):
         w_version = subprocess.check_output(['powershell.exe', '(Get-WmiObject -class Win32_OperatingSystem).Caption'])
         w_version = w_version.decode('utf-8')
         self.label_windows_version.setText(w_version.rstrip())
+        logging.info(f'System check: Windows version - {w_version.rstrip()}')
 
         if 'nl' in self.os_language:
             self.label_windows_lang.setText('Nederlands')
+            logging.info(f'System check: Language - Dutch')
         elif 'en' in self.os_language:
             self.label_windows_lang.setText('Engels')
+            logging.info(f'System check: Language - English')
         else:
             self.label_windows_lang.setText(self.os_language)
+            logging.info(f'System check: Language {self.os_language}')
 
         # Domain / Workgroup check
         w_domain_workgroup = subprocess.check_output(['powershell.exe', '(Get-WmiObject Win32_ComputerSystem).domain'])
         w_domain_workgroup = w_domain_workgroup.decode('utf-8')
         self.label_domain_workgroup.setText(f'{w_domain_workgroup.rstrip()}')
+        logging.info(f'System check: Workgroup / Domain - {w_domain_workgroup.rstrip()}')
 
         # Get Hostname
-        self.label_windows_hostname.setText(os.getenv('COMPUTERNAME'))
+        windows_hostname = os.getenv('COMPUTERNAME')
+        self.label_windows_hostname.setText(windows_hostname)
+        logging.info(f'System check: Hostname - {windows_hostname}')
 
         # Get Manufacturer and model
         manufacturer = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).manufacturer'])
@@ -333,28 +386,38 @@ class MainPage(QtWidgets.QMainWindow):
         model = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).model'])
         model = model.decode('utf-8')
         self.label_manufacturer_model.setText(f'{manufacturer.rstrip()} / {model.rstrip()}')
+        logging.info(f'System check: Manufacturer / Model - {manufacturer.rstrip()} / {model.rstrip()}')
 
         # Get PC Type
         type_number = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).PCSystemTypeEx'])
         type_number = int(type_number.decode('utf-8').rstrip())
         if type_number == 1:
             self.label_type.setText('Desktop')
+            logging.info('System check: Computer type - Desktop')
         elif type_number == 2:
             self.label_type.setText('Mobile / Laptop')
+            logging.info('System check: Computer type - Mobile / Laptop')
         elif type_number == 3:
             self.label.type.setText('Workstation')
+            logging.info('System check: Computer type - Workstation')
         elif type_number == 4:
             self.label_type.setText('Enterprise Server')
+            logging.info('System check: Computer type - Server')
         elif type_number == 5:
             self.label_type.setText('Small Office Server (SOHO)')
+            logging.info('System check: Computer type - Small Office Server')
         elif type_number == 6:
             self.label_type.setText('Appliance PC')
+            logging.info('System check: Computer type - Appliance PC')
         elif type_number == 7:
             self.label_type.setText('Performance Server')
+            logging.info('System check: Computer type - Performance Server')
         elif type_number == 8:
             self.label_type.setText('Maximum')
+            logging.info('System check: Computer type - Maximum')
         else:
             self.label_type('Onbekend product type')
+            logging.info('System check: Computer type - Unknown')
 
         # Calculate RAM
         bytes_number = subprocess.check_output(
@@ -363,14 +426,17 @@ class MainPage(QtWidgets.QMainWindow):
         gb_number = bytes_number / (1024 ** 3)
         gb_number = round(gb_number)
         self.label_physicalmemory.setText(f'{gb_number} GB')
+        logging.info(f'System check: RAM {gb_number} GB')
 
         # Get Processor info
         processor_name = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_Processor).name']).decode('utf-8')
         self.label_processor.setText(processor_name.rstrip())
         self.label_processor.setToolTip(processor_name.rstrip())
+        logging.info(f'System check: Processor - {processor_name.rstrip()}')
         processor_cores = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_Processor).NumberOfCores']).decode('utf-8')
         processor_logicalprocessors = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_Processor).NumberOfLogicalProcessors']).decode('utf-8')
         self.label_cores.setText(f'{processor_cores.rstrip()} cores / {processor_logicalprocessors.rstrip()} logical processors')
+        logging.info(f'System check: Processor cores - {processor_cores.rstrip()} cores / {processor_logicalprocessors.rstrip()} logical processors')
 
         # Get Windows Build and Version
         w_release_id = subprocess.check_output(
@@ -380,6 +446,7 @@ class MainPage(QtWidgets.QMainWindow):
             ['powershell.exe', '(Get-WmiObject Win32_OperatingSystem).Version'])
         w_release_version = w_release_version.decode('utf-8')
         self.label_windows_build.setText(f'{w_release_version.rstrip()} / {w_release_id.rstrip()}')
+        logging.info(f'System check: Windows build - {w_release_version.rstrip()} / {w_release_id.rstrip()}')
 
         self.counter_threads += 1
 
@@ -416,19 +483,17 @@ class MainPage(QtWidgets.QMainWindow):
                                        'Set-NetFirewallRule -DisplayName \"Bestands- en '
                                        'printerdeling (Echoaanvraag - ICMPv4-In)\" -Profile Any -Enabled True'])
                 self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                logging.info('ICMP is geactiveerd')
-            except subprocess.CalledProcessError:
-                self.criticalbox('De firewall instelling is niet uitgevoerd!')
-        elif "en" in self.os_language:
+                logging.info('Firewall ICMP activated')
+            except Exception as e:
+                logging.error(f'Firewall ICMP failed with message: {e}')
+        else:
             try:
                 subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"File and Printer Sharing '
                                                          '(Echo Request - ICMPv4-In)\" -Profile Any -Enabled True'])
                 self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                logging.info('ICMP is geactiveerd')
-            except subprocess.CalledProcessError:
-                self.criticalbox('De firewall instelling is niet uitgevoerd!')
-        else:
-            logging.info('Deze taal wordt niet ondersteund')
+                logging.info('Firewall ICMP activated')
+            except Exception as e:
+                logging.error(f'Firewall ICMP failed with message: {e}')
             
     def firewall_ping_thread(self):
         thread = threading.Thread(target=self.firewall_ping, daemon=True)
@@ -440,19 +505,17 @@ class MainPage(QtWidgets.QMainWindow):
                 subprocess.check_call(['powershell.exe', 'netsh advfirewall firewall '
                                                          'set rule group=”Network Discovery” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                logging.info('Discovery is geactiveerd')
-            except subprocess.CalledProcessError:
-                self.criticalbox('De firewall instelling is niet uitgevoerd!')
-        elif "en" in self.os_language:
+                logging.info('Firewall Discovery activated')
+            except Exception as e:
+                logging.error(f'Firewall Discovery failed with message: {e}')
+        else:
             try:
                 subprocess.check_call(['powershell.exe', 'netsh advfirewall firewall '
                                                          'set rule group=”Network Discovery” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                logging.info('Discovery is geactiveerd')
-            except subprocess.CalledProcessError:
-                self.criticalbox('De firewall instelling is niet uitgevoerd!')
-        else:
-            logging.info('Deze taal wordt niet ondersteund')
+                logging.info('Firewall Discovery activated')
+            except Exception as e:
+                logging.error(f'Firewall Discovery failed with message: {e}')
     
     def firewall_network_discovery_thread(self):
         thread = threading.Thread(target=self.firewall_network_discovery, daemon=True)
@@ -476,26 +539,22 @@ class MainPage(QtWidgets.QMainWindow):
     def set_hostname(self):
         new_hostname = self.lineEdit_hostname.text()
         if not self.checkout_hostname(new_hostname):
-            self.add_text_to_log('{} is geen geldige computernaam'.format(new_hostname))
             self.criticalbox('Ongeldige computernaam, zie info button')
             return
         try:
-            subprocess.check_call(['powershell.exe', "Rename-Computer -NewName {}".format(new_hostname)])
-            self.add_text_to_log('Computernaam is aangepast naar {}'.format(new_hostname))
-            logging.info('De computernaam is aangepast naar: {}'.format(self.lineEdit_hostname.text()))
+            subprocess.check_call(['powershell.exe', f'Rename-Computer -NewName {new_hostname}'])
+            logging.info(f'Hostname changed to: {self.lineEdit_hostname.text()}')
             self.label_hostname_new.setText('Nieuwe computernaam: {}'.format(new_hostname))
             self.lineEdit_hostname.clear()
-
         except Exception as e:
-            self.criticalbox('De uitvoering is mislukt!')
-            self.add_text_to_log(str(e))
+            logging.error(f'Hostname change failed with message: {e}')
 
     # Security
     def import_sec_policy(self):
         secpol_new = resource_path('\\src\\resources\\security\\secpol_new.inf')
         if not os.path.exists(secpol_new):
             self.criticalbox('Kan secpol_new.inf niet vinden \nFunctie kan niet uitgevoerd worden!')
-            logging.info('Kan secpol_new.inf niet vinden, import_sec_policy kan niet uitgevoerd worden')
+            logging.info('secpol_new.inf is not found on the system. Execution of security policy failed')
         else:
             current_user_Desktop = 'c:\\users\\{}\\desktop'.format(getpass.getuser())
             program_cwd = os.getcwd()
@@ -505,14 +564,14 @@ class MainPage(QtWidgets.QMainWindow):
                 os.chdir("c:\\windows\\system32")
                 subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit '
                                                          '/export /cfg backup_secpol.inf /log c:\\windows\\system32\\secpol_backup.log /quiet'])
-                logging.info('Backup van default security policy is geslaagd')
+                logging.info('Backup of default security policy succesful')
                 try:
                     shutil.copy('backup_secpol.inf', current_user_Desktop)  # Copy secpol_backup to user desktop
-                    logging.info('backup_secpol.inf is verplaatst naar {}'.format(current_user_Desktop))
+                    logging.info(f'backup_secpol.inf is moved to {current_user_Desktop}')
                 except Exception as e:
-                    self.criticalbox('Kopieeren van backup_secpol.inf is mislukt')
+                    self.criticalbox('Copy of backup_secpol.inf failed with message: {e}')
             except Exception as e:
-                logging.info('Het maken van de security policy backup is mislukt!\n Foutmelding {}'.format(str(e)))
+                logging.info(f'Backup of security policy failed with message: {e}')
             finally:
                 os.chdir(program_cwd)
 
@@ -526,7 +585,7 @@ class MainPage(QtWidgets.QMainWindow):
                                                              '/db c:\\windows\\system32\\defltbase.sdb /cfg {} '
                                                              '/overwrite /log c:\\windows\\system32\\secpol_import.log '
                                                              '/quiet'.format(secpol_new)])
-                    logging.info('Import security policy geslaagd')
+                    logging.info('Import security policy succesful')
                     try:
                         subprocess.check_call(['powershell.exe', 'echo y | gpupdate /force /wait:0'])
                         self.pushButton_check_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
@@ -536,13 +595,13 @@ class MainPage(QtWidgets.QMainWindow):
                         #     subprocess.check_call(['powershell.exe', 'shutdown -L'])
                         # except Exception as e:
                         #     logging.info(str(e))
+                        logging.info('GPUpdate forced succesful')
                     except Exception as e:
-                        logging.info(str(e))
+                        logging.error(f'GPUpdate failed with message: {e}')
                 except Exception as e:
-                    logging.info('Importeren van security policy is mislukt. {}'.format(str(e)))
+                    logging.info(f'Import security policy failed with message: {e}')
             except Exception as e:
-                logging.info('Het kopieeren van {} naar c:\\windows\\system32 is mislukt!\n '
-                             'Foutmelding {}'.format(secpol_new, str(e)))
+                logging.error(f'Copy of {secpol_new} to c:\\windows\\system32 failed with message: {e}')
 
     def import_sec_policy_thread(self):
         thread = threading.Thread(target=self.import_sec_policy, daemon=True)
@@ -561,6 +620,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            logging.info('Initial check: USB-storage Enabled')
         # Als de waarde 4 is de USB gedeactiveerd
         elif "4" in self.check_usb:
             self.pushButton_usb_disable.setDisabled(True)
@@ -568,8 +628,9 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            logging.info('Initial check: USB-storage Disabled')
         else:
-            return
+            logging.error('USB-storage check failed. Value of register doesn\'t match number 3 or 4.')
 
     def usb_check_thread(self):
         thread = threading.Thread(target=self.usb_check, daemon=True)
@@ -577,13 +638,16 @@ class MainPage(QtWidgets.QMainWindow):
 
     def enable_usb(self):
         try:
-            register = 'reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR /v ' \
-                       'Start /t REG_DWORD /d 3 /f'
-            subprocess.check_call(register.split(" "))
-            # self.infobox('USB-opslagapparaten zijn geactiveerd')
-            self.usb_check_thread()
-        except subprocess.CalledProcessError:
-            self.criticalbox('De uitvoering is mislukt')
+            subprocess.check_call(['powershell.exe', 'reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
+                                                     '\\Services\\USBSTOR /v Start /t REG_DWORD /d 3 /f'])
+            self.pushButton_usb_enable.setDisabled(True)
+            self.pushButton_usb_disable.setDisabled(False)
+            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            logging.info('USB-storage enabled')
+        except Exception as e:
+            logging.error(f'Enable USB-storage failed with message: {e}')
 
     def enable_usb_thread(self):
         thread = threading.Thread(target=self.enable_usb, daemon=True)
@@ -591,12 +655,16 @@ class MainPage(QtWidgets.QMainWindow):
 
     def disable_usb(self):
         try:
-            register = 'reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR /v Start /t REG_DWORD /d 4 /f'
-            subprocess.check_call(register.split(" "))
-            # self.infobox('USB-opslagapparaten zijn gedeactiveerd')
-            self.usb_check_thread()
-        except subprocess.CalledProcessError:
-            self.criticalbox('De uitvoering is mislukt! \n\n Is het programma uitgevoerd als Administrator?')
+            subprocess.check_call(['powershell.exe', 'reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
+                                                     '\\Services\\USBSTOR /v Start /t REG_DWORD /d 4 /f'])
+            self.pushButton_usb_disable.setDisabled(True)
+            self.pushButton_usb_enable.setDisabled(False)
+            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            logging.info('USB-storage disabled')
+        except Exception as e:
+            self.criticalbox(f'Disable USB-storage failed with message: {e}')
 
     def disable_usb_thread(self):
         thread = threading.Thread(target=self.disable_usb, daemon=True)
@@ -617,8 +685,8 @@ class MainPage(QtWidgets.QMainWindow):
                     subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
                                                              'Schaduw (TCP-In)\" -Profile Any -Enabled True'])
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
-                except subprocess.CalledProcessError:
-                    self.criticalbox('De firewall instellingen voor RDP zijn niet uitgevoerd')
+                except Exception as e:
+                    logging.error(f'Firewall settings RDP failed with message: {e}')
             elif "en" in self.os_language:
                 try:
                     subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
@@ -628,18 +696,16 @@ class MainPage(QtWidgets.QMainWindow):
                     subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
                                                              'Shadow (TCP-In)\" -Profile Any -Enabled True'])
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
-                except subprocess.CalledProcessError:
-                    self.criticalbox('De firewall instellingen voor RDP zijn niet uitgevoerd')
+                except Exception as e:
+                    logging.error(f'Firewall settings RDP failed with message: {e}')
             try:
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f'])
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\" /v SecurityLayer /t REG_DWORD /d 0 /f'])
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f'])
                 logging.info('De register wijzigingen voor RDP zijn geslaagd')
                 self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            except subprocess.CalledProcessError:
-                logging.info('De register instellingen voor RDP zijn niet uitgevoerd')
             except Exception as e:
-                logging.info(e)
+                logging.error(f'Register settings for RDP failed with message: {e}')
 
     def enable_rdp_thread(self):
         thread = threading.Thread(target=self.enable_rdp, daemon=True)
@@ -658,7 +724,6 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Check active scheme
         if energy_on_scheme in active_scheme:
-            logging.info('Dit energieplan is al actief')
             self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
@@ -667,7 +732,6 @@ class MainPage(QtWidgets.QMainWindow):
         if energy_on_scheme in scheme_list:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_on_scheme)])
-                logging.info('Oude energieplan verwijderd')
                 try:
                     subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
                                           .format(energy_config, energy_on_scheme)])
@@ -676,11 +740,11 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_energy_default.setIcon(
                         QIcon(QPixmap(resource_path('../icons/transparent.png'))))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                    logging.info('Instellen van het energieplan is geslaagd')
+                    logging.info('Enery plan: always on activated')
                 except Exception as e:
-                    logging.info('Import energieplan is mislukt.')
+                    logging.error(f'Import energy plan failed with message {e}')
             except Exception as e:
-                logging.info('Oude energieplan kan niet verwijderd worden')
+                logging.info(f'Remove old energy plan failed with message: {e}')
         else:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
@@ -689,9 +753,9 @@ class MainPage(QtWidgets.QMainWindow):
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                logging.info('Instellen van het energieplan is geslaagd')
+                logging.info('Enery plan: always on activated')
             except Exception as e:
-                logging.info('Import energieplan is mislukt.')
+                logging.error(f'Import energy plan failed with message {e}')
                 
     def enery_on_thread(self):
         thread = threading.Thread(target=self.energy_on, daemon=True)
@@ -712,13 +776,11 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            logging.info('Dit energieplan is al actief')
             return
 
         if energy_lock_scheme in scheme_list:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_lock_scheme)])
-                logging.info('Oude energieplan verwijderd')
                 try:
                     subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
                                           .format(energy_config, energy_lock_scheme)])
@@ -728,11 +790,11 @@ class MainPage(QtWidgets.QMainWindow):
                         QIcon(QPixmap(resource_path('../icons/transparent.png'))))
                     self.pushButton_check_energy_lock.setIcon(
                         QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                    logging.info('Instellen van het energieplan is geslaagd')
+                    logging.info('Enery plan: Auto lock activated')
                 except Exception as e:
-                    logging.info('Import energieplan is mislukt.')
+                    logging.error(f'Import energy plan failed with message {e}')
             except Exception as e:
-                logging.info('Oude energieplan kan niet verwijderd worden')
+                logging.info(f'Remove old energy plan failed with message: {e}')
         else:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
@@ -741,9 +803,9 @@ class MainPage(QtWidgets.QMainWindow):
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                logging.info('Instellen van het energieplan is geslaagd')
+                logging.info('Enery plan: Auto lock activated')
             except Exception as e:
-                logging.info('Import energieplan is mislukt.')
+                logging.error(f'Import energy plan failed with message {e}')
 
     def enery_lock_thread(self):
         thread = threading.Thread(target=self.energy_lock, daemon=True)
@@ -764,13 +826,11 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
             self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            logging.info('Dit energieplan is al actief')
             return
 
         if energy_default_scheme in scheme_list:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_default_scheme)])
-                logging.info('Oude energieplan verwijderd')
                 try:
                     subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
                                           .format(energy_config, energy_default_scheme)])
@@ -779,11 +839,11 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_energy_default.setIcon(
                         QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                    logging.info('Instellen van het energieplan is geslaagd')
+                    logging.info('Enery plan: Default activated')
                 except Exception as e:
-                    logging.info('Import energieplan is mislukt.')
+                    logging.error(f'Import energy plan failed with message {e}')
             except Exception as e:
-                logging.info('Oude energieplan kan niet verwijderd worden')
+                logging.info(f'Remove old energy plan failed with message: {e}')
         else:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
@@ -792,9 +852,9 @@ class MainPage(QtWidgets.QMainWindow):
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                logging.info('Instellen van het energieplan is geslaagd')
+                logging.info('Enery plan: Default activated')
             except Exception as e:
-                logging.info('Import energieplan is mislukt.')
+                logging.error(f'Import energy plan failed with message {e}')
     
     def enery_restore_thread(self):
         thread = threading.Thread(target=self.energy_restore, daemon=True)
@@ -945,12 +1005,10 @@ class MainPage(QtWidgets.QMainWindow):
                     try:
                         subprocess.check_call(['powershell.exe', f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
                     except Exception as e:
-                        logging.error(f'Gebruiker {user} kan niet toegevoegd worden aan de groep administrators')
-                logging.info(f'De gebruiker {user} is succesvol toegevoegd aan deze computer')
+                        logging.error(f'User {user} can not be added to the administrators group. Error message: {e}')
+                logging.info(f'User {user} is successfully added as local user to this computer')
             except Exception as e:
-                logging.error(f'Gebruiker {user} kan niet toegevoegd worden {e} ')
-            # finally:
-            #     self.tableWidget_add_users.clearContents()
+                logging.error(f'User {user} can not be added. Error message: {e}')
 
     def checkout_username(self, username):
         self.username_fault = ''
@@ -984,16 +1042,6 @@ class MainPage(QtWidgets.QMainWindow):
 
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
-
-    # Log
-    def add_text_to_log(self, text):
-        '''Adds text to the log tab. Make sure to end each line with a \n
-        '''
-        self.textBrowser_log.append(text)
-        desktop_loc = os.environ['USERPROFILE'] + '\\Desktop'
-        os.path.isdir(desktop_loc)
-        with open(desktop_loc + 'wtdlog.txt', 'w') as file:
-            file.write(self.textBrowser_log.toPlainText())
 
     # Messageboxen
     def infobox(self, message):
@@ -1041,6 +1089,9 @@ class MainPage(QtWidgets.QMainWindow):
         license_window_ = LicenceWindow()
         license_window_.exec_()
 
+    def open_logging_window(self):
+        logging_window_ = LoggingWindow()
+        logging_window_.exec_()
 
 def powershell(command):
     return subprocess.check_call(['powershell.exe', command])
@@ -1118,6 +1169,61 @@ class LicenceWindow(QDialog):
         self.plainTextEdit_license.setPlainText(license_text)
         self.plainTextEdit_license.centerCursor()
         self.plainTextEdit_license.centerOnScroll()
+
+
+class LoggingWindow(QDialog):
+    def __init__(self):
+        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
+        loadUi(resource_path('../resources/ui/wdt_logging_dialog.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        self.setFixedSize(600, 800)
+        # Logo
+        self.label_logging_logo.setText("")
+        self.label_logging_logo = QLabel(self)
+        info_icon = QPixmap(resource_path('../icons/wdt.ico'))
+        info_icon = info_icon.scaledToWidth(40)
+        self.label_logging_logo.setPixmap(info_icon)
+        self.label_logging_logo.move(260, 10)
+        # Labels
+        self.label_logging_title.setText(f'Windows Deployment Tool v{current_version}')
+        with open(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log') as file:
+            license_text = file.read()
+        self.plainTextEdit_logging.setPlainText(license_text)
+        self.plainTextEdit_logging.centerCursor()
+        self.plainTextEdit_logging.centerOnScroll()
+        # Buttons
+        self.pushButton_clear_log.clicked.connect(self.clear_wdt_log)
+        self.pushButton_export_log.clicked.connect(self.export_wdt_log)
+        self.pushButton_delete_log.clicked.connect(self.delete_wdt_log)
+
+    def infobox(self, message):
+        buttonReply = QMessageBox.information(self, 'Info', message, QMessageBox.Ok)
+
+    def clear_wdt_log(self):
+        with open(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log', 'w'): pass
+        self.plainTextEdit_logging.clear()
+
+    def export_wdt_log(self):
+        wdt_log = self.plainTextEdit_logging.toPlainText()
+        try:
+            with open(f'C:\\Users\\{current_user}\\Desktop\\WDT.log', 'w+') as file:
+                file.write(wdt_log)
+                self.infobox(f'WDT.log is opgeslagen op de locatie: C:\\Users\\{current_user}\\Desktop.')
+                try:
+                    subprocess.check_call(['powershell.exe', f'start c:\\users\\{current_user}\\Desktop\\WDT.log'])
+                except Exception as e:
+                    self.infobox(f'Log kan niet automatisch geopend worden.\nError: {e}')
+        except Exception as e:
+            self.infobox(f'Log kan niet geexporteerd worden.\nError: {e}')
+
+    def delete_wdt_log(self):
+        self.infobox(f'WDT.log kan handmatig verwijderd worden nadat WDT is afgesloten.\n\nLocatie: '
+                     f'C:\\Users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log\n\n'
+                     f'De verkenner zal geopend worden nadat op OK is geklikt.')
+        try:
+            subprocess.check_call(['powershell.exe', f'start C:\\Users\\{current_user}\\AppData\\Local\\Temp\\WDT'])
+        except Exception as e:
+            self.infobox(f'WDT.log kan niet verwijderd worden.\nError: {e}')
 
 
 def main():
