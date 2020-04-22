@@ -72,7 +72,6 @@ console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 
-
 # Release page
 def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
@@ -544,8 +543,9 @@ class MainPage(QtWidgets.QMainWindow):
         try:
             subprocess.check_call(['powershell.exe', f'Rename-Computer -NewName {new_hostname}'])
             logging.info(f'Hostname changed to: {self.lineEdit_hostname.text()}')
-            self.label_hostname_new.setText('Nieuwe computernaam: {}'.format(new_hostname))
+            self.label_hostname_new.setText(f'Nieuwe computernaam: {new_hostname}')
             self.lineEdit_hostname.clear()
+            logging.info(f'Hostname changed to {new_hostname}')
         except Exception as e:
             logging.error(f'Hostname change failed with message: {e}')
 
