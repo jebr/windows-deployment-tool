@@ -84,7 +84,6 @@ class MainPage(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
-        self.actionSettings.triggered.connect(self.open_settings_popup)
         self.actionLogging.triggered.connect(self.open_logging_window)
 
         # Controleer systeemtaal
@@ -128,7 +127,7 @@ class MainPage(QtWidgets.QMainWindow):
         threading.Thread(target=self.energy_check, daemon=True).start()  # Check energy settings
 
         # Hostname
-        self.pushButton_info_hostname.clicked.connect(self.open_hostname_help)
+        self.pushButton_info_hostname.clicked.connect(self.open_hostname_help_window)
         self.pushButton_info_hostname.setIcon(QIcon(QPixmap(resource_path('../icons/circle-info.png'))))
         self.pushButton_info_hostname.setToolTip('Klik voor informatie over computernaam')
         self.label_hostname.setText('Huidige computernaam: {}'.format(os.getenv('COMPUTERNAME')))
@@ -1059,27 +1058,16 @@ class MainPage(QtWidgets.QMainWindow):
     def noicon(self, message):
         buttonReply = QMessageBox.noicon(self, '', message, QMessageBox.Ok)
 
-    def open_about_popup(self):
-        AboutPopup_ = AboutPopup()
-        AboutPopup_.exec_()
-
-    def open_licence_popup(self):
-        LicencePopup_ = LicencePopup()
-        LicencePopup_.exec_()
-
-    def open_settings_popup(self):
-        SettingsPopup_ = SettingsPopup()
-        SettingsPopup_.exec_()
-
-    def open_hostname_help(self):
-        HostnamePopup_ = HostnamePopup()
-        HostnamePopup_.exec_()
-
     def infobox_update(self, message):
         title = f'Windows Deployment Tool v{current_version}'
         buttonReply = QMessageBox.information(self, title, message, QMessageBox.Yes, QMessageBox.No)
         if buttonReply == QMessageBox.Yes:
             webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
+
+    # Windows
+    def open_hostname_help_window(self):
+        hostname_window = HostnameWindow()
+        hostname_window.exec_()
 
     def open_info_window(self):
         info_window_ = InfoWindow()
@@ -1093,36 +1081,16 @@ class MainPage(QtWidgets.QMainWindow):
         logging_window_ = LoggingWindow()
         logging_window_.exec_()
 
+
 def powershell(command):
     return subprocess.check_call(['powershell.exe', command])
 
 
-class AboutPopup(QDialog):
-    def __init__(self):
-        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        loadUi(resource_path('../resources/ui/about_popup.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
-
-
-class LicencePopup(QDialog):
-    def __init__(self):
-        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        loadUi(resource_path('../resources/ui/licence_popup.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
-
-
-class SettingsPopup(QDialog):
-    def __init__(self):
-        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        loadUi(resource_path('../resources/ui/settings_popup.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
-
-
-class HostnamePopup(QDialog):
+class HostnameWindow(QDialog):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
         self.setFixedSize(600, 400)
-        loadUi(resource_path('../resources/ui/hostname_help_popup.ui'), self)
+        loadUi(resource_path('../resources/ui/hostname_help_dialog.ui'), self)
         self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
 
 
