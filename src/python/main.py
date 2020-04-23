@@ -903,6 +903,7 @@ class MainPage(QtWidgets.QMainWindow):
         item.setText(var)
         return item
 
+    # Function for later use
     def get_local_users(self):
         # w_users_full = subprocess.check_output(['powershell.exe', 'Get-LocalUser | select name, enabled, description'])
         w_users = subprocess.check_output(['powershell.exe', '(Get-LocalUser).name']).decode('utf-8').splitlines()
