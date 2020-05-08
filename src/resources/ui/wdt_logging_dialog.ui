@@ -55,6 +55,21 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="label_info_company">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>Company</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPlainTextEdit" name="plainTextEdit_logging">
       <property name="enabled">
        <bool>true</bool>

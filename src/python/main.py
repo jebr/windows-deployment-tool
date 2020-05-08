@@ -1302,7 +1302,7 @@ class InfoWindow(QDialog):
         self.label_info_logo.setPixmap(info_icon)
         self.label_info_logo.move(140, 10)
         # Labels
-        self.label_info_title.setText(f'Windows Deployment Tool v{current_version}')
+        self.label_info_title.setText(f'Windows Deployment Tool v{current_version} <br/> <font size=1>Heijmans N.V.</font>')
         self.label_info_link.setText('<a href="https://github.com/jebr/windows-deployment-tool">GitHub repository</a>')
         self.label_info_link.setOpenExternalLinks(True)
         self.label_info_dev.setText('Developers\nJeroen Brauns / Niels van den Bos')
@@ -1324,6 +1324,7 @@ class LicenceWindow(QDialog):
         self.label_info_logo.move(180, 10)
         # Labels
         self.label_info_title.setText(f'Windows Deployment Tool v{current_version}')
+        self.label_info_company.setText('Heijmans N.V.')
         self.label_info_link.setText('<a href="https://github.com/jebr/windows-deployment-tool">GitHub repository</a>')
         self.label_info_link.setOpenExternalLinks(True)
         with open('../../LICENSE') as file:
@@ -1348,6 +1349,7 @@ class LoggingWindow(QDialog):
         self.label_logging_logo.move(260, 10)
         # Labels
         self.label_logging_title.setText(f'Windows Deployment Tool v{current_version}')
+        self.label_info_company.setText('Heijmans N.V.')
         with open(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log') as file:
             license_text = file.read()
         self.plainTextEdit_logging.setPlainText(license_text)
