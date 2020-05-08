@@ -1,8 +1,8 @@
 # Windows Deployment Tool (WDT)
 Programma voor het uitrollen van Windows 10 en Windows Server 2016
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
-
+![Python version](https://img.shields.io/badge/python-3.7-blue) &nbsp; &nbsp; 
+![Windows version](https://img.shields.io/badge/windows-10-important)
 
 # TODO
 - [ ] Administrator activeren via window `wdt/2.0/feat/2001/activate-admin`
