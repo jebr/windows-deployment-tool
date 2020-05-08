@@ -13,6 +13,11 @@ import threading
 import urllib3
 import webbrowser
 from datetime import datetime
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
 
 from PyQt5.QtCore import QDateTime, QDate, Qt, QThread
 from PyQt5.QtGui import QPixmap, QIcon
@@ -45,6 +50,7 @@ def is_admin():
     except:
         return False
 
+
 # Software version
 current_version = float(1.0)
 
@@ -71,7 +77,6 @@ console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-
 # Release page
 def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
@@ -93,6 +98,9 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Controleer windows versie
         self.os_version = platform.platform()
+
+        # Hostname
+        self.hostname = os.getenv('COMPUTERNAME')
 
         # System checks
         self.pushButton_system_check.clicked.connect(self.system_checks_thread)
@@ -162,6 +170,9 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Update button
         self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_button)
+
+        # Create report button:
+        self.pushButton_export_system_settings.clicked.connect(self.create_pdf_report_thread)
 
         # Set date for report
         datetime = QDateTime.currentDateTime()
@@ -268,6 +279,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             logging.info('System check: Security policy applied ')
+            return True
         else:
             logging.info('System check: Security policy not applied')
         self.counter_threads += 1
@@ -281,6 +293,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             logging.info('System check: RDP activated')
+            return True
         else:
             logging.info('System check: RDP not activated')
         self.counter_threads += 1
@@ -297,6 +310,7 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                     logging.info('System check: Firewall ICMP allowed')
+                    return True
                 else:
                     logging.info('System check: Firewall ICMP blocked')
             except Exception as e:
@@ -329,6 +343,7 @@ class MainPage(QtWidgets.QMainWindow):
                                                                                            'circle-check.png'))))
                     self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
                     logging.info('System check: Firewall discovery allowed')
+                    return True
                 else:
                     logging.info('System check: Firewall discovery blocked')
             except Exception as e:
@@ -536,15 +551,15 @@ class MainPage(QtWidgets.QMainWindow):
 
     def set_hostname(self):
         new_hostname = self.lineEdit_hostname.text()
+        self.hostname = new_hostname
         if not self.checkout_hostname(new_hostname):
             self.criticalbox('Ongeldige computernaam, zie info button')
             return
         try:
             subprocess.check_call(['powershell.exe', f'Rename-Computer -NewName {new_hostname}'])
-            logging.info(f'Hostname changed to: {self.lineEdit_hostname.text()}')
             self.label_hostname_new.setText(f'Nieuwe computernaam: {new_hostname}')
             self.lineEdit_hostname.clear()
-            logging.info(f'Hostname changed to {new_hostname}')
+            logging.info(f'Hostname changed to: {new_hostname}')
         except Exception as e:
             logging.error(f'Hostname change failed with message: {e}')
 
@@ -628,6 +643,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
             logging.info('Initial check: USB-storage Disabled')
+            return True
         else:
             logging.error('USB-storage check failed. Value of register doesn\'t match number 3 or 4.')
 
@@ -1042,6 +1058,183 @@ class MainPage(QtWidgets.QMainWindow):
 
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
+
+    def create_pdf_report(self):
+        if not self.lineEdit_project.text():
+            self.warningbox('Vul het veld Project in')
+        if not self.lineEdit_engineer.text():
+            self.warningbox('Vul het veld Medewerker in')
+        else:
+            date_time = datetime.now().strftime('%d%m%Y%H%M%S')
+            hostname = self.hostname
+            project = self.lineEdit_project.text()
+            engineer = self.lineEdit_engineer.text()
+            filename = f'c:\\users\\{current_user}\\Desktop\\deploy_report_{project}_{hostname}.pdf'
+
+            try:
+                my_canvas = canvas.Canvas(filename)
+
+                styles = getSampleStyleSheet()
+                width, height = A4
+
+                # Header
+                my_canvas.drawImage('../icons/heijmans-logo.jpg', 400, 770, 156.35, 39.6)
+
+                logo_sub_text = f'''
+                <font size=10 color=gray>UTILITEIT SAFETY & SECURITY</font>
+                '''
+                para_logo_sub = Paragraph(logo_sub_text, style=styles['Normal'])
+                para_logo_sub.wrapOn(my_canvas, width, height)
+                para_logo_sub.drawOn(my_canvas, 400, 755)
+
+                # Body
+                # Project data
+                project_data = f'''
+                <font size=24><b>Deployment rapportage</b></font><br/>
+                <br/>
+                <br/>
+                <font size=16><b>{self.lineEdit_project.text()}</b><br/></font>
+                <font size=12 color=gray>Server / Workstation: {hostname}</font>
+                '''
+                para_project_data = Paragraph(project_data, style=styles['Normal'])
+                para_project_data.wrapOn(my_canvas, width, height)
+                para_project_data.drawOn(my_canvas, 50, 600)
+
+                character_data = f'''
+                <font size=10 color=gray>
+                Kenmerk: {date_time}-{hostname} <br/>
+                <br/>
+                Datum: {self.dateEdit_date.text()}<br/>
+                <br/>
+                Engineer: {self.lineEdit_engineer.text()}<br/>
+                </font>
+                '''
+                para_character_data = Paragraph(character_data, style=styles['Normal'])
+                para_character_data.wrapOn(my_canvas, width, height)
+                para_character_data.drawOn(my_canvas, 50, 175)
+
+                # Footer
+                footer_text = '''
+                <font size=6>Heijmans Utiliteit B.V. • Graafsebaan 65, 5248 JT  Rosmalen • Postbus 246, 5240 AE  Rosmalen • 
+                Nederland<br/> 
+                Telefoon +31 (0)73 543 51 11 • E-mail info@heijmans.nl • www.heijmans.<br/>
+                Niets van dit rapport en/of ontwerp mag worden vermenigvuldigd, openbaar gemaakt en/of overhandigd aan derden, 
+                zonder voorafgaande schriftelijke toestemming van de samensteller.</font>
+                '''
+                para_footer = Paragraph(footer_text, style=styles['Normal'])
+                para_footer.wrapOn(my_canvas, width, height)
+                para_footer.drawOn(my_canvas, 50, 20)
+                # Page number
+                para_page_number_1 = Paragraph('<font size=6>pagina 1 van 2</font>', style=styles['Normal'])
+                para_page_number_1.wrapOn(my_canvas, width, height)
+                para_page_number_1.drawOn(my_canvas, width / 2, 5)
+
+                # Page Break
+                my_canvas.showPage()
+
+                # Page 2
+                # Header
+                my_canvas.drawImage('../icons/heijmans-logo.jpg', 400, 770, 156.35, 39.6)
+                para_logo_sub.drawOn(my_canvas, 400, 755)
+
+                # Body
+                # System info
+                title_system_info = Paragraph('<font size=14><b>Windows Informatie</b></font>', style=styles['Normal'])
+                title_system_info.wrapOn(my_canvas, width, height)
+                title_system_info.drawOn(my_canvas, 50, 700)
+                system_info_data = [
+                    ['Windows versie', str(self.label_windows_version.text())],
+                    ['Windows Taal', str(self.label_windows_lang.text())],
+                    ['Domein / Werkgroep', self.label_domain_workgroup.text()],
+                    ['Computernaam', self.label_windows_hostname.text()],
+                    ['Fabrikant / Model', self.label_manufacturer_model.text()],
+                    ['Type', self.label_type.text()],
+                    ['RAM', self.label_physicalmemory.text()],
+                    ['Processor', self.label_processor.text()],
+                    ['Core / Logical Processors', self.label_cores.text()],
+                    ['Windows Build', self.label_windows_build.text()]
+                ]
+                table_system_info = Table(system_info_data, style=[('OUTLINE', (0,0), (-1,-1), 0.25, colors.black),
+                                                                   ('LINEAFTER', (0,0), (0,-1), 0.25, colors.black)], colWidths=250)
+                table_system_info.wrapOn(my_canvas, width, height)
+                table_system_info.drawOn(my_canvas, 50, 510)
+
+                # Application Settings
+                title_application_settings = Paragraph('<font size=14><b>Applicatie instellingen</b></font>', style=styles['Normal'])
+                title_application_settings.wrapOn(my_canvas, width, height)
+                title_application_settings.drawOn(my_canvas, 50, 490)
+
+                secpol_enabled = 'Ja' if self.secpol_check() else 'Nee'
+                usb_blocked = 'Ja' if self.usb_check() else 'Nee'
+                rdp_enabled = 'Ja' if self.rdp_check() else 'Nee'
+                icmp_enabled = 'Ja' if self.fw_icmp_check() else 'Nee'
+                discovery_enabled = 'Ja' if self.fw_discovery_check() else 'Nee'
+
+                application_settings_data = [
+                    ['Security Policy toegepast', secpol_enabled],
+                    ['USB geblokkeerd', usb_blocked],
+                    ['Remote Desktop geactiveerd', rdp_enabled],
+                    ['Windows Firewall ICMP toegestaan', icmp_enabled],
+                    ['Windows Firewall Discovery toegestaan', discovery_enabled],
+                    ['Energiebeheer', self.label_energie_settings.text()]
+                ]
+                table_application_settings = Table(application_settings_data, style=[('OUTLINE', (0, 0), (-1, -1), 0.25, colors.black),
+                                                                   ('LINEAFTER', (0, 0), (0, -1), 0.25, colors.black)], colWidths=250)
+                table_application_settings.wrapOn(my_canvas, width, height)
+                table_application_settings.drawOn(my_canvas, 50, 372)
+
+                # Windows Users
+                title_windows_users = Paragraph('<font size=14><b>Lokale Windows Gebruikers</b></font>', style=styles['Normal'])
+                title_windows_users.wrapOn(my_canvas, width, height)
+                title_windows_users.drawOn(my_canvas, 50, 352)
+
+                windows_users_data = [['Gebruiker', 'Administrator']]
+                height_windows_users_table = 318
+                for i in range(20):
+                    try:
+                        user_cell = self.tableWidget_active_users.item(i, 0)
+                        admin_cell = self.tableWidget_active_users.item(i, 1)
+                        if 'text' not in dir(user_cell) or 'text' not in dir(admin_cell):
+                            continue
+                        user_cell = user_cell.text()
+                        admin_cell = admin_cell.text()
+                        windows_users_data.append([user_cell, admin_cell])
+                        height_windows_users_table -= 16
+                    except Exception as e:
+                        logging.error(f'Error message: {e}')
+
+                table_windows_user_data = Table(windows_users_data,
+                                                   style=[('OUTLINE', (0, 0), (-1, -1), 0.25, colors.black),
+                                                          ('LINEAFTER', (0, 0), (0, -1), 0.25, colors.black),
+                                                          ('LINEBELOW', (0, 0), (-1, 0), 0.25, colors.black)], colWidths=250)
+                table_windows_user_data.wrapOn(my_canvas, width, height)
+                table_windows_user_data.drawOn(my_canvas, 50, height_windows_users_table)
+
+                # Footer
+                para_footer.drawOn(my_canvas, 50, 20)
+                # Page number
+                para_page_number_1 = Paragraph('<font size=6>pagina 2 van 2</font>', style=styles['Normal'])
+                para_page_number_1.wrapOn(my_canvas, width, height)
+                para_page_number_1.drawOn(my_canvas, width / 2, 5)
+
+                # META Data
+                my_canvas.setAuthor(f'{engineer}')
+                my_canvas.setTitle(f'Deployment rapportage - {project}')
+                my_canvas.setSubject(f'Device Hostname - {hostname}')
+                my_canvas.setCreator('Jeroen Brauns - Heijmans N.V.')
+                my_canvas.setProducer('Jeroen Brauns - Heijmans N.V.')
+                my_canvas.setKeywords([project, engineer, hostname])
+
+                # Create PDF
+                my_canvas.save()
+
+                subprocess.check_call(['powershell.exe', f'start "{filename}"'])
+            except Exception as e:
+                logging.error(f'Deployment report failed with message: {e}')
+
+    def create_pdf_report_thread(self):
+        thread = threading.Thread(target=self.create_pdf_report, daemon=True)
+        thread.start()
 
     # Messageboxen
     def infobox(self, message):
