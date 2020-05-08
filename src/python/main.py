@@ -1219,7 +1219,7 @@ class MainPage(QtWidgets.QMainWindow):
 
                 # META Data
                 my_canvas.setAuthor(f'{engineer}')
-                my_canvas.setTitle(f'Deployment rapportage - {project}')
+                my_canvas.setTitle(f'Deployment Report - {project}')
                 my_canvas.setSubject(f'Device Hostname - {hostname}')
                 my_canvas.setCreator('Jeroen Brauns - Heijmans N.V.')
                 my_canvas.setProducer('Jeroen Brauns - Heijmans N.V.')
