@@ -1,9 +1,9 @@
 <img src="https://github.com/jebr/windows-deployment-tool/blob/master/src/icons/wdt-logo.png" alt="Windows Deployment Tool" width="50" height="50"></img>
 
+# Windows Deployment Tool (WDT)
 ![Python version](https://img.shields.io/badge/python-3.7-blue) &nbsp;
 ![Windows version](https://img.shields.io/badge/windows-10-important)
 
-# Windows Deployment Tool (WDT)
 Programma voor het uitrollen van Windows 10 computers. Bekijk voor de mogelijkheden van het programma de 
 [Wiki](https://github.com/jebr/windows-deployment-tool/wiki). 
 
