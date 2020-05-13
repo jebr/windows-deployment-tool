@@ -92,6 +92,7 @@ secpol_new = resource_path('resources/security/secpol_new.inf')
 energy_config_on = resource_path('resources/energy/energy-full.pow')
 energy_config_lock = resource_path('resources/energy/energy-auto-lock.pow')
 energy_config_default = resource_path('resources/energy/energy-default.pow')
+license_file = resource_path('resources/license/license.txt')
 
 # Release page
 def website_update():
@@ -177,9 +178,9 @@ class MainPage(QtWidgets.QMainWindow):
         self.pushButton_rdp_enable.clicked.connect(self.enable_rdp_thread)
 
         # Energy settings
-        self.pushButton_energy_on.clicked.connect(self.enery_on_thread)
-        self.pushButton_energy_lock.clicked.connect(self.enery_lock_thread)
-        self.pushButton_energy_default.clicked.connect(self.enery_restore_thread)
+        self.pushButton_energy_on.clicked.connect(self.energy_on_thread)
+        self.pushButton_energy_lock.clicked.connect(self.energy_lock_thread)
+        self.pushButton_energy_default.clicked.connect(self.energy_restore_thread)
 
         # Restart system
         self.pushButton_restart_system.clicked.connect(self.restart_system)
@@ -249,10 +250,11 @@ class MainPage(QtWidgets.QMainWindow):
         threading.Thread(target=self.rdp_check, daemon=True).start()
         threading.Thread(target=self.fw_icmp_check, daemon=True).start()
         threading.Thread(target=self.fw_discovery_check, daemon=True).start()
-        # threading.Thread(target=self.energy_check, daemon=True).start() # WIP controleren in VM of deze check nog nodig is
+        threading.Thread(target=self.energy_check, daemon=True).start()
         threading.Thread(target=self.get_users, daemon=True).start()
         while True:
-            if self.counter_threads == 6:  # Verhogen als er meer threads in deze functie geplaatst worden
+            # print(self.counter_threads)
+            if self.counter_threads == 7:  # Verhogen als er meer threads in deze functie geplaatst worden
                 break
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
@@ -295,7 +297,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: Security policy applied ')
-            return True
+            # return True
         else:
             logging.info('System check: Security policy not applied')
         self.counter_threads += 1
@@ -309,7 +311,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: RDP activated')
-            return True
+            # return True
         else:
             logging.info('System check: RDP not activated')
         self.counter_threads += 1
@@ -768,7 +770,7 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
-                    logging.info('Enery plan: always on activated')
+                    logging.info('Energy plan: always on activated')
                 except Exception as e:
                     logging.error(f'Import energy plan failed with message {e}')
             except Exception as e:
@@ -781,11 +783,11 @@ class MainPage(QtWidgets.QMainWindow):
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
-                logging.info('Enery plan: always on activated')
+                logging.info('Energy plan: always on activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
                 
-    def enery_on_thread(self):
+    def energy_on_thread(self):
         thread = threading.Thread(target=self.energy_on, daemon=True)
         thread.start()
 
@@ -816,7 +818,7 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
-                    logging.info('Enery plan: Auto lock activated')
+                    logging.info('Energy plan: Auto lock activated')
                 except Exception as e:
                     logging.error(f'Import energy plan failed with message {e}')
             except Exception as e:
@@ -829,11 +831,11 @@ class MainPage(QtWidgets.QMainWindow):
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
-                logging.info('Enery plan: Auto lock activated')
+                logging.info('Energy plan: Auto lock activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
 
-    def enery_lock_thread(self):
+    def energy_lock_thread(self):
         thread = threading.Thread(target=self.energy_lock, daemon=True)
         thread.start()
 
@@ -864,7 +866,7 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
-                    logging.info('Enery plan: Default activated')
+                    logging.info('Energy plan: Default activated')
                 except Exception as e:
                     logging.error(f'Import energy plan failed with message {e}')
             except Exception as e:
@@ -877,11 +879,11 @@ class MainPage(QtWidgets.QMainWindow):
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
-                logging.info('Enery plan: Default activated')
+                logging.info('Energy plan: Default activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
     
-    def enery_restore_thread(self):
+    def energy_restore_thread(self):
         thread = threading.Thread(target=self.energy_restore, daemon=True)
         thread.start()
     
@@ -1071,9 +1073,9 @@ class MainPage(QtWidgets.QMainWindow):
 
     def create_pdf_report(self):
         if not self.lineEdit_project.text():
-            self.warningbox('Vul het veld Project in')
+            logging.error('Project field not filled in')
         if not self.lineEdit_engineer.text():
-            self.warningbox('Vul het veld Medewerker in')
+            logging.error('Engineer field not filled in')
         else:
             date_time = datetime.now().strftime('%d%m%Y%H%M%S')
             hostname = self.hostname
@@ -1337,7 +1339,7 @@ class LicenceWindow(QDialog):
         self.label_info_company.setText('Heijmans N.V.')
         self.label_info_link.setText('<a href="https://github.com/jebr/windows-deployment-tool">GitHub repository</a>')
         self.label_info_link.setOpenExternalLinks(True)
-        with open('../../LICENSE') as file:
+        with open(license_file) as file:
             license_text = file.read()
         self.plainTextEdit_license.setPlainText(license_text)
         self.plainTextEdit_license.centerCursor()
