@@ -21,7 +21,7 @@ Voeg in geval van een probleem altijd de log van WDT toe aan je Issue.
 - [ ] Controle op gebruikerswachtwoord `wdt/2.0/feat/2003/check-user-password`
 - [ ] Disable wintracking intergratie
 - [ ] Group policy toevoegen
-
+---
 - [x] Geavanceerde logging (22-4-2020)
 - [x] Logging wegschrijven naar bestand en via window op te vragen (22-4-2020)
 - [x] Toevoegen licentie met nieuw window (20-4-2020)
