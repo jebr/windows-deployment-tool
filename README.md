@@ -4,11 +4,16 @@
 ![Python version](https://img.shields.io/badge/python-3.7-blue) &nbsp;
 ![Windows version](https://img.shields.io/badge/windows-10-important)
 
-Programma voor het uitrollen van Windows 10 computers. Bekijk voor de mogelijkheden van het programma de 
-[Wiki](https://github.com/jebr/windows-deployment-tool/wiki). 
+Programma voor het uitrollen van Windows 10 computers. 
 
-Wanneer functies niet werken of je graag nieuwe functies wilt toevoegen maak dan een [Issue](https://github.com/jebr/windows-deployment-tool/issues) aan. 
-Voeg in geval van een probleem altijd de log van WDT toe aan je Issue.
+Alle informatie over de functionaliteiten en modules van de Windows Deployment Tool zijn terug te vinden in de 
+[Wiki](https://github.com/jebr/windows-deployment-tool/wiki).
+
+Bedankt voor het gebruik van de Windows Deployment Tool, en blijf op de hoogte van alle nieuwe mogelijkheden
+in toekomstige updates. 
+Eventuele bugs, verbeteringen en suggesties voor Windows Deployment Tool 
+kun je plaatsen in de [Issue Tracker](https://github.com/jebr/windows-deployment-tool/issues). 
+Bij bugs graag de WDT log toevoegen aan de melding.
 
 
 [![Screenshot](https://github.com/jebr/windows-deployment-tool/blob/master/src/icons/screenshot-WDT_v1.0.png?raw=true "WDT screenshot")](https://github.com/jebr/windows-deployment-tool/releases)
