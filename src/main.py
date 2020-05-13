@@ -77,6 +77,22 @@ console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
+# External files
+ui_main_window = resource_path('resources/ui/main_window.ui')
+ui_hostname_window = resource_path('resources/ui/hostname_help_dialog.ui')
+ui_info_window = resource_path('resources/ui/info_dialog.ui')
+ui_license_window = resource_path('resources/ui/license_dialog.ui')
+ui_logging_window = resource_path('resources/ui/wdt_logging_dialog.ui')
+icon_window = resource_path('icons/wdt.ico')
+icon_transparant_image = resource_path('icons/transparent.png')
+icon_circle_info = resource_path('icons/circle-info.png')
+icon_circle_check = resource_path('icons/circle-check.png')
+icon_heijmans_logo = resource_path('icons/heijmans-logo.jpg')
+secpol_new = resource_path('resources/security/secpol_new.inf')
+energy_config_on = resource_path('resources/energy/energy-full.pow')
+energy_config_lock = resource_path('resources/energy/energy-auto-lock.pow')
+energy_config_default = resource_path('resources/energy/energy-default.pow')
+
 # Release page
 def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
@@ -84,9 +100,9 @@ def website_update():
 class MainPage(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        loadUi(resource_path('../resources/ui/main_window.ui'), self)
+        loadUi(ui_main_window, self)
         self.setFixedSize(900, 760)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        self.setWindowIcon(QtGui.QIcon(icon_window))
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
         self.actionLogging.triggered.connect(self.open_logging_window)
@@ -104,19 +120,19 @@ class MainPage(QtWidgets.QMainWindow):
 
         # System checks
         self.pushButton_system_check.clicked.connect(self.system_checks_thread)
-        self.pushButton_check_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+        self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_rdp.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_usb.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_windows_updates.clicked.connect(self.open_update)
-        self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-        self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+        self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
 
         # Pre-system checks
         logging.info(f'========{date_time}========')
@@ -136,7 +152,7 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help_window)
-        self.pushButton_info_hostname.setIcon(QIcon(QPixmap(resource_path('../icons/circle-info.png'))))
+        self.pushButton_info_hostname.setIcon(QIcon(QPixmap(icon_circle_info)))
         self.pushButton_info_hostname.setToolTip('Klik voor informatie over computernaam')
         self.label_hostname.setText('Huidige computernaam: {}'.format(os.getenv('COMPUTERNAME')))
         self.pushButton_set_hostname.clicked.connect(self.set_hostname)
@@ -262,22 +278,22 @@ class MainPage(QtWidgets.QMainWindow):
 
         if energy_on_scheme in active_scheme:
             self.label_energie_settings.setText('Altijd aan')
-            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('Initial check: Energy plan - Always on')
         elif energy_lock_scheme in active_scheme:
             self.label_energie_settings.setText('Automatisch vergrendelen')
-            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('Initial check: Energy plan - Lock automatically')
         else:
             self.label_energie_settings.setText('Standaard energieplan')
-            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('Initial check: Energy plan - Default')
         self.counter_threads += 1
 
     def secpol_check(self):
         if os.path.exists('c:\\windows\\system32\secpol_new.inf'):
-            self.pushButton_check_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: Security policy applied ')
             return True
         else:
@@ -290,8 +306,8 @@ class MainPage(QtWidgets.QMainWindow):
         # Controleer de waarde van het register
         self.check_rdp = str(subprocess.check_output(['powershell.exe', 'Get-ItemProperty -Path {} -Name {}'.format(self.rdp_register_path, self.rdp_reg_dword)]))
         if "0" in self.check_rdp:
-            self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: RDP activated')
             return True
         else:
@@ -307,8 +323,8 @@ class MainPage(QtWidgets.QMainWindow):
             try:
                 check_nl = str(subprocess.check_output(['powershell.exe', icmp_rule_nl]))
                 if "True" in check_nl:
-                    self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                    self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
+                    self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall ICMP allowed')
                     return True
                 else:
@@ -319,8 +335,8 @@ class MainPage(QtWidgets.QMainWindow):
             try:
                 check_en = str(subprocess.check_output(['powershell.exe', icmp_rule_en]))
                 if "True" in check_en:
-                    self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                    self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
+                    self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall ICMP allowed')
                 else:
                     logging.info('System check: Firewall ICMP blocked')
@@ -339,9 +355,8 @@ class MainPage(QtWidgets.QMainWindow):
                 check_en = check_en.decode('utf-8')
                 check_true = check_en.count("True")
                 if check_true == 3:
-                    self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/'
-                                                                                           'circle-check.png'))))
-                    self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
+                    self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall discovery allowed')
                     return True
                 else:
@@ -356,9 +371,8 @@ class MainPage(QtWidgets.QMainWindow):
                 check_en = check_en.decode('utf-8')
                 check_true = check_en.count("True")
                 if check_true == 3:
-                    self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/'
-                                                                                           'circle-check.png'))))
-                    self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
+                    self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall discovery allowed')
                 else:
                     logging.info('System check: Firewall discovery blocked')
@@ -495,7 +509,7 @@ class MainPage(QtWidgets.QMainWindow):
                 subprocess.check_call(['powershell.exe',
                                        'Set-NetFirewallRule -DisplayName \"Bestands- en '
                                        'printerdeling (Echoaanvraag - ICMPv4-In)\" -Profile Any -Enabled True'])
-                self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall ICMP activated')
             except Exception as e:
                 logging.error(f'Firewall ICMP failed with message: {e}')
@@ -503,7 +517,7 @@ class MainPage(QtWidgets.QMainWindow):
             try:
                 subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"File and Printer Sharing '
                                                          '(Echo Request - ICMPv4-In)\" -Profile Any -Enabled True'])
-                self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall ICMP activated')
             except Exception as e:
                 logging.error(f'Firewall ICMP failed with message: {e}')
@@ -517,7 +531,7 @@ class MainPage(QtWidgets.QMainWindow):
             try:
                 subprocess.check_call(['powershell.exe', 'netsh advfirewall firewall '
                                                          'set rule group=”Network Discovery” new enable=Yes'])
-                self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
             except Exception as e:
                 logging.error(f'Firewall Discovery failed with message: {e}')
@@ -525,7 +539,7 @@ class MainPage(QtWidgets.QMainWindow):
             try:
                 subprocess.check_call(['powershell.exe', 'netsh advfirewall firewall '
                                                          'set rule group=”Network Discovery” new enable=Yes'])
-                self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
             except Exception as e:
                 logging.error(f'Firewall Discovery failed with message: {e}')
@@ -565,7 +579,7 @@ class MainPage(QtWidgets.QMainWindow):
 
     # Security
     def import_sec_policy(self):
-        secpol_new = resource_path('\\src\\resources\\security\\secpol_new.inf')
+        global secpol_new
         if not os.path.exists(secpol_new):
             self.criticalbox('Kan secpol_new.inf niet vinden \nFunctie kan niet uitgevoerd worden!')
             logging.info('secpol_new.inf is not found on the system. Execution of security policy failed')
@@ -602,7 +616,7 @@ class MainPage(QtWidgets.QMainWindow):
                     logging.info('Import security policy succesful')
                     try:
                         subprocess.check_call(['powershell.exe', 'echo y | gpupdate /force /wait:0'])
-                        self.pushButton_check_secpol.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                        self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
                         # FIXME: Nagaan of de gebruiker uitgelogd moet worden na het aanpassen van de policy of
                         # FIXME: pas na het doorlopen van het programma
                         # try:
@@ -631,17 +645,17 @@ class MainPage(QtWidgets.QMainWindow):
         if "3" in self.check_usb:
             self.pushButton_usb_enable.setDisabled(True)
             self.pushButton_usb_disable.setDisabled(False)
-            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_usb.setIcon(QIcon(QPixmap(icon_transparant_image)))
             logging.info('Initial check: USB-storage Enabled')
         # Als de waarde 4 is de USB gedeactiveerd
         elif "4" in self.check_usb:
             self.pushButton_usb_disable.setDisabled(True)
             self.pushButton_usb_enable.setDisabled(False)
-            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_usb.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('Initial check: USB-storage Disabled')
             return True
         else:
@@ -657,9 +671,9 @@ class MainPage(QtWidgets.QMainWindow):
                                                      '\\Services\\USBSTOR /v Start /t REG_DWORD /d 3 /f'])
             self.pushButton_usb_enable.setDisabled(True)
             self.pushButton_usb_disable.setDisabled(False)
-            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_usb.setIcon(QIcon(QPixmap(icon_transparant_image)))
             logging.info('USB-storage enabled')
         except Exception as e:
             logging.error(f'Enable USB-storage failed with message: {e}')
@@ -674,9 +688,9 @@ class MainPage(QtWidgets.QMainWindow):
                                                      '\\Services\\USBSTOR /v Start /t REG_DWORD /d 4 /f'])
             self.pushButton_usb_disable.setDisabled(True)
             self.pushButton_usb_enable.setDisabled(False)
-            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_usb.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_usb.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('USB-storage disabled')
         except Exception as e:
             self.criticalbox(f'Disable USB-storage failed with message: {e}')
@@ -718,7 +732,7 @@ class MainPage(QtWidgets.QMainWindow):
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\" /v SecurityLayer /t REG_DWORD /d 0 /f'])
                 subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f'])
                 logging.info('De register wijzigingen voor RDP zijn geslaagd')
-                self.pushButton_check_rdp.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             except Exception as e:
                 logging.error(f'Register settings for RDP failed with message: {e}')
 
@@ -728,7 +742,7 @@ class MainPage(QtWidgets.QMainWindow):
 
     # Energy Settings
     def energy_on(self):
-        energy_config = resource_path('../resources/energy/energy-full.pow')
+        global energy_config_on
         energy_on_scheme = '00000000-0000-0000-0000-000000000000'
 
         scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
@@ -739,9 +753,9 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Check active scheme
         if energy_on_scheme in active_scheme:
-            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
             return
 
         if energy_on_scheme in scheme_list:
@@ -749,12 +763,11 @@ class MainPage(QtWidgets.QMainWindow):
                 subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_on_scheme)])
                 try:
                     subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                          .format(energy_config, energy_on_scheme)])
+                                          .format(energy_config_on, energy_on_scheme)])
                     subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_on_scheme)])
-                    self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                    self.pushButton_check_energy_default.setIcon(
-                        QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                    self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+                    self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
+                    self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                    self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     logging.info('Enery plan: always on activated')
                 except Exception as e:
                     logging.error(f'Import energy plan failed with message {e}')
@@ -763,11 +776,11 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                      .format(energy_config, energy_on_scheme)])
+                                      .format(energy_config_on, energy_on_scheme)])
                 subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_on_scheme)])
-                self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+                self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
+                self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 logging.info('Enery plan: always on activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
@@ -777,7 +790,7 @@ class MainPage(QtWidgets.QMainWindow):
         thread.start()
 
     def energy_lock(self):
-        energy_config = resource_path('../resources/energy/energy-auto-lock.pow')
+        global energy_config_lock
         energy_lock_scheme = '39ff2e23-e11c-4fc3-ab0f-da25fadb8a89'
 
         scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
@@ -788,9 +801,9 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Check active scheme
         if energy_lock_scheme in active_scheme:
-            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
             return
 
         if energy_lock_scheme in scheme_list:
@@ -798,13 +811,11 @@ class MainPage(QtWidgets.QMainWindow):
                 subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_lock_scheme)])
                 try:
                     subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                          .format(energy_config, energy_lock_scheme)])
+                                          .format(energy_config_lock, energy_lock_scheme)])
                     subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_lock_scheme)])
-                    self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                    self.pushButton_check_energy_default.setIcon(
-                        QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                    self.pushButton_check_energy_lock.setIcon(
-                        QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                    self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                    self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                    self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('Enery plan: Auto lock activated')
                 except Exception as e:
                     logging.error(f'Import energy plan failed with message {e}')
@@ -813,11 +824,11 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                      .format(energy_config, energy_lock_scheme)])
+                                      .format(energy_config_lock, energy_lock_scheme)])
                 subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_lock_scheme)])
-                self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
+                self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Enery plan: Auto lock activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
@@ -827,7 +838,7 @@ class MainPage(QtWidgets.QMainWindow):
         thread.start()
 
     def energy_restore(self):
-        energy_config = resource_path('../resources/energy/energy-default.pow')
+        global energy_config_default
         energy_default_scheme = '381b4222-f694-41f0-9685-ff5bb260df2e'
 
         scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
@@ -838,9 +849,9 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Check active scheme
         if energy_default_scheme in active_scheme:
-            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+            self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
             return
 
         if energy_default_scheme in scheme_list:
@@ -848,12 +859,11 @@ class MainPage(QtWidgets.QMainWindow):
                 subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_default_scheme)])
                 try:
                     subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                          .format(energy_config, energy_default_scheme)])
+                                          .format(energy_config_default, energy_default_scheme)])
                     subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_default_scheme)])
-                    self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                    self.pushButton_check_energy_default.setIcon(
-                        QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                    self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+                    self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                    self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
+                    self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     logging.info('Enery plan: Default activated')
                 except Exception as e:
                     logging.error(f'Import energy plan failed with message {e}')
@@ -862,11 +872,11 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             try:
                 subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                      .format(energy_config, energy_default_scheme)])
+                                      .format(energy_config_default, energy_default_scheme)])
                 subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_default_scheme)])
-                self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
-                self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(resource_path('../icons/circle-check.png'))))
-                self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(resource_path('../icons/transparent.png'))))
+                self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
+                self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
+                self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 logging.info('Enery plan: Default activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
@@ -1078,7 +1088,7 @@ class MainPage(QtWidgets.QMainWindow):
                 width, height = A4
 
                 # Header
-                my_canvas.drawImage('../icons/heijmans-logo.jpg', 400, 770, 156.35, 39.6)
+                my_canvas.drawImage(icon_heijmans_logo, 400, 770, 156.35, 39.6)
 
                 logo_sub_text = f'''
                 <font size=10 color=gray>UTILITEIT SAFETY & SECURITY</font>
@@ -1134,7 +1144,7 @@ class MainPage(QtWidgets.QMainWindow):
 
                 # Page 2
                 # Header
-                my_canvas.drawImage('../icons/heijmans-logo.jpg', 400, 770, 156.35, 39.6)
+                my_canvas.drawImage(icon_heijmans_logo, 400, 770, 156.35, 39.6)
                 para_logo_sub.drawOn(my_canvas, 400, 755)
 
                 # Body
@@ -1284,20 +1294,20 @@ class HostnameWindow(QDialog):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
         self.setFixedSize(600, 400)
-        loadUi(resource_path('../resources/ui/hostname_help_dialog.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        loadUi(ui_hostname_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
 
 
 class InfoWindow(QDialog):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        loadUi(resource_path('../resources/ui/info_dialog.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        loadUi(ui_info_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
         self.setFixedSize(320, 300)
         # Logo
         self.label_info_logo.setText("")
         self.label_info_logo = QLabel(self)
-        info_icon = QPixmap(resource_path('../icons/wdt.ico'))
+        info_icon = QPixmap(icon_window)
         info_icon = info_icon.scaledToWidth(40)
         self.label_info_logo.setPixmap(info_icon)
         self.label_info_logo.move(140, 10)
@@ -1312,13 +1322,13 @@ class InfoWindow(QDialog):
 class LicenceWindow(QDialog):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        loadUi(resource_path('../resources/ui/license_dialog.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        loadUi(ui_license_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
         self.setFixedSize(420, 500)
         # Logo
         self.label_info_logo.setText("")
         self.label_info_logo = QLabel(self)
-        info_icon = QPixmap(resource_path('../icons/wdt.ico'))
+        info_icon = QPixmap(icon_window)
         info_icon = info_icon.scaledToWidth(40)
         self.label_info_logo.setPixmap(info_icon)
         self.label_info_logo.move(180, 10)
@@ -1337,13 +1347,13 @@ class LicenceWindow(QDialog):
 class LoggingWindow(QDialog):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        loadUi(resource_path('../resources/ui/wdt_logging_dialog.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(resource_path('../icons/wdt.ico')))
+        loadUi(ui_logging_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
         self.setFixedSize(600, 800)
         # Logo
         self.label_logging_logo.setText("")
         self.label_logging_logo = QLabel(self)
-        info_icon = QPixmap(resource_path('../icons/wdt.ico'))
+        info_icon = QPixmap(icon_window)
         info_icon = info_icon.scaledToWidth(40)
         self.label_logging_logo.setPixmap(info_icon)
         self.label_logging_logo.move(260, 10)
@@ -1398,6 +1408,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # main()
     if is_admin():  # Check admin rights
         main()
     else:
