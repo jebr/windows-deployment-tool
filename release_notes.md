@@ -6,6 +6,9 @@
 **Release v1.0**  
 *13-5-2020*
 
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/jebr/windows-deployment-tool/v1.0?color=green)
+
+
 <a href="https://github.com/jebr/windows-deployment-tool/releases" Download>
   <img src="src/icons/download.png" alt="Download WDT" width="200" height="50">
 </a>
