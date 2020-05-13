@@ -3,7 +3,7 @@
 # Windows Deployment Tool
 
 
-**Release 1.0**  
+**Release v1.0**  
 *13-5-2020*
 
 <a href="https://github.com/jebr/windows-deployment-tool/releases" Download>
