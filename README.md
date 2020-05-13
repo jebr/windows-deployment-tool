@@ -12,8 +12,10 @@ Voeg in geval van een probleem altijd de log van WDT toe aan je Issue.
 
 [![Screenshot](https://github.com/jebr/windows-deployment-tool/blob/master/src/icons/screenshot-WDT_v1.0.png?raw=true "WDT screenshot")](https://github.com/jebr/windows-deployment-tool/releases)
 
+# Release Notes
+[![Release Notes](https://img.shields.io/badge/Release%20Notese-v1.0-green)](https://github.com/jebr/windows-deployment-tool/blob/master/release_notes.md)
 
-# Upcoming features
+# Upcoming Features
 - [ ] Administrator activeren via window `wdt/2.0/feat/2001/activate-admin`
 - [ ] Administrator wachtwoord aanmaken via window `wdt/2.0/feat/2001/activate-admin`
 - [ ] Geavanceerde systeeminformatie `wdt/2.0/feat/2002/advanced-system-info`
