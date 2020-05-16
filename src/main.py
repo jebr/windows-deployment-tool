@@ -8,21 +8,21 @@ import subprocess
 import getpass
 import logging
 import shutil
+import requests
 import time
 import threading
-import urllib3
 import webbrowser
 from datetime import datetime
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import Paragraph, Table
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 
-from PyQt5.QtCore import QDateTime, QDate, Qt, QThread
+from PyQt5.QtCore import QDateTime
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem, QLabel, QScrollArea
+    QTableWidgetItem, QLabel
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -212,34 +212,18 @@ class MainPage(QtWidgets.QMainWindow):
 
     # WDT update check
     def check_update_wdt(self):
+        url = 'https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/version.txt'
         try:
-            timeout = urllib3.Timeout(connect=2.0, read=7.0)
-            http = urllib3.PoolManager(timeout=timeout)
-            response = http.request('GET',
-                                    'https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/version.txt')
-            data = response.data.decode('utf-8')
-
-            self.new_version = float(data)
-
-            if current_version < self.new_version:
-                # logging.info('Current software version: v{}'.format(current_version))
-                # logging.info('New software version available v{}'.format(new_version))
-                # logging.info('https://github.com/jebr/windows-deployment-tool/releases')
-                # self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
-                # self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
-                return True
-            else:
-                # logging.info('Current software version: v{}'.format(current_version))
-                # logging.info('Latest release: v{}'.format(new_version))
-                # logging.info('Software up-to-date')
-                # self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
-                # self.infobox(f'Je maakt momenteel gebruik van de nieuwste versie (v{current_version})')
-                return False
-
-        except urllib3.exceptions.MaxRetryError:
-            logging.error('No internet connection, max retry error')
-        except urllib3.exceptions.ResponseError:
-            logging.error('No internet connection, no response error')
+            resp = requests.get(url)
+        except Exception as e:
+            logging.error(f'{e}')
+            return False
+        if not resp.ok:
+            logging.error(f'{resp.status_code}')
+            logging.error(f'{resp.text}')
+            return False
+        self.new_version = float(resp.text)
+        return True
 
     # System checks
     def system_checks(self):
