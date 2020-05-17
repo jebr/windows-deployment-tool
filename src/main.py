@@ -201,12 +201,8 @@ class MainPage(QtWidgets.QMainWindow):
 
     def powershell(self, input_: list) -> str:
         """
-        Deze functie returned (error, output)
-        Niet heel gangbaar in python maar dagelijkse
-        koek voor een GO programmeur :)
-        Deze implementatie lijkt me voor nu het
-        handigst omdat je anders alles in een
-        try exept block moet zetten
+        Returns a string when no error
+        If an exception occurs the exeption is logged and None is returned
         """
         try:
             proc = subprocess.Popen(['powershell.exe'] + input_,
@@ -285,10 +281,6 @@ class MainPage(QtWidgets.QMainWindow):
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
         self.pushButton_system_check.setEnabled(True)
-
-    # def system_checks_thread(self):
-    #     thread = threading.Thread(target=self.system_checks, daemon=True)
-    #     thread.start()
 
     def windows7_check(self):
         os_version = platform.platform()
