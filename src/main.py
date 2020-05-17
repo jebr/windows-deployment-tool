@@ -8,22 +8,21 @@ import subprocess
 import getpass
 import logging
 import shutil
-import requests
 import time
 import threading
-import functools
+import urllib3
 import webbrowser
 from datetime import datetime
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, Table
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 
-from PyQt5.QtCore import QDateTime
+from PyQt5.QtCore import QDateTime, QDate, Qt, QThread
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem, QLabel
+    QTableWidgetItem, QLabel, QScrollArea
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -121,7 +120,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.hostname = os.getenv('COMPUTERNAME')
 
         # System checks
-        self.pushButton_system_check.clicked.connect(self.system_checks)
+        self.pushButton_system_check.clicked.connect(self.system_checks_thread)
         self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_transparant_image)))
@@ -199,39 +198,7 @@ class MainPage(QtWidgets.QMainWindow):
         # Set counter for started threads
         self.counter_threads = 0
 
-    def powershell(self, input_: list) -> str:
-        """
-        Returns a string when no error
-        If an exception occurs the exeption is logged and None is returned
-        """
-        try:
-            proc = subprocess.Popen(['powershell.exe'] + input_,
-                                    shell=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT,
-                                    stdin=subprocess.PIPE,
-                                    cwd=os.getcwd(),
-                                    env=os.environ)
-            proc.stdin.close()
-            outs, errs = proc.communicate(timeout=15)
-            return outs.decode('U8')
-        except Exception as e:
-            logging.warning(e)
-
-    def thread(func):
-        @functools.wraps(func)
-        def wrapper(self, **kwargs):
-            if 'daemon' in kwargs:
-                daemon = kwargs.pop('daemon')
-            else:
-                daemon = True
-            t = threading.Thread(target=func, args=[self], daemon=daemon)
-            t.start()
-            return None
-        return wrapper
-
     # Button to check on updates
-    @thread
     def check_update_wdt_button(self):
         if self.check_update_wdt():
             self.infobox_update(
@@ -245,42 +212,57 @@ class MainPage(QtWidgets.QMainWindow):
 
     # WDT update check
     def check_update_wdt(self):
-        url = 'https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/version.txt'
         try:
-            resp = requests.get(url)
-        except Exception as e:
-            logging.error(f'{e}')
-            return False
-        if not resp.ok:
-            logging.error(f'{resp.status_code}')
-            logging.error(f'{resp.text}')
-            return False
-        self.new_version = float(resp.text)
-        return True
+            timeout = urllib3.Timeout(connect=2.0, read=7.0)
+            http = urllib3.PoolManager(timeout=timeout)
+            response = http.request('GET',
+                                    'https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/version.txt')
+            data = response.data.decode('utf-8')
 
-    @thread
+            self.new_version = float(data)
+
+            if current_version < self.new_version:
+                # logging.info('Current software version: v{}'.format(current_version))
+                # logging.info('New software version available v{}'.format(new_version))
+                # logging.info('https://github.com/jebr/windows-deployment-tool/releases')
+                # self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
+                # self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
+                return True
+            else:
+                # logging.info('Current software version: v{}'.format(current_version))
+                # logging.info('Latest release: v{}'.format(new_version))
+                # logging.info('Software up-to-date')
+                # self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
+                # self.infobox(f'Je maakt momenteel gebruik van de nieuwste versie (v{current_version})')
+                return False
+
+        except urllib3.exceptions.MaxRetryError:
+            logging.error('No internet connection, max retry error')
+        except urllib3.exceptions.ResponseError:
+            logging.error('No internet connection, no response error')
+
+    # System checks
     def system_checks(self):
         self.counter_threads = 0
         self.pushButton_system_check.setEnabled(False)
-
-        # TODO alles omschrijven naar deze manier
-        self.windows_chars()
-
-        # threading.Thread(target=self.windows_chars, daemon=True).start()
-        # threading.Thread(target=self.secpol_check, daemon=True).start()
-        # threading.Thread(target=self.rdp_check, daemon=True).start()
-        # threading.Thread(target=self.fw_icmp_check, daemon=True).start()
-        # threading.Thread(target=self.fw_discovery_check, daemon=True).start()
-        # threading.Thread(target=self.energy_check, daemon=True).start()
-        # threading.Thread(target=self.get_users, daemon=True).start()
+        threading.Thread(target=self.windows_chars, daemon=True).start()
+        threading.Thread(target=self.secpol_check, daemon=True).start()
+        threading.Thread(target=self.rdp_check, daemon=True).start()
+        threading.Thread(target=self.fw_icmp_check, daemon=True).start()
+        threading.Thread(target=self.fw_discovery_check, daemon=True).start()
+        threading.Thread(target=self.energy_check, daemon=True).start()
+        threading.Thread(target=self.get_users, daemon=True).start()
         while True:
             # print(self.counter_threads)
-            if self.counter_threads == 1:  # Verhogen als er meer threads in
-                # deze functie geplaatst worden
+            if self.counter_threads == 7:  # Verhogen als er meer threads in deze functie geplaatst worden
                 break
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
         self.pushButton_system_check.setEnabled(True)
+
+    def system_checks_thread(self):
+        thread = threading.Thread(target=self.system_checks, daemon=True)
+        thread.start()
 
     def windows7_check(self):
         os_version = platform.platform()
@@ -400,10 +382,9 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'System check: Firewall discovery check failed with message: {e}')
         self.counter_threads += 1
 
-    @thread
     def windows_chars(self):
-        w_version = self.powershell(['(Get-WmiObject -class '
-                                         'Win32_OperatingSystem).Caption'])
+        w_version = subprocess.check_output(['powershell.exe', '(Get-WmiObject -class Win32_OperatingSystem).Caption'])
+        w_version = w_version.decode('utf-8')
         self.label_windows_version.setText(w_version.rstrip())
         logging.info(f'System check: Windows version - {w_version.rstrip()}')
 
@@ -418,7 +399,8 @@ class MainPage(QtWidgets.QMainWindow):
             logging.info(f'System check: Language {self.os_language}')
 
         # Domain / Workgroup check
-        w_domain_workgroup = self.powershell(['(Get-WmiObject Win32_ComputerSystem).domain'])
+        w_domain_workgroup = subprocess.check_output(['powershell.exe', '(Get-WmiObject Win32_ComputerSystem).domain'])
+        w_domain_workgroup = w_domain_workgroup.decode('utf-8')
         self.label_domain_workgroup.setText(f'{w_domain_workgroup.rstrip()}')
         logging.info(f'System check: Workgroup / Domain - {w_domain_workgroup.rstrip()}')
 
@@ -428,14 +410,16 @@ class MainPage(QtWidgets.QMainWindow):
         logging.info(f'System check: Hostname - {windows_hostname}')
 
         # Get Manufacturer and model
-        manufacturer = self.powershell(['(get-wmiobject Win32_ComputerSystem).manufacturer'])
-        model = self.powershell(['(get-wmiobject Win32_ComputerSystem).model'])
+        manufacturer = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).manufacturer'])
+        manufacturer = manufacturer.decode('utf-8')
+        model = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).model'])
+        model = model.decode('utf-8')
         self.label_manufacturer_model.setText(f'{manufacturer.rstrip()} / {model.rstrip()}')
         logging.info(f'System check: Manufacturer / Model - {manufacturer.rstrip()} / {model.rstrip()}')
 
         # Get PC Type
-        type_number = self.powershell(['(get-wmiobject Win32_ComputerSystem).PCSystemTypeEx'])
-        type_number = int(type_number.rstrip())
+        type_number = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).PCSystemTypeEx'])
+        type_number = int(type_number.decode('utf-8').rstrip())
         if type_number == 1:
             self.label_type.setText('Desktop')
             logging.info('System check: Computer type - Desktop')
@@ -465,31 +449,34 @@ class MainPage(QtWidgets.QMainWindow):
             logging.info('System check: Computer type - Unknown')
 
         # Calculate RAM
-        bytes_number = self.powershell(['(get-wmiobject '
-                                        'Win32_ComputerSystem).totalphysicalmemory'])
-        bytes_number = int(bytes_number)
+        bytes_number = subprocess.check_output(
+            ['powershell.exe', '(get-wmiobject Win32_ComputerSystem).totalphysicalmemory'])
+        bytes_number = int(bytes_number.decode('utf-8'))
         gb_number = bytes_number / (1024 ** 3)
         gb_number = round(gb_number)
         self.label_physicalmemory.setText(f'{gb_number} GB')
         logging.info(f'System check: RAM {gb_number} GB')
 
         # Get Processor info
-        processor_name = self.powershell(['(get-wmiobject Win32_Processor).name'])
+        processor_name = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_Processor).name']).decode('utf-8')
         self.label_processor.setText(processor_name.rstrip())
         self.label_processor.setToolTip(processor_name.rstrip())
         logging.info(f'System check: Processor - {processor_name.rstrip()}')
-        processor_cores = self.powershell(['(get-wmiobject Win32_Processor).NumberOfCores'])
-        processor_logicalprocessors = self.powershell(['(get-wmiobject Win32_Processor).NumberOfLogicalProcessors'])
+        processor_cores = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_Processor).NumberOfCores']).decode('utf-8')
+        processor_logicalprocessors = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_Processor).NumberOfLogicalProcessors']).decode('utf-8')
         self.label_cores.setText(f'{processor_cores.rstrip()} cores / {processor_logicalprocessors.rstrip()} logical processors')
         logging.info(f'System check: Processor cores - {processor_cores.rstrip()} cores / {processor_logicalprocessors.rstrip()} logical processors')
 
         # Get Windows Build and Version
-        w_release_id = self.powershell(
-            ['(Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseID'])
-        w_release_version = self.powershell(
-            ['(Get-WmiObject Win32_OperatingSystem).Version'])
+        w_release_id = subprocess.check_output(
+            ['powershell.exe', '(Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseID'])
+        w_release_id = w_release_id.decode('utf-8')
+        w_release_version = subprocess.check_output(
+            ['powershell.exe', '(Get-WmiObject Win32_OperatingSystem).Version'])
+        w_release_version = w_release_version.decode('utf-8')
         self.label_windows_build.setText(f'{w_release_version.rstrip()} / {w_release_id.rstrip()}')
         logging.info(f'System check: Windows build - {w_release_version.rstrip()} / {w_release_id.rstrip()}')
+
         self.counter_threads += 1
 
     def open_update(self):
@@ -1299,6 +1286,10 @@ class MainPage(QtWidgets.QMainWindow):
     def open_logging_window(self):
         logging_window_ = LoggingWindow()
         logging_window_.exec_()
+
+
+def powershell(command):
+    return subprocess.check_call(['powershell.exe', command])
 
 
 class HostnameWindow(QDialog):
