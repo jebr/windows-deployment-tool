@@ -255,7 +255,10 @@ class MainPage(QtWidgets.QMainWindow):
             logging.error(f'{resp.status_code}')
             logging.error(f'{resp.text}')
             return False
-        self.new_version = float(resp.text)
+        latest_version = float(resp.text)
+        if latest_version == current_version:
+            return False
+        self.new_version = latest_version
         return True
 
     @thread
