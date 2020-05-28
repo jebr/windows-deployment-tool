@@ -166,23 +166,23 @@ class MainPage(QtWidgets.QMainWindow):
         self.pushButton_clear_users_table.clicked.connect(self.clear_users_table)
 
         # Security policy
-        self.pushButton_sec_policy.clicked.connect(self.import_sec_policy_thread)
+        self.pushButton_sec_policy.clicked.connect(self.import_sec_policy)
 
         # USB-storage
-        self.pushButton_usb_enable.clicked.connect(self.enable_usb_thread)
-        self.pushButton_usb_disable.clicked.connect(self.disable_usb_thread)
+        self.pushButton_usb_enable.clicked.connect(self.enable_usb)
+        self.pushButton_usb_disable.clicked.connect(self.disable_usb)
 
         # Firewall instellingen
-        self.pushButton_firewall_ping.clicked.connect(self.firewall_ping_thread)
-        self.pushButton_firewall_discovery.clicked.connect(self.firewall_network_discovery_thread)
+        self.pushButton_firewall_ping.clicked.connect(self.firewall_ping)
+        self.pushButton_firewall_discovery.clicked.connect(self.firewall_network_discovery)
 
         # Remote desktop (RDP)
-        self.pushButton_rdp_enable.clicked.connect(self.enable_rdp_thread)
+        self.pushButton_rdp_enable.clicked.connect(self.enable_rdp)
 
         # Energy settings
-        self.pushButton_energy_on.clicked.connect(self.energy_on_thread)
-        self.pushButton_energy_lock.clicked.connect(self.energy_lock_thread)
-        self.pushButton_energy_default.clicked.connect(self.energy_restore_thread)
+        self.pushButton_energy_on.clicked.connect(self.energy_on)
+        self.pushButton_energy_lock.clicked.connect(self.energy_lock)
+        self.pushButton_energy_default.clicked.connect(self.energy_restore)
 
         # Restart system
         self.pushButton_restart_system.clicked.connect(self.restart_system)
@@ -191,7 +191,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_button)
 
         # Create report button:
-        self.pushButton_export_system_settings.clicked.connect(self.create_pdf_report_thread)
+        self.pushButton_export_system_settings.clicked.connect(self.create_pdf_report)
 
         # Set date for report
         datetime = QDateTime.currentDateTime()
@@ -277,7 +277,7 @@ class MainPage(QtWidgets.QMainWindow):
 
         while True:
             # print(self.counter_threads)
-            if self.counter_threads == 1:  # Verhogen als er meer threads in
+            if self.counter_threads == 7:  # Verhogen als er meer threads in
                 # deze functie geplaatst worden
                 break
             time.sleep(0.05)
@@ -319,8 +319,9 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: Security policy applied ')
-            # return True
+            self.secpol_check_return = True
         else:
+            self.secpol_check_return = False
             logging.info('System check: Security policy not applied')
         self.counter_threads += 1
 
@@ -334,8 +335,9 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: RDP activated')
-            # return True
+            self.rdp_check_return = True
         else:
+            self.rdp_check_return = False
             logging.info('System check: RDP not activated')
         self.counter_threads += 1
 
@@ -353,8 +355,9 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall ICMP allowed')
-                    return True
+                    self.fw_icmp_check_return = True
                 else:
+                    self.fw_icmp_check_return = False
                     logging.info('System check: Firewall ICMP blocked')
             except Exception as e:
                 logging.info(f'System check: Firewall ICMP check failed with message: {e}')
@@ -366,7 +369,9 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall ICMP allowed')
+                    self.fw_icmp_check_return = True
                 else:
+                    self.fw_icmp_check_return = False
                     logging.info('System check: Firewall ICMP blocked')
             except Exception as e:
                 logging.info(f'System check: Firewall ICMP check failed with message {e}')
@@ -385,8 +390,9 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall discovery allowed')
-                    return True
+                    self.fw_discovery_check_return = True
                 else:
+                    self.fw_discovery_check_return = False
                     logging.info('System check: Firewall discovery blocked')
             except Exception as e:
                 logging.info(f'System check: Firewall discovery check failed with message: {e}')
@@ -399,7 +405,9 @@ class MainPage(QtWidgets.QMainWindow):
                     self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     logging.info('System check: Firewall discovery allowed')
+                    self.fw_discovery_check_return = True
                 else:
+                    self.fw_discovery_check_return = False
                     logging.info('System check: Firewall discovery blocked')
             except Exception as e:
                 logging.info(f'System check: Firewall discovery check failed with message: {e}')
@@ -499,7 +507,7 @@ class MainPage(QtWidgets.QMainWindow):
 
     def open_update(self):
         try:
-            subprocess.check_call(['powershell.exe', 'C:\Windows\System32\control.exe /name Microsoft.WindowsUpdate'])
+            self.powershell(['C:\Windows\System32\control.exe /name Microsoft.WindowsUpdate'])
         except Exception as e:
             logging.info('Openen Windows update is mislukt.')
 
@@ -521,12 +529,11 @@ class MainPage(QtWidgets.QMainWindow):
                 i += 1
         self.counter_threads += 1
 
-    # Firewall
+    @thread
     def firewall_ping(self):
         if "nl" in self.os_language:
             try:
-                subprocess.check_call(['powershell.exe',
-                                       'Set-NetFirewallRule -DisplayName \"Bestands- en '
+                self.powershell(['Set-NetFirewallRule -DisplayName \"Bestands- en '
                                        'printerdeling (Echoaanvraag - ICMPv4-In)\" -Profile Any -Enabled True'])
                 self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall ICMP activated')
@@ -534,21 +541,18 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.error(f'Firewall ICMP failed with message: {e}')
         else:
             try:
-                subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"File and Printer Sharing '
+                self.powershell(['Set-NetFirewallRule -DisplayName \"File and Printer Sharing '
                                                          '(Echo Request - ICMPv4-In)\" -Profile Any -Enabled True'])
                 self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall ICMP activated')
             except Exception as e:
                 logging.error(f'Firewall ICMP failed with message: {e}')
-            
-    def firewall_ping_thread(self):
-        thread = threading.Thread(target=self.firewall_ping, daemon=True)
-        thread.start()
 
+    @thread
     def firewall_network_discovery(self):
         if "nl" in self.os_language:
             try:
-                subprocess.check_call(['powershell.exe', 'netsh advfirewall firewall '
+                self.powershell(['netsh advfirewall firewall '
                                                          'set rule group=”Network Discovery” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
@@ -556,17 +560,13 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.error(f'Firewall Discovery failed with message: {e}')
         else:
             try:
-                subprocess.check_call(['powershell.exe', 'netsh advfirewall firewall '
+                self.powershell(['netsh advfirewall firewall '
                                                          'set rule group=”Network Discovery” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
             except Exception as e:
                 logging.error(f'Firewall Discovery failed with message: {e}')
     
-    def firewall_network_discovery_thread(self):
-        thread = threading.Thread(target=self.firewall_network_discovery, daemon=True)
-        thread.start()
-
     # Functie voor het wijzigen van de computernaam
     def checkout_hostname(self, hostname):
         if len(hostname) > 15 or len(hostname) < 2:
@@ -599,6 +599,7 @@ class MainPage(QtWidgets.QMainWindow):
             logging.error(f'Hostname change failed with message: {e}')
 
     # Security
+    @thread
     def import_sec_policy(self):
         global secpol_new
         if not os.path.exists(secpol_new):
@@ -611,7 +612,7 @@ class MainPage(QtWidgets.QMainWindow):
             # Backup maken van de huidige security policy
             try:
                 os.chdir("c:\\windows\\system32")
-                subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit '
+                self.powershell(['c:\\windows\\system32\\secedit '
                                                          '/export /cfg backup_secpol.inf /log c:\\windows\\system32\\secpol_backup.log /quiet'])
                 logging.info('Backup of default security policy succesful')
                 try:
@@ -630,13 +631,13 @@ class MainPage(QtWidgets.QMainWindow):
                 shutil.copy(secpol_new, 'c:\\windows\\system32')
                 # Import secpol_new policy
                 try:
-                    subprocess.check_call(['powershell.exe', 'c:\\windows\\system32\\secedit /configure '
-                                                             '/db c:\\windows\\system32\\defltbase.sdb /cfg {} '
-                                                             '/overwrite /log c:\\windows\\system32\\secpol_import.log '
-                                                             '/quiet'.format(secpol_new)])
+                    self.powershell([f'c:\\windows\\system32\\secedit /configure '
+                                                             f'/db c:\\windows\\system32\\defltbase.sdb /cfg {secpol_new} '
+                                                             f'/overwrite /log c:\\windows\\system32\\secpol_import.log '
+                                                             f'/quiet'])
                     logging.info('Import security policy succesful')
                     try:
-                        subprocess.check_call(['powershell.exe', 'echo y | gpupdate /force /wait:0'])
+                        self.powershell(['echo y | gpupdate /force /wait:0'])
                         self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
                         # FIXME: Nagaan of de gebruiker uitgelogd moet worden na het aanpassen van de policy of
                         # FIXME: pas na het doorlopen van het programma
@@ -651,10 +652,6 @@ class MainPage(QtWidgets.QMainWindow):
                     logging.info(f'Import security policy failed with message: {e}')
             except Exception as e:
                 logging.error(f'Copy of {secpol_new} to c:\\windows\\system32 failed with message: {e}')
-
-    def import_sec_policy_thread(self):
-        thread = threading.Thread(target=self.import_sec_policy, daemon=True)
-        thread.start()
 
     # Functie voor het contoleren van de USB activering
     @thread
@@ -672,6 +669,7 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(icon_transparant_image)))
             self.pushButton_usb.setIcon(QIcon(QPixmap(icon_transparant_image)))
             logging.info('Initial check: USB-storage Enabled')
+            self.usb_check_return = False
         # Als de waarde 4 is de USB gedeactiveerd
         elif "4" in self.check_usb:
             self.pushButton_usb_disable.setDisabled(True)
@@ -680,14 +678,15 @@ class MainPage(QtWidgets.QMainWindow):
             self.pushButton_check_usb_disable.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_usb.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('Initial check: USB-storage Disabled')
-            return True
+            self.usb_check_return = True
         else:
+            self.usb_check_return = False
             logging.error('USB-storage check failed. Value of register doesn\'t match number 3 or 4.')
 
-
+    @thread
     def enable_usb(self):
         try:
-            subprocess.check_call(['powershell.exe', 'reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
+            self.powershell(['reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
                                                      '\\Services\\USBSTOR /v Start /t REG_DWORD /d 3 /f'])
             self.pushButton_usb_enable.setDisabled(True)
             self.pushButton_usb_disable.setDisabled(False)
@@ -698,13 +697,10 @@ class MainPage(QtWidgets.QMainWindow):
         except Exception as e:
             logging.error(f'Enable USB-storage failed with message: {e}')
 
-    def enable_usb_thread(self):
-        thread = threading.Thread(target=self.enable_usb, daemon=True)
-        thread.start()
-
+    @thread
     def disable_usb(self):
         try:
-            subprocess.check_call(['powershell.exe', 'reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
+            self.powershell(['reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
                                                      '\\Services\\USBSTOR /v Start /t REG_DWORD /d 4 /f'])
             self.pushButton_usb_disable.setDisabled(True)
             self.pushButton_usb_enable.setDisabled(False)
@@ -715,11 +711,9 @@ class MainPage(QtWidgets.QMainWindow):
         except Exception as e:
             self.criticalbox(f'Disable USB-storage failed with message: {e}')
 
-    def disable_usb_thread(self):
-        thread = threading.Thread(target=self.disable_usb, daemon=True)
-        thread.start()
 
     # Wimndows settings
+    @thread
     def enable_rdp(self):
         if self.rdp_check():
             logging.info('RDP is al geactiveerd op deze computer')
@@ -727,49 +721,44 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             if "nl" in self.os_language:
                 try:
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
+                    self.powershell(['Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
                                                              'Gebruikersmodus (TCP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
+                    self.powershell(['Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
                                                              'Gebruikersmodus (UDP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
+                    self.powershell(['Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
                                                              'Schaduw (TCP-In)\" -Profile Any -Enabled True'])
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
                 except Exception as e:
                     logging.error(f'Firewall settings RDP failed with message: {e}')
             elif "en" in self.os_language:
                 try:
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
+                    self.powershell(['Set-NetFirewallRule -DisplayName \"Remote Desktop - '
                                                              'User Mode (TCP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
+                    self.powershell(['Set-NetFirewallRule -DisplayName \"Remote Desktop - '
                                                              'User Mode (UDP-In)\" -Profile Any -Enabled True'])
-                    subprocess.check_call(['powershell.exe', 'Set-NetFirewallRule -DisplayName \"Remote Desktop - '
+                    self.powershell(['Set-NetFirewallRule -DisplayName \"Remote Desktop - '
                                                              'Shadow (TCP-In)\" -Profile Any -Enabled True'])
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
                 except Exception as e:
                     logging.error(f'Firewall settings RDP failed with message: {e}')
             try:
-                subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f'])
-                subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\" /v SecurityLayer /t REG_DWORD /d 0 /f'])
-                subprocess.check_call(['powershell.exe', 'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f'])
+                self.powershell(['reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f'])
+                self.powershell(['reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\" /v SecurityLayer /t REG_DWORD /d 0 /f'])
+                self.powershell(['reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f'])
                 logging.info('De register wijzigingen voor RDP zijn geslaagd')
                 self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             except Exception as e:
                 logging.error(f'Register settings for RDP failed with message: {e}')
 
-    def enable_rdp_thread(self):
-        thread = threading.Thread(target=self.enable_rdp, daemon=True)
-        thread.start()
-
     # Energy Settings
+    @thread
     def energy_on(self):
         global energy_config_on
         energy_on_scheme = '00000000-0000-0000-0000-000000000000'
 
-        scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
-        scheme_list = scheme_list.decode('utf-8')
+        scheme_list = self.powershell(['powercfg /list'])
 
-        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
-        active_scheme = active_scheme.decode('utf-8')
+        active_scheme = self.powershell(['powercfg /getactivescheme'])
 
         # Check active scheme
         if energy_on_scheme in active_scheme:
@@ -780,11 +769,10 @@ class MainPage(QtWidgets.QMainWindow):
 
         if energy_on_scheme in scheme_list:
             try:
-                subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_on_scheme)])
+                self.powershell([f'powercfg /delete {energy_on_scheme}'])
                 try:
-                    subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                          .format(energy_config_on, energy_on_scheme)])
-                    subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_on_scheme)])
+                    self.powershell([f'powercfg -import {energy_config_on} {energy_on_scheme}'])
+                    self.powershell([f'powercfg -setactive {energy_on_scheme}'])
                     self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
@@ -795,9 +783,8 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'Remove old energy plan failed with message: {e}')
         else:
             try:
-                subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                      .format(energy_config_on, energy_on_scheme)])
-                subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_on_scheme)])
+                self.powershell([f'powercfg -import {energy_config_on} {energy_on_scheme}'])
+                self.powershell([f'powercfg -setactive {energy_on_scheme}'])
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_circle_check)))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
@@ -805,19 +792,14 @@ class MainPage(QtWidgets.QMainWindow):
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
                 
-    def energy_on_thread(self):
-        thread = threading.Thread(target=self.energy_on, daemon=True)
-        thread.start()
-
+    @thread
     def energy_lock(self):
         global energy_config_lock
         energy_lock_scheme = '39ff2e23-e11c-4fc3-ab0f-da25fadb8a89'
 
-        scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
-        scheme_list = scheme_list.decode('utf-8')
+        scheme_list = self.powershell(['powercfg /list'])
 
-        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
-        active_scheme = active_scheme.decode('utf-8')
+        active_scheme = self.powershell(['powercfg /getactivescheme'])
 
         # Check active scheme
         if energy_lock_scheme in active_scheme:
@@ -828,11 +810,10 @@ class MainPage(QtWidgets.QMainWindow):
 
         if energy_lock_scheme in scheme_list:
             try:
-                subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_lock_scheme)])
+                self.powershell([f'powercfg /delete {energy_lock_scheme}'])
                 try:
-                    subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                          .format(energy_config_lock, energy_lock_scheme)])
-                    subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_lock_scheme)])
+                    self.powershell([f'powercfg -import {energy_config_lock} {energy_lock_scheme}'])
+                    self.powershell([f'powercfg -setactive {energy_lock_scheme}'])
                     self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -843,9 +824,8 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'Remove old energy plan failed with message: {e}')
         else:
             try:
-                subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                      .format(energy_config_lock, energy_lock_scheme)])
-                subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_lock_scheme)])
+                self.powershell([f'powercfg -import {energy_config_lock} {energy_lock_scheme}'])
+                self.powershell([f'powercfg -setactive {energy_lock_scheme}'])
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -853,19 +833,14 @@ class MainPage(QtWidgets.QMainWindow):
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
 
-    def energy_lock_thread(self):
-        thread = threading.Thread(target=self.energy_lock, daemon=True)
-        thread.start()
-
+    @thread
     def energy_restore(self):
         global energy_config_default
         energy_default_scheme = '381b4222-f694-41f0-9685-ff5bb260df2e'
 
-        scheme_list = subprocess.check_output(['powershell.exe', 'powercfg /list'])
-        scheme_list = scheme_list.decode('utf-8')
+        scheme_list = self.powershell(['powercfg /list'])
 
-        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
-        active_scheme = active_scheme.decode('utf-8')
+        active_scheme = self.powershell(['powercfg /getactivescheme'])
 
         # Check active scheme
         if energy_default_scheme in active_scheme:
@@ -876,11 +851,10 @@ class MainPage(QtWidgets.QMainWindow):
 
         if energy_default_scheme in scheme_list:
             try:
-                subprocess.check_call(['powershell.exe', 'powercfg /delete {}'.format(energy_default_scheme)])
+                self.powershell([f'powercfg /delete {energy_default_scheme}'])
                 try:
-                    subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                          .format(energy_config_default, energy_default_scheme)])
-                    subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_default_scheme)])
+                    self.powershell([f'powercfg -import {energy_config_default} {energy_default_scheme}'])
+                    self.powershell([f'powercfg -setactive {energy_default_scheme}'])
                     self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                     self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
@@ -891,30 +865,26 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'Remove old energy plan failed with message: {e}')
         else:
             try:
-                subprocess.check_call(['powershell.exe', 'powercfg -import {} {}'
-                                      .format(energy_config_default, energy_default_scheme)])
-                subprocess.check_call(['powershell.exe', 'powercfg -setactive {}'.format(energy_default_scheme)])
+                self.powershell([f'powercfg -import {energy_config_default} {energy_default_scheme}'])
+                self.powershell([f'powercfg -setactive {energy_default_scheme}'])
                 self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_circle_check)))
                 self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
                 logging.info('Energy plan: Default activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
-    
-    def energy_restore_thread(self):
-        thread = threading.Thread(target=self.energy_restore, daemon=True)
-        thread.start()
-    
+
     # Restart system
     def restart_system(self):
         try:
-            subprocess.check_call(['powershell.exe', 'shutdown -r -t 10'])
+            self.powershell(['shutdown -r -t 10'])
             self.infobox('Het systeeem zal over 10 seconden herstarten')
         except Exception as e:
-            self.warningbox('Door een onbekende fout kan het systeem niet herstart worden')
+            self.warningbox('Door een onbekende fout kan het systeem niet herstart worden\nProbeer het systeem handmatig te herstarten')
             logging.info('Systeem kan niet herstart worden. {}'.format(e))
 
     # Add Local Windows Users
+    @thread
     def load_csv_file(self):
         self.clear_users_table()
         fileName, _ = QFileDialog.getOpenFileName(self,
@@ -950,14 +920,14 @@ class MainPage(QtWidgets.QMainWindow):
         return item
 
     # Function for later use
+    @thread
     def get_local_users(self):
         # w_users_full = subprocess.check_output(['powershell.exe', 'Get-LocalUser | select name, enabled, description'])
-        w_users = subprocess.check_output(['powershell.exe', '(Get-LocalUser).name']).decode('utf-8').splitlines()
-        w_users_enabled = subprocess.check_output(['powershell.exe', '(Get-LocalUser).enabled']).decode('utf-8').splitlines()
-        w_users_desc = subprocess.check_output(['powershell.exe', '(Get-LocalUser).description']).decode('utf-8').splitlines()
-        w_users_fullname = subprocess.check_output(['powershell.exe', '(get-wmiobject -class Win32_USeraccount).fullname']).decode('utf-8').splitlines()
-        w_group_admin = subprocess.check_output(['powershell.exe', 'net localgroup administrators'])
-        w_group_admin = w_group_admin.decode('utf-8')
+        w_users = self.powershell(['(Get-LocalUser).name']).splitlines()
+        w_users_enabled = self.powershell(['(Get-LocalUser).enabled']).splitlines()
+        w_users_desc = self.powershell(['(Get-LocalUser).description']).splitlines()
+        w_users_fullname = self.powershell(['(get-wmiobject -class Win32_USeraccount).fullname']).splitlines()
+        w_group_admin = self.powershell(['net localgroup administrators'])
         self.tableWidget_add_users.clearContents()
         i = 0
 
@@ -986,8 +956,9 @@ class MainPage(QtWidgets.QMainWindow):
 
             i += 1
 
+    @thread
     def add_windows_users(self):
-        w_users = subprocess.check_output(['powershell.exe', '(Get-LocalUser).name']).decode('utf-8').splitlines()
+        w_users = self.powershell(['(Get-LocalUser).name']).splitlines()
         w_users = [element.lower() for element in w_users]  # Gebruikers naar lowercase
         for i in range(20):
             empty_fields = []
@@ -1036,11 +1007,10 @@ class MainPage(QtWidgets.QMainWindow):
                 self.warningbox(f'De gebruiker "{user}" komt al voor op deze computer en kan niet toegevoegd. '
                                 f'Verander de gebruikersnaam.')
                 return False
-
             try:
-                subprocess.check_call(['powershell.exe', f'net user "{user}" "{password}" /add /active:yes '
+                self.powershell([f'net user "{user}" "{password}" /add /active:yes '
                                                          f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
-                subprocess.check_call(['powershell.exe', f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
+                self.powershell([f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
                 # subprocess.check_call(['powershell.exe', f'$password = {password} -AsSecureString && New-LocalUser "{user}" -Password $password -Fullname {fullname} -Description {desc}'])
                 self.tableWidget_add_users.setItem(i, 0, QTableWidgetItem(''))
                 self.tableWidget_add_users.setItem(i, 1, QTableWidgetItem(''))
@@ -1049,7 +1019,7 @@ class MainPage(QtWidgets.QMainWindow):
                 self.tableWidget_add_users.setItem(i, 4, QTableWidgetItem(''))
                 if admin == True:
                     try:
-                        subprocess.check_call(['powershell.exe', f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
+                        self.powershell([f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
                     except Exception as e:
                         logging.error(f'User {user} can not be added to the administrators group. Error message: {e}')
                 logging.info(f'User {user} is successfully added as local user to this computer')
@@ -1092,6 +1062,7 @@ class MainPage(QtWidgets.QMainWindow):
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
 
+    @thread
     def create_pdf_report(self):
         if not self.lineEdit_project.text():
             logging.error('Project field not filled in')
@@ -1197,11 +1168,11 @@ class MainPage(QtWidgets.QMainWindow):
                 title_application_settings.wrapOn(my_canvas, width, height)
                 title_application_settings.drawOn(my_canvas, 50, 490)
 
-                secpol_enabled = 'Ja' if self.secpol_check() else 'Nee'
-                usb_blocked = 'Ja' if self.usb_check() else 'Nee'
-                rdp_enabled = 'Ja' if self.rdp_check() else 'Nee'
-                icmp_enabled = 'Ja' if self.fw_icmp_check() else 'Nee'
-                discovery_enabled = 'Ja' if self.fw_discovery_check() else 'Nee'
+                secpol_enabled = 'Ja' if self.secpol_check_return else 'Nee'
+                usb_blocked = 'Ja' if self.usb_check_return else 'Nee'
+                rdp_enabled = 'Ja' if self.rdp_check_return else 'Nee'
+                icmp_enabled = 'Ja' if self.fw_icmp_check_return else 'Nee'
+                discovery_enabled = 'Ja' if self.fw_discovery_check_return else 'Nee'
 
                 application_settings_data = [
                     ['Security Policy toegepast', secpol_enabled],
@@ -1261,13 +1232,10 @@ class MainPage(QtWidgets.QMainWindow):
                 # Create PDF
                 my_canvas.save()
 
-                subprocess.check_call(['powershell.exe', f'start "{filename}"'])
+                self.powershell([f'start "{filename}"'])
             except Exception as e:
                 logging.error(f'Deployment report failed with message: {e}')
 
-    def create_pdf_report_thread(self):
-        thread = threading.Thread(target=self.create_pdf_report, daemon=True)
-        thread.start()
 
     # Messageboxen
     def infobox(self, message):
@@ -1403,7 +1371,7 @@ class LoggingWindow(QDialog):
                 file.write(wdt_log)
                 self.infobox(f'WDT.log is opgeslagen op de locatie: C:\\Users\\{current_user}\\Desktop.')
                 try:
-                    subprocess.check_call(['powershell.exe', f'start c:\\users\\{current_user}\\Desktop\\WDT.log'])
+                    self.powershell([f'start c:\\users\\{current_user}\\Desktop\\WDT.log'])
                 except Exception as e:
                     self.infobox(f'Log kan niet automatisch geopend worden.\nError: {e}')
         except Exception as e:
@@ -1414,7 +1382,7 @@ class LoggingWindow(QDialog):
                      f'C:\\Users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log\n\n'
                      f'De verkenner zal geopend worden nadat op OK is geklikt.')
         try:
-            subprocess.check_call(['powershell.exe', f'start C:\\Users\\{current_user}\\AppData\\Local\\Temp\\WDT'])
+            self.powershell([f'start C:\\Users\\{current_user}\\AppData\\Local\\Temp\\WDT'])
         except Exception as e:
             self.infobox(f'WDT.log kan niet verwijderd worden.\nError: {e}')
 
