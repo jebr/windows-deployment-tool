@@ -956,7 +956,6 @@ class MainPage(QtWidgets.QMainWindow):
 
             i += 1
 
-    @thread
     def add_windows_users(self):
         w_users = self.powershell(['(Get-LocalUser).name']).splitlines()
         w_users = [element.lower() for element in w_users]  # Gebruikers naar lowercase
@@ -1356,6 +1355,25 @@ class LoggingWindow(QDialog):
         self.pushButton_clear_log.clicked.connect(self.clear_wdt_log)
         self.pushButton_export_log.clicked.connect(self.export_wdt_log)
         self.pushButton_delete_log.clicked.connect(self.delete_wdt_log)
+
+    def powershell(self, input_: list) -> str:
+        """
+        Returns a string when no error
+        If an exception occurs the exeption is logged and None is returned
+        """
+        try:
+            proc = subprocess.Popen(['powershell.exe'] + input_,
+                                    shell=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT,
+                                    stdin=subprocess.PIPE,
+                                    cwd=os.getcwd(),
+                                    env=os.environ)
+            proc.stdin.close()
+            outs, errs = proc.communicate(timeout=15)
+            return outs.decode('U8')
+        except Exception as e:
+            logging.warning(e)
 
     def infobox(self, message):
         buttonReply = QMessageBox.information(self, 'Info', message, QMessageBox.Ok)
