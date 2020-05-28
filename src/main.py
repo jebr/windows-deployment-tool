@@ -232,7 +232,6 @@ class MainPage(QtWidgets.QMainWindow):
         return wrapper
 
     # Button to check on updates
-    @thread
     def check_update_wdt_button(self):
         if self.check_update_wdt():
             self.infobox_update(
