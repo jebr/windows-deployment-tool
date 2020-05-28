@@ -138,6 +138,7 @@ class MainPage(QtWidgets.QMainWindow):
 
         # Pre-system checks
         logging.info(f'========{date_time}========')
+        self.new_version = ''
 
         if self.check_update_wdt():  # Check for update WDT
             self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
