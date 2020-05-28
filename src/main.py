@@ -248,7 +248,7 @@ class MainPage(QtWidgets.QMainWindow):
     def check_update_wdt(self):
         url = 'https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/version.txt'
         try:
-            resp = requests.get(url)
+            resp = requests.get(url, timeout=2)
         except Exception as e:
             logging.error(f'{e}')
             return False
