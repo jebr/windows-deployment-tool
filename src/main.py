@@ -148,9 +148,10 @@ class MainPage(QtWidgets.QMainWindow):
             self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
             logging.info(f'Initial check: Current software version v{current_version}')
 
+        # Initil checks
         self.windows7_check()
-        self.usb_check_thread()
-        threading.Thread(target=self.energy_check, daemon=True).start()  # Check energy settings
+        self.usb_check()
+        self.energy_check()
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help_window)
@@ -266,16 +267,14 @@ class MainPage(QtWidgets.QMainWindow):
         self.counter_threads = 0
         self.pushButton_system_check.setEnabled(False)
 
-        # TODO alles omschrijven naar deze manier
         self.windows_chars()
+        self.secpol_check()
+        self.rdp_check()
+        self.fw_icmp_check()
+        self.fw_discovery_check()
+        self.energy_check()
+        self.get_users()
 
-        # threading.Thread(target=self.windows_chars, daemon=True).start()
-        # threading.Thread(target=self.secpol_check, daemon=True).start()
-        # threading.Thread(target=self.rdp_check, daemon=True).start()
-        # threading.Thread(target=self.fw_icmp_check, daemon=True).start()
-        # threading.Thread(target=self.fw_discovery_check, daemon=True).start()
-        # threading.Thread(target=self.energy_check, daemon=True).start()
-        # threading.Thread(target=self.get_users, daemon=True).start()
         while True:
             # print(self.counter_threads)
             if self.counter_threads == 1:  # Verhogen als er meer threads in
@@ -285,6 +284,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.pushButton_export_system_settings.setEnabled(True)
         self.pushButton_system_check.setEnabled(True)
 
+    @thread
     def windows7_check(self):
         os_version = platform.platform()
         if "Windows-7" in os_version:
@@ -292,12 +292,12 @@ class MainPage(QtWidgets.QMainWindow):
             logging.error(f'Initial check: Windows 7 is not supported')
             sys.exit()
 
+    @thread
     def energy_check(self):
         energy_on_scheme = '00000000-0000-0000-0000-000000000000'
         energy_lock_scheme = '39ff2e23-e11c-4fc3-ab0f-da25fadb8a89'
 
-        active_scheme = subprocess.check_output(['powershell.exe', 'powercfg /getactivescheme'])
-        active_scheme = active_scheme.decode('utf-8')
+        active_scheme = self.powershell(['powercfg /getactivescheme'])
 
         if energy_on_scheme in active_scheme:
             self.label_energie_settings.setText('Altijd aan')
@@ -313,6 +313,7 @@ class MainPage(QtWidgets.QMainWindow):
             logging.info('Initial check: Energy plan - Default')
         self.counter_threads += 1
 
+    @thread
     def secpol_check(self):
         if os.path.exists('c:\\windows\\system32\secpol_new.inf'):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -323,11 +324,12 @@ class MainPage(QtWidgets.QMainWindow):
             logging.info('System check: Security policy not applied')
         self.counter_threads += 1
 
+    @thread
     def rdp_check(self):
         self.rdp_register_path = 'Registry::"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server"'
         self.rdp_reg_dword = "fDenyTSConnections"
         # Controleer de waarde van het register
-        self.check_rdp = str(subprocess.check_output(['powershell.exe', 'Get-ItemProperty -Path {} -Name {}'.format(self.rdp_register_path, self.rdp_reg_dword)]))
+        self.check_rdp = self.powershell([f'Get-ItemProperty -Path {self.rdp_register_path} -Name {self.rdp_reg_dword}'])
         if "0" in self.check_rdp:
             self.pushButton_check_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_rdp.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -337,6 +339,7 @@ class MainPage(QtWidgets.QMainWindow):
             logging.info('System check: RDP not activated')
         self.counter_threads += 1
 
+    @thread
     def fw_icmp_check(self):
         icmp_rule_nl = str('Get-NetFirewallRule -DisplayName \"Bestands- en printerdeling '
                            '(Echoaanvraag - ICMPv4-In)\" | select DisplayName, Enabled')
@@ -344,7 +347,8 @@ class MainPage(QtWidgets.QMainWindow):
                            '(Echo Request - ICMPv4-In)\" | select DisplayName, Enabled')
         if "nl" in self.os_language:
             try:
-                check_nl = str(subprocess.check_output(['powershell.exe', icmp_rule_nl]))
+                check_nl = self.powershell([icmp_rule_nl])
+                # check_nl = str(subprocess.check_output(['powershell.exe', icmp_rule_nl]))
                 if "True" in check_nl:
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -356,7 +360,8 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'System check: Firewall ICMP check failed with message: {e}')
         else:
             try:
-                check_en = str(subprocess.check_output(['powershell.exe', icmp_rule_en]))
+                check_en = self.powershell([icmp_rule_en])
+                # check_en = str(subprocess.check_output(['powershell.exe', icmp_rule_en]))
                 if "True" in check_en:
                     self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -367,16 +372,15 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'System check: Firewall ICMP check failed with message {e}')
         self.counter_threads += 1
 
+    @thread
     def fw_discovery_check(self):
         # Netwerk detecteren (NB-Datagram-In)
         # Network Discovery (NB-Datagram-In)
         if "nl" in self.os_language:
             try:
-                check_en = subprocess.check_output(['powershell.exe', 'Get-NetFirewallRule -DisplayName '
-                                                                      '"Netwerk detecteren (NB-Datagram-In)"  | '
-                                                                      'select DisplayName, Enabled'])
-                check_en = check_en.decode('utf-8')
-                check_true = check_en.count("True")
+                check_nl = self.powershell(['Get-NetFirewallRule -DisplayName "Netwerk detecteren (NB-Datagram-In)" '
+                                            '| select DisplayName, Enabled'])
+                check_true = check_nl.count("True")
                 if check_true == 3:
                     self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                     self.pushButton_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -388,10 +392,8 @@ class MainPage(QtWidgets.QMainWindow):
                 logging.info(f'System check: Firewall discovery check failed with message: {e}')
         else:
             try:
-                check_en = subprocess.check_output(['powershell.exe', 'Get-NetFirewallRule -DisplayName '
-                                                           '"Network Discovery (NB-Datagram-In)"  | '
-                                                           'select DisplayName, Enabled'])
-                check_en = check_en.decode('utf-8')
+                check_en = self.powershell(['Get-NetFirewallRule -DisplayName "Network Discovery (NB-Datagram-In)" '
+                                            '| select DisplayName, Enabled'])
                 check_true = check_en.count("True")
                 if check_true == 3:
                     self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -501,12 +503,11 @@ class MainPage(QtWidgets.QMainWindow):
         except Exception as e:
             logging.info('Openen Windows update is mislukt.')
 
+    @thread
     def get_users(self):
-        w_users = subprocess.check_output(['powershell.exe', 'Get-LocalUser | select name, enabled'])
-        w_users = w_users.decode('utf-8')
+        w_users = self.powershell(['Get-LocalUser | select name, enabled'])
         w_users_output = w_users.splitlines()
-        w_group_admin = subprocess.check_output(['powershell.exe', 'net localgroup administrators'])
-        w_group_admin = w_group_admin.decode('utf-8')
+        w_group_admin = self.powershell(['net localgroup administrators'])
         self.tableWidget_active_users.clearContents()
         i = 0
         for user in w_users_output:
@@ -581,6 +582,7 @@ class MainPage(QtWidgets.QMainWindow):
             return False
         return True
 
+    @thread
     def set_hostname(self):
         new_hostname = self.lineEdit_hostname.text()
         self.hostname = new_hostname
@@ -588,7 +590,8 @@ class MainPage(QtWidgets.QMainWindow):
             self.criticalbox('Ongeldige computernaam, zie info button')
             return
         try:
-            subprocess.check_call(['powershell.exe', f'Rename-Computer -NewName {new_hostname}'])
+            self.powershell([f'Rename-Computer -NewName {new_hostname}'])
+            # subprocess.check_call(['powershell.exe', f'Rename-Computer -NewName {new_hostname}'])
             self.label_hostname_new.setText(f'Nieuwe computernaam: {new_hostname}')
             self.lineEdit_hostname.clear()
             logging.info(f'Hostname changed to: {new_hostname}')
@@ -654,11 +657,13 @@ class MainPage(QtWidgets.QMainWindow):
         thread.start()
 
     # Functie voor het contoleren van de USB activering
+    @thread
     def usb_check(self):
         self.usb_register_path = "Registry::HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR"
         self.usb_reg_dword = "Start"
         # Controleer de waarde van het register
-        self.check_usb = str(subprocess.check_output(['powershell.exe', 'Get-ItemProperty -Path {} -Name {}'.format(self.usb_register_path, self.usb_reg_dword)]))
+        self.check_usb = self.powershell([f'Get-ItemProperty -Path {self.usb_register_path} -Name {self.usb_reg_dword}'])
+        # self.check_usb = str(subprocess.check_output(['powershell.exe', 'Get-ItemProperty -Path {} -Name {}'.format(self.usb_register_path, self.usb_reg_dword)]))
         # Als de waarde 3 is de USB geactiveerd
         if "3" in self.check_usb:
             self.pushButton_usb_enable.setDisabled(True)
@@ -679,9 +684,6 @@ class MainPage(QtWidgets.QMainWindow):
         else:
             logging.error('USB-storage check failed. Value of register doesn\'t match number 3 or 4.')
 
-    def usb_check_thread(self):
-        thread = threading.Thread(target=self.usb_check, daemon=True)
-        thread.start()
 
     def enable_usb(self):
         try:
@@ -1070,6 +1072,9 @@ class MainPage(QtWidgets.QMainWindow):
             return False
         if username.replace('.','.') == '.':
             self.username_fault = ('De gebruikersnaam mag niet uit punten bestaan.')
+            return False
+        if username.lower() == self.powershell(['hostname']).lower().rstrip():
+            self.username_fault = ('De gebruikersnaam mag niet hetzelfde zijn als de computernaam.')
             return False
         return True
 
