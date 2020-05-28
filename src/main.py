@@ -110,7 +110,8 @@ class MainPage(QtWidgets.QMainWindow):
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
         self.actionLogging.triggered.connect(self.open_logging_window)
-        self.actionAdministrator_Activceren.triggered.connect(self.open_admin_window)
+        self.actionAdministrator_Account.triggered.connect(self.open_admin_window)
+        self.actionVersion.setText(f'Version v{current_version}')
 
         # Controleer systeemtaal
         windll = ctypes.windll.kernel32

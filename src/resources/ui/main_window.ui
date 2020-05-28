@@ -1507,6 +1507,9 @@ p, li { white-space: pre-wrap; }
           <property name="text">
            <string>Gebruikers toevoegen</string>
           </property>
+          <property name="shortcut">
+           <string>Return</string>
+          </property>
          </widget>
         </item>
         <item row="0" column="1">
@@ -1982,7 +1985,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="toolTip">
-       <string>Actieve Windows gebruikers</string>
+       <string>Lokale Windows gebruikers</string>
       </property>
       <property name="title">
        <string>Lokale Windows gebruikers</string>
@@ -2607,60 +2610,45 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="toolTip">
-       <string>Aanvullende gegevens</string>
+       <string>Rapportage</string>
       </property>
       <property name="title">
        <string>Rapportage</string>
       </property>
-      <widget class="QWidget" name="gridLayoutWidget_9">
+      <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>16</x>
-         <y>90</y>
-         <width>411</width>
-         <height>151</height>
+         <x>20</x>
+         <y>40</y>
+         <width>401</width>
+         <height>41</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_7">
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEdit_engineer">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>200</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>Voor- en achternaam</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>Voor- en achternaam</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Voor het maken van een rapportage moet eerst een systeemcontrole uitgevoerd worden.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QWidget" name="formLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>94</y>
+         <width>408</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="l_project">
           <property name="sizePolicy">
@@ -2688,66 +2676,6 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>Project</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="l_engineer">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>200</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Medewerker</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="l_date">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>200</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Datum</string>
           </property>
          </widget>
         </item>
@@ -2787,6 +2715,105 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="clearButtonEnabled">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="l_engineer">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>200</horstretch>
+            <verstretch>25</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Medewerker</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit_engineer">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>200</horstretch>
+            <verstretch>25</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Voor- en achternaam</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Voor- en achternaam</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="l_date">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>200</horstretch>
+            <verstretch>25</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Datum</string>
           </property>
          </widget>
         </item>
@@ -2913,33 +2940,12 @@ p, li { white-space: pre-wrap; }
           <property name="text">
            <string>Rapportage</string>
           </property>
+          <property name="shortcut">
+           <string>Return</string>
+          </property>
          </widget>
         </item>
        </layout>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>40</y>
-         <width>401</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Voor het maken van een rapportage moet eerst een systeemcontrole uitgevoerd worden.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
       </widget>
      </widget>
     </widget>
@@ -2958,7 +2964,7 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Geavanceerd</string>
     </property>
-    <addaction name="actionAdministrator_Activceren"/>
+    <addaction name="actionAdministrator_Account"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -2969,6 +2975,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLogging"/>
     <addaction name="separator"/>
     <addaction name="actionLicence"/>
+    <addaction name="actionVersion"/>
    </widget>
    <addaction name="menuHelp"/>
    <addaction name="menuFile"/>
@@ -3024,12 +3031,20 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionLogging">
    <property name="text">
-    <string>WDT logging</string>
+    <string>Log weergeven</string>
    </property>
   </action>
-  <action name="actionAdministrator_Activceren">
+  <action name="actionAdministrator_Account">
    <property name="text">
     <string>Administrator Account</string>
+   </property>
+  </action>
+  <action name="actionVersion">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Version</string>
    </property>
   </action>
  </widget>
