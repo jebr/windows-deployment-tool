@@ -1527,7 +1527,7 @@ p, li { white-space: pre-wrap; }
     </widget>
     <widget class="QWidget" name="tab_systeem_informatie">
      <attribute name="title">
-      <string>Systeem informatie</string>
+      <string>Systeeminformatie / Rapportage</string>
      </attribute>
      <widget class="QGroupBox" name="groupBox_windows">
       <property name="enabled">
@@ -1550,7 +1550,7 @@ p, li { white-space: pre-wrap; }
        <string>Windows informatie</string>
       </property>
       <property name="title">
-       <string>Windows informatie</string>
+       <string>Systeeminformatie</string>
       </property>
       <widget class="QWidget" name="gridLayoutWidget_6">
        <property name="geometry">
@@ -1985,7 +1985,7 @@ p, li { white-space: pre-wrap; }
        <string>Actieve Windows gebruikers</string>
       </property>
       <property name="title">
-       <string>Windows gebruikers</string>
+       <string>Lokale Windows gebruikers</string>
       </property>
       <widget class="QTableWidget" name="tableWidget_active_users">
        <property name="enabled">
@@ -2610,18 +2610,57 @@ p, li { white-space: pre-wrap; }
        <string>Aanvullende gegevens</string>
       </property>
       <property name="title">
-       <string>Aanvullende gegevens</string>
+       <string>Rapportage</string>
       </property>
       <widget class="QWidget" name="gridLayoutWidget_9">
        <property name="geometry">
         <rect>
          <x>16</x>
-         <y>30</y>
+         <y>90</y>
          <width>411</width>
-         <height>89</height>
+         <height>151</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_7">
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit_engineer">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>200</horstretch>
+            <verstretch>25</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Voor- en achternaam</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Voor- en achternaam</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="l_project">
           <property name="sizePolicy">
@@ -2682,81 +2721,6 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEdit_project">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>200</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>Project</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEdit_engineer">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>200</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>Voor- en achternaam</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>Voor- en achternaam</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
          <widget class="QLabel" name="l_date">
           <property name="sizePolicy">
@@ -2784,6 +2748,45 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>Datum</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEdit_project">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>200</horstretch>
+            <verstretch>25</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Project</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -2843,19 +2846,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="gridLayoutWidget_10">
-       <property name="geometry">
-        <rect>
-         <x>17</x>
-         <y>130</y>
-         <width>411</width>
-         <height>62</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_8">
-        <item row="0" column="0">
+        <item row="3" column="0">
          <widget class="QPushButton" name="pushButton_system_check">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2884,11 +2875,11 @@ p, li { white-space: pre-wrap; }
            <string>Systeem controle uitvoeren</string>
           </property>
           <property name="text">
-           <string>Systeem controle</string>
+           <string>Systeemcontrole</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="3" column="1">
          <widget class="QPushButton" name="pushButton_export_system_settings">
           <property name="enabled">
            <bool>false</bool>
@@ -2920,11 +2911,35 @@ p, li { white-space: pre-wrap; }
            <string>Exporteren systeem informatie</string>
           </property>
           <property name="text">
-           <string>Export systeeminformatie</string>
+           <string>Rapportage</string>
           </property>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>401</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Voor het maken van een rapportage moet eerst een systeemcontrole uitgevoerd worden.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
       </widget>
      </widget>
     </widget>
@@ -2941,14 +2956,13 @@ p, li { white-space: pre-wrap; }
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Geavanceerd</string>
     </property>
-    <addaction name="actionSettings"/>
-    <addaction name="actionSysteem_Informatie_Advanced"/>
+    <addaction name="actionAdministrator_Activceren"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>Info</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actioncheck_update_wdt"/>
@@ -2956,8 +2970,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="actionLicence"/>
    </widget>
-   <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="enabled">
@@ -3011,6 +3025,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionLogging">
    <property name="text">
     <string>WDT logging</string>
+   </property>
+  </action>
+  <action name="actionAdministrator_Activceren">
+   <property name="text">
+    <string>Administrator Account</string>
    </property>
   </action>
  </widget>

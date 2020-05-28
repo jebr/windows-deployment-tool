@@ -84,6 +84,7 @@ ui_hostname_window = resource_path('resources/ui/hostname_help_dialog.ui')
 ui_info_window = resource_path('resources/ui/info_dialog.ui')
 ui_license_window = resource_path('resources/ui/license_dialog.ui')
 ui_logging_window = resource_path('resources/ui/wdt_logging_dialog.ui')
+ui_admin_window = resource_path('resources/ui/admin_dialog.ui')
 icon_window = resource_path('icons/wdt.ico')
 icon_transparant_image = resource_path('icons/transparent.png')
 icon_circle_info = resource_path('icons/circle-info.png')
@@ -98,6 +99,7 @@ license_file = resource_path('resources/license/license.txt')
 # Release page
 def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
+    
 
 class MainPage(QtWidgets.QMainWindow):
     def __init__(self):
@@ -108,6 +110,7 @@ class MainPage(QtWidgets.QMainWindow):
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
         self.actionLogging.triggered.connect(self.open_logging_window)
+        self.actionAdministrator_Activceren.triggered.connect(self.open_admin_window)
 
         # Controleer systeemtaal
         windll = ctypes.windll.kernel32
@@ -1061,11 +1064,13 @@ class MainPage(QtWidgets.QMainWindow):
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
 
-    @thread
+    # @thread
     def create_pdf_report(self):
         if not self.lineEdit_project.text():
+            self.warningbox('Vul de naam van het project in')
             logging.error('Project field not filled in')
         if not self.lineEdit_engineer.text():
+            self.warningbox('Vul je voor- en achternaam in')
             logging.error('Engineer field not filled in')
         else:
             date_time = datetime.now().strftime('%d%m%Y%H%M%S')
@@ -1235,7 +1240,6 @@ class MainPage(QtWidgets.QMainWindow):
             except Exception as e:
                 logging.error(f'Deployment report failed with message: {e}')
 
-
     # Messageboxen
     def infobox(self, message):
         buttonReply = QMessageBox.information(self, 'Info', message, QMessageBox.Ok)
@@ -1274,6 +1278,10 @@ class MainPage(QtWidgets.QMainWindow):
     def open_logging_window(self):
         logging_window_ = LoggingWindow()
         logging_window_.exec_()
+
+    def open_admin_window(self):
+        admin_window_ = AdminWindow()
+        admin_window_.exec_()
 
 
 class HostnameWindow(QDialog):
@@ -1403,6 +1411,76 @@ class LoggingWindow(QDialog):
             self.powershell([f'start C:\\Users\\{current_user}\\AppData\\Local\\Temp\\WDT'])
         except Exception as e:
             self.infobox(f'WDT.log kan niet verwijderd worden.\nError: {e}')
+
+
+class AdminWindow(QDialog):
+    def __init__(self):
+        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
+        self.setFixedSize(320, 250)
+        loadUi(ui_admin_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
+        # Enable Administrator button
+        self.PushButton_enable_admin.clicked.connect(self.enable_admin_account)
+
+        self.local_admin_enabled = self.powershell(['(Get-LocalUser Administrator).enabled'])
+        if eval(self.local_admin_enabled):
+            self.checkBox_activate_admin.setChecked(True)
+            self.checkBox_activate_admin.setText('Account geactiveerd')
+            self.checkBox_activate_admin.setEnabled(False)
+
+    def powershell(self, input_: list) -> str:
+        """
+        Returns a string when no error
+        If an exception occurs the exeption is logged and None is returned
+        """
+        try:
+            proc = subprocess.Popen(['powershell.exe'] + input_,
+                                    shell=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT,
+                                    stdin=subprocess.PIPE,
+                                    cwd=os.getcwd(),
+                                    env=os.environ)
+            proc.stdin.close()
+            outs, errs = proc.communicate(timeout=15)
+            return outs.decode('U8')
+        except Exception as e:
+            logging.warning(e)
+
+    def infobox(self, message):
+        buttonReply = QMessageBox.information(self, 'Info', message, QMessageBox.Ok)
+
+    def warningbox(self, message):
+        buttonReply = QMessageBox.warning(self, 'Waarschuwing', message, QMessageBox.Ok)
+
+    def enable_admin_account(self):
+        if not self.lineEdit_password.text():
+            self.warningbox('Vul het wachtwoord in')
+            return False
+        if not self.lineEdit_password_check.text():
+            self.warningbox('Herhaal het wachtwoord')
+            return False
+        if not self.lineEdit_password.text() == self.lineEdit_password_check.text():
+            self.warningbox('De ingevoerde wachtwoorden komen niet overeen')
+            return False
+
+        # Change Admin password without activate
+        if not self.checkBox_activate_admin.isChecked() and not eval(self.local_admin_enabled):
+            self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
+            self.infobox(f'Let op!\nHet Administrator account is niet geactiveerd\nHet wachtwoord \"{self.lineEdit_password.text()}\" is ingesteld voor het Adminstrator account')
+        # Activate Admin account with password
+        elif self.checkBox_activate_admin.isChecked() and not eval(self.local_admin_enabled):
+            self.powershell(['Enable-LocalUser Administrator'])
+            self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
+            self.infobox(f'Administrator account is geactiveerd met het wachtwoord \"{self.lineEdit_password.text()}\"')
+        # Change Admin password for activated account
+        elif self.checkBox_activate_admin.isChecked() and eval(self.local_admin_enabled):
+            self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
+            self.infobox(f'Het wachtwoord \"{self.lineEdit_password.text()}\" is ingesteld voor het Administrator account')
+
+        # Close Window
+        self.close()
+
 
 
 def main():
