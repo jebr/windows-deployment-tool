@@ -1052,6 +1052,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                                 f'Verander de gebruikersnaam.')
                 return False
             try:
+                user = user.replace(' ', '')
+                user = user.capitalize()
                 self.powershell([f'net user "{user}" "{password}" /add /active:yes '
                                                          f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
                 self.powershell([f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
@@ -1075,7 +1077,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if len(username) > 20:
             self.username_fault = ('De gebruikersnaam bevat teveel karakters. Maximaal 20 karakters toegestaan')
             return False
-        prohobited = '\\/:*?\"<>| ,@[];=+'
+        prohobited = '\\/:*?\"<>|,@[];=+'
         # " / \ [ ] : ; | = , + * ? < > @
         for elem in prohobited:
             if elem in username:
@@ -1089,6 +1091,12 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             return False
         if username.lower() == self.powershell(['hostname']).lower().rstrip():
             self.username_fault = ('De gebruikersnaam mag niet hetzelfde zijn als de computernaam.')
+            return False
+        if username.lower().endswith(' '):
+            self.username_fault = ('De gebruikersnaam mag niet eindigen met een spatie')
+            return False
+        if username.lower().startswith(' '):
+            self.username_fault = ('De gebruikersnaam mag niet beginnen met een spatie')
             return False
         return True
 
