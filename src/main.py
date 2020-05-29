@@ -198,7 +198,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         logging.info(f'========{date_time}========')
         self.new_version = current_version
 
-        if self.check_update_wdt():  # Check for update WDT
+        if self.check_update_wdt == 'New Version':  # Check for update WDT
             self.infobox_update(f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
             self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
             logging.info(f'Initial check: Current software version v{current_version}')
@@ -247,7 +247,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_restart_system.clicked.connect(self.restart_system)
 
         # Update button
-        self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_button)
+        self.actioncheck_update_wdt.triggered.connect(self.check_update_wdt_trigger)
 
         # Create report button:
         self.pushButton_export_system_settings.clicked.connect(self.create_pdf_report)
@@ -260,16 +260,17 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.counter_threads = 0
 
     # Button to check on updates
-    def check_update_wdt_button(self):
-        if self.check_update_wdt():
+    def check_update_wdt_trigger(self):
+        update_check = self.check_update_wdt()
+        if update_check == 'New Version':
             self.infobox_update(
                 f'v{self.new_version} is nu beschikbaar om te installeren.\n Wil je deze nu downloaden?')
             self.statusBar().showMessage(f'Nieuwe versie beschikbaar v{self.new_version}')
             logging.info(f'Update button: Current software version v{current_version}')
-            logging.info(f'Update button: New version available v{self.new_version}')
-        else:
+        if update_check == 'Connection Error':
+            self.warningbox('Het is niet mogelijk om te controleren op updates\n\nHerstel de internetverbinding!')
+        if update_check == 'Latest Version':
             self.infobox(f'Je maakt momenteel gebruik van de nieuwste versie (v{current_version})')
-            logging.info(f'Update button: Current software version v{current_version}')
 
     # WDT update check
     def check_update_wdt(self):
@@ -278,16 +279,16 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             resp = requests.get(url, timeout=2)
         except Exception as e:
             logging.error(f'{e}')
-            return False
+            return ('Connection Error')
         if not resp.ok:
             logging.error(f'{resp.status_code}')
             logging.error(f'{resp.text}')
-            return False
+            return ('Connection Error')
         latest_version = float(resp.text)
         self.new_version = latest_version
-        if latest_version == current_version:
-            return False
-        return True
+        if latest_version > current_version:
+            return ('Latest Version')
+        return ('New Version')
 
     @thread
     def system_checks(self):
