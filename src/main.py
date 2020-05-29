@@ -1442,20 +1442,22 @@ class AdminWindow(QDialog, BaseWindow):
         if not self.lineEdit_password.text() == self.lineEdit_password_check.text():
             self.warningbox('De ingevoerde wachtwoorden komen niet overeen')
             return False
-
-        # Change Admin password without activate
-        if not self.checkBox_activate_admin.isChecked() and not eval(self.local_admin_enabled):
-            self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
-            self.infobox(f'Let op!\nHet Administrator account is niet geactiveerd\nHet wachtwoord \"{self.lineEdit_password.text()}\" is ingesteld voor het Adminstrator account')
-        # Activate Admin account with password
-        elif self.checkBox_activate_admin.isChecked() and not eval(self.local_admin_enabled):
-            self.powershell(['Enable-LocalUser Administrator'])
-            self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
-            self.infobox(f'Administrator account is geactiveerd met het wachtwoord \"{self.lineEdit_password.text()}\"')
-        # Change Admin password for activated account
-        elif self.checkBox_activate_admin.isChecked() and eval(self.local_admin_enabled):
-            self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
-            self.infobox(f'Het wachtwoord \"{self.lineEdit_password.text()}\" is ingesteld voor het Administrator account')
+        try:
+            # Change Admin password without activate
+            if not self.checkBox_activate_admin.isChecked() and not eval(self.local_admin_enabled):
+                self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
+                self.infobox(f'Let op!\nHet Administrator account is niet geactiveerd\nHet wachtwoord \"{self.lineEdit_password.text()}\" is ingesteld voor het Adminstrator account')
+            # Activate Admin account with password
+            elif self.checkBox_activate_admin.isChecked() and not eval(self.local_admin_enabled):
+                self.powershell(['Enable-LocalUser Administrator'])
+                self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
+                self.infobox(f'Administrator account is geactiveerd met het wachtwoord \"{self.lineEdit_password.text()}\"')
+            # Change Admin password for activated account
+            elif self.checkBox_activate_admin.isChecked() and eval(self.local_admin_enabled):
+                self.powershell([f'net user "Administrator" "{self.lineEdit_password.text()}" /add /expires:never /Y'])
+                self.infobox(f'Het wachtwoord \"{self.lineEdit_password.text()}\" is ingesteld voor het Administrator account')
+        except Exception as e:
+            logging.error(f'Add Administrator account or change password failed. Error: {e}')
 
         # Close Window
         self.close()
