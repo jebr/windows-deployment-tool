@@ -930,7 +930,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.info('Systeem kan niet herstart worden. {}'.format(e))
 
     # Add Local Windows Users
-    @thread
     def load_csv_file(self):
         self.clear_users_table()
         fileName, _ = QFileDialog.getOpenFileName(self,
