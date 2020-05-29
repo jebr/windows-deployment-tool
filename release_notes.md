@@ -2,8 +2,7 @@
 
 # Windows Deployment Tool
 
-**Release v2.0**  
-
+**Release v2.0**\
 *29-5-2020*
 
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/jebr/windows-deployment-tool/v2.0?color=green)
