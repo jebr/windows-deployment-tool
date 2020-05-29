@@ -2,7 +2,7 @@
 
 # Windows Deployment Tool
 
-**Release v2.0**
+**Release v2.0** 
 *29-5-2020*
 
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/jebr/windows-deployment-tool/v2.0?color=green)
@@ -14,12 +14,12 @@
 </br>
 </br>
 
-Wat is nieuw
-- Administrator account activeren
-- Administrator wachtwoord aanpassen
+**Wat is nieuw**
+1. Administrator account activeren
+2. Administrator wachtwoord aanpassen
 
-Opgeloste problemen
-1. Probleem opgelost waarbij het niey mogelijk was om gebruikers toe te voegen
+**Opgeloste problemen**
+1. Probleem opgelost waarbij het niet mogelijk was om gebruikers toe te voegen
 2. Probleem opgelost waarbij de applicatie vast liep wanneer er geen internetverbinding was
 3. Verbeterning in de update controle
 4. Verbetring in het uitvoeren van commando's
