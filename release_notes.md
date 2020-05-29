@@ -23,6 +23,8 @@
 3. Verbeterning in de update controle
 4. Verbetring in het uitvoeren van commando's
 5. Verbetering in threading van functies
+6. Controle op Windows versie. Bij een Windows server versie zijn niet alle opties van het programma beschikbaar.
+
 
 
 ---

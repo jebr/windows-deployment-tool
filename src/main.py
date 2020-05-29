@@ -209,6 +209,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
         # Initil checks
         self.windows7_check()
+        self.windows_version_check()
         self.usb_check()
         self.energy_check()
 
@@ -319,6 +320,18 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             self.warningbox('Windows 7 wordt niet meer ondersteund\nDe applicatie zal afgesloten worden')
             logging.error(f'Initial check: Windows 7 is not supported')
             sys.exit()
+
+    @thread
+    def windows_version_check(self):
+        # Check Windows version
+        self.windows_version = self.powershell(['(Get-WmiObject -class Win32_OperatingSystem).Caption'])
+        if 'server' in self.windows_version.lower():
+            self.pushButton_sec_policy.setEnabled(False)
+            self.pushButton_usb_enable.setEnabled(False)
+            self.pushButton_usb_disable.setEnabled(False)
+            self.pushButton_energy_on.setEnabled(False)
+            self.pushButton_energy_lock.setEnabled(False)
+            self.pushButton_energy_default.setEnabled(False)
 
     @thread
     def energy_check(self):
