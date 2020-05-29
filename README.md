@@ -18,7 +18,7 @@ kun je plaatsen in de [Issue Tracker](https://github.com/jebr/windows-deployment
 Bij bugs graag de WDT log toevoegen aan de melding.
 
 
-[![Screenshot](https://github.com/jebr/windows-deployment-tool/blob/master/src/icons/screenshot-WDT_v1.0.png?raw=true "WDT screenshot")](https://github.com/jebr/windows-deployment-tool/releases)
+[![Screenshot](https://github.com/jebr/windows-deployment-tool/blob/master/docs/readme-docs/windows-deployment-tool-v20.gif "WDT screenshot")](https://github.com/jebr/windows-deployment-tool/releases)
 
 # Release Notes
 [![Release Notes](https://img.shields.io/badge/Release%20Notese-v1.0-green)](https://github.com/jebr/windows-deployment-tool/blob/master/release_notes.md)
