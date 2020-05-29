@@ -30,7 +30,5 @@
 **Release v1.0**  
 *13-5-2020*
 
-</br>
-</br>
 
 - Release: Windows Deployment Tool

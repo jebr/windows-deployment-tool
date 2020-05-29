@@ -22,13 +22,10 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 [![Release Notes](https://img.shields.io/badge/Release%20Notese-v1.0-green)](https://github.com/jebr/windows-deployment-tool/blob/master/release_notes.md)
 
 # Upcoming Features
-- [ ] Administrator activeren via window `wdt/2.0/feat/2001/activate-admin`
-- [ ] Administrator wachtwoord aanmaken via window `wdt/2.0/feat/2001/activate-admin`
-- [ ] Geavanceerde systeeminformatie `wdt/2.0/feat/2002/advanced-system-info`
-- [ ] Geavanceerde systeeminformatie window `wdt/2.0/feat/2002/advanced-system-info`
-- [ ] Controle op gebruikerswachtwoord `wdt/2.0/feat/2003/check-user-password`
-- [ ] Disable wintracking intergratie
-- [ ] Group policy toevoegen
+- [ ] Geavanceerde systeeminformatie `advanced-system-info`
+- [ ] Controle op gebruikerswachtwoord `check-user-password`
+- [ ] Disable wintracking intergratie `disable-wintracking`
+- [ ] Group policy toevoegen `activate-group-policy`
 ---
 - [x] Geavanceerde logging (22-4-2020)
 - [x] Logging wegschrijven naar bestand en via window op te vragen (22-4-2020)
@@ -37,3 +34,5 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 - [x] Update window (20-4-2020)
 - [x] Over de applicatie window (20-4-2020)
 - [x] Exporteren systeeminformatie (08-05-2020)
+- [x] Administrator activeren via window `activate-admin`
+- [x] Administrator wachtwoord aanmaken via window `activate-admin`
