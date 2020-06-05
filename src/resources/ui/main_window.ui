@@ -1520,7 +1520,7 @@ p, li { white-space: pre-wrap; }
            </font>
           </property>
           <property name="text">
-           <string>Leeg tabel</string>
+           <string>Tabel leegmaken</string>
           </property>
          </widget>
         </item>
@@ -1589,18 +1589,6 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="l_type">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Type</string>
-          </property>
-         </widget>
-        </item>
         <item row="4" column="0">
          <widget class="QLabel" name="l_manufacturer_model">
           <property name="sizeIncrement">
@@ -1619,18 +1607,6 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="textInteractionFlags">
            <set>Qt::NoTextInteraction</set>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1">
-         <widget class="QLabel" name="label_cores">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>-</string>
           </property>
          </widget>
         </item>
@@ -1658,8 +1634,8 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
-         <widget class="QLabel" name="label_type">
+        <item row="8" column="1">
+         <widget class="QLabel" name="label_cores">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -1667,6 +1643,18 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="l_type">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Type</string>
           </property>
          </widget>
         </item>
@@ -1727,8 +1715,41 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="label_windows_lang">
+        <item row="5" column="1">
+         <widget class="QLabel" name="label_type">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="l_hostname">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Computernaam</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_windows_hostname">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -1757,20 +1778,8 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
-         <widget class="QLabel" name="label_physicalmemory">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLabel" name="label_windows_hostname">
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_windows_lang">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -1787,24 +1796,39 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="l_hostname">
-          <property name="sizeIncrement">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
+        <item row="6" column="1">
+         <widget class="QLabel" name="label_physicalmemory">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Computernaam</string>
+           <string>-</string>
           </property>
-          <property name="textInteractionFlags">
-           <set>Qt::NoTextInteraction</set>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="l_processor">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Processor</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QLabel" name="label_processor">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -1835,30 +1859,6 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="l_processor">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Processor</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QLabel" name="label_processor">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
         <item row="8" column="0">
          <widget class="QLabel" name="l_cores">
           <property name="font">
@@ -1868,36 +1868,6 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>Cores / Logical processors</string>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="0">
-         <widget class="QLabel" name="l_windows_build">
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <property name="text">
-           <string>Windows Build</string>
           </property>
          </widget>
         </item>
@@ -1928,6 +1898,36 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="l_windows_build">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="text">
+           <string>Windows Build</string>
           </property>
          </widget>
         </item>
