@@ -1050,15 +1050,15 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 continue
 
             if empty_fields:
-                self.warningbox(f'De volgende velden zijn niet ingevuld in rij {i+1}: ' + ', '.join(empty_fields))
-                continue
+                self.warningbox(f'De volgende velden zijn niet ingevuld: ' + ', '.join(empty_fields))
+                return False
 
             # Admin veld Ja/ja en anders nee
             admin = True if admin.lower() == 'ja' else False
 
             if not self.checkout_username(user):
                 self.criticalbox(self.username_fault)
-                continue
+                return False
 
             # Check of de gebruiker al voorkomt op de computer
             if user.lower() in w_users:
@@ -1077,6 +1077,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 self.tableWidget_add_users.setItem(i, 2, QTableWidgetItem(''))
                 self.tableWidget_add_users.setItem(i, 3, QTableWidgetItem(''))
                 self.tableWidget_add_users.setItem(i, 4, QTableWidgetItem(''))
+                self.infobox(f'De gebruiker {user} is succesvol toegevoegd\n')
                 if admin == True:
                     try:
                         self.powershell([f'Add-LocalGroupMember -Group "Administrators" -Member {user}'])
@@ -1085,6 +1086,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 logging.info(f'User {user} is successfully added as local user to this computer')
             except Exception as e:
                 logging.error(f'User {user} can not be added. Error message: {e}')
+
 
     def checkout_username(self, username):
         self.username_fault = ''
