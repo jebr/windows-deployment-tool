@@ -326,6 +326,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         # Check Windows version
         self.windows_version = self.powershell(['(Get-WmiObject -class Win32_OperatingSystem).Caption'])
         if 'server' in self.windows_version.lower():
+            self.infobox(f'Windows versie: {self.windows_version}\nHierdoor zijn de volgende opties niet beschikbaar\nPolicy, USB, Energiebeheer')
             self.pushButton_sec_policy.setEnabled(False)
             self.pushButton_usb_enable.setEnabled(False)
             self.pushButton_usb_disable.setEnabled(False)
