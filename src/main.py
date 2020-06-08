@@ -23,7 +23,7 @@ from reportlab.lib import colors
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem, QLabel
+    QTableWidgetItem, QLabel, QTabWidget
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -85,11 +85,14 @@ ui_info_window = resource_path('resources/ui/info_dialog.ui')
 ui_license_window = resource_path('resources/ui/license_dialog.ui')
 ui_logging_window = resource_path('resources/ui/wdt_logging_dialog.ui')
 ui_admin_window = resource_path('resources/ui/admin_dialog.ui')
+ui_password_window = resource_path('resources/ui/password_help_dialog.ui')
+ui_username_window = resource_path('resources/ui/username_help_dialog.ui')
 icon_window = resource_path('icons/wdt.ico')
 icon_transparant_image = resource_path('icons/transparent.png')
 icon_circle_info = resource_path('icons/circle-info.png')
 icon_circle_check = resource_path('icons/circle-check.png')
 icon_heijmans_logo = resource_path('icons/heijmans-logo.jpg')
+icon_workstation = resource_path('icons/icon_workstation')
 secpol_new = resource_path('resources/security/secpol_new.inf')
 energy_config_on = resource_path('resources/energy/energy-full.pow')
 energy_config_lock = resource_path('resources/energy/energy-auto-lock.pow')
@@ -99,6 +102,9 @@ license_file = resource_path('resources/license/license.txt')
 # Release page
 def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
+
+def read_the_docs():
+    webbrowser.open('https://github.com/jebr/windows-deployment-tool/wiki')
 
 def thread(func):
         @functools.wraps(func)
@@ -165,7 +171,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.actionLicence.triggered.connect(self.open_license_window)
         self.actionLogging.triggered.connect(self.open_logging_window)
         self.actionAdministrator_Account.triggered.connect(self.open_admin_window)
-        self.actionVersion.setText(f'Version v{current_version}')
+        self.actionVersion.setText(f'Versie v{current_version}')
+        self.actionRead_The_Docs.triggered.connect(read_the_docs)
 
         # Controleer systeemtaal
         windll = ctypes.windll.kernel32
@@ -224,6 +231,12 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_import_csv.clicked.connect(self.load_csv_file)
         self.pushButton_users_add.clicked.connect(self.add_windows_users)
         self.pushButton_clear_users_table.clicked.connect(self.clear_users_table)
+        self.pushButton_info_username.setIcon(QIcon(QPixmap(icon_circle_info)))
+        self.pushButton_info_password.setIcon(QIcon(QPixmap(icon_circle_info)))
+        self.pushButton_info_password.clicked.connect(self.open_password_notification_window)
+        self.pushButton_info_username.clicked.connect(self.open_username_notification_window)
+        self.pushButton_info_username.setToolTip('Klik voor info over Gebruikersnaam')
+        self.pushButton_info_password.setToolTip('Klik voor info over Wachtwoord')
 
         # Security policy
         self.pushButton_sec_policy.clicked.connect(self.import_sec_policy)
@@ -361,9 +374,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: Security policy applied ')
-            self.secpol_check_return = True
+            # self.secpol_check_return = True
         else:
-            self.secpol_check_return = False
+            # self.secpol_check_return = False
             logging.info('System check: Security policy not applied')
         self.counter_threads += 1
 
@@ -674,7 +687,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             try:
                 os.chdir("c:\\windows\\system32")
                 self.powershell(['c:\\windows\\system32\\secedit '
-                                                         '/export /cfg backup_secpol.inf /log c:\\windows\\system32\\secpol_backup.log /quiet'])
+                                 '/export /cfg backup_secpol.inf '
+                                 '/log c:\\windows\\system32\\secpol_backup.log /quiet'])
                 logging.info('Backup of default security policy succesful')
                 try:
                     shutil.copy('backup_secpol.inf', current_user_Desktop)  # Copy secpol_backup to user desktop
@@ -1060,6 +1074,10 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 self.criticalbox(self.username_fault)
                 return False
 
+            if not self.checkout_password(password=password, samAccountName=user, displayName=fullname):
+                self.criticalbox(self.password_fault)
+                return False
+
             # Check of de gebruiker al voorkomt op de computer
             if user.lower() in w_users:
                 self.warningbox(f'De gebruiker "{user}" komt al voor op deze computer en kan niet toegevoegd. '
@@ -1087,44 +1105,77 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             except Exception as e:
                 logging.error(f'User {user} can not be added. Error message: {e}')
 
-
-    def checkout_username(self, username):
+    def checkout_username(self, samAccountName):
         self.username_fault = ''
-        if len(username) > 20:
+        if len(samAccountName) > 20:
             self.username_fault = ('De gebruikersnaam bevat teveel karakters. Maximaal 20 karakters toegestaan')
             return False
         prohobited = '\\/:*?\"<>|,@[];=+'
         # " / \ [ ] : ; | = , + * ? < > @
         for elem in prohobited:
-            if elem in username:
+            if elem in samAccountName:
                 self.username_fault = ('De gebruikersnaam bevat ongeldige tekens.')
                 return False
-        if username.replace(' ','') == '':
+        if samAccountName.replace(' ','') == '':
             self.username_fault = ('De gebruikersnaam mag niet uit spaties bestaan.')
             return False
-        if username.replace('.','.') == '.':
+        if samAccountName.replace('.','.') == '.':
             self.username_fault = ('De gebruikersnaam mag niet uit punten bestaan.')
             return False
-        if username.lower() == self.powershell(['hostname']).lower().rstrip():
+        if samAccountName.lower() == self.powershell(['hostname']).lower().rstrip():
             self.username_fault = ('De gebruikersnaam mag niet hetzelfde zijn als de computernaam.')
             return False
-        if username.lower().endswith(' '):
+        if samAccountName.lower().endswith(' '):
             self.username_fault = ('De gebruikersnaam mag niet eindigen met een spatie')
             return False
-        if username.lower().startswith(' '):
+        if samAccountName.lower().startswith(' '):
             self.username_fault = ('De gebruikersnaam mag niet beginnen met een spatie')
             return False
         return True
 
-    def checkout_password(self, password):
+    def checkout_password(self, password, samAccountName: str, displayName: str) -> bool:
+        """Password requirements based on
+        https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+        """
         self.password_fault = ''
-        if len(password) < 10:
-            self.password_fault = ('Password voldoet niet aan de eisen.\nMinimaal 10 karakters')
+        if samAccountName.lower() in password.lower() and len \
+                    (samAccountName) > 3:
+            self.password_fault = ('De gebruikersnaam mag niet voorkomen in het wachtwoord')
             return False
-        alphabet = 'abcdefghijklmnopqtrsuvwxyz1234567890'
-        if (password in alphabet or password in alphabet.upper()):
-            self.password_fault = ('Password voldoet niet aan de eisen.\nMinimaal 1 symbool')
+
+        splits = ',. \t_+/\\$'
+        for split in splits:
+            splitted_items = displayName.split(split)
+            for elem in splitted_items:
+                if len(elem) < 3:
+                    continue
+                if elem in password:
+                    self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
+                    return False
+
+        if displayName.lower() in password.lower():
+            self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
             return False
+
+        if len(password) < 8:
+            self.password_fault = ('Het wachtwoord is te kort\ngebruik minimaal 8 karakters.')
+            return False
+
+        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        alphabet_up = alphabet.upper()
+        special = '~!@#$%^&*_-+=`|\\(){}[]:;"`\'<>,.?/'
+        letter = '1234567890'
+
+        categories_in_password = 0
+        for category in [alphabet, alphabet_up, special, letter]:
+            for char in category:
+                if char in password:
+                    categories_in_password += 1
+                    break
+        if categories_in_password < 3:
+            self.password_fault = ('Het wachtwoord niet complex genoeg.\nMaak gebruik van tekens, letters en cijfers')
+            return False
+
         return True
 
     def clear_users_table(self):
@@ -1332,11 +1383,18 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         admin_window_ = AdminWindow()
         admin_window_.exec_()
 
+    def open_password_notification_window(self):
+        password_window = PasswordNotificationWindow()
+        password_window.exec_()
+
+    def open_username_notification_window(self):
+        password_window = UsernameNotificationWindow()
+        password_window.exec_()
 
 class HostnameWindow(QDialog, BaseWindow):
     def __init__(self):
         super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
-        self.setFixedSize(600, 400)
+        self.setFixedSize(572, 382)
         loadUi(ui_hostname_window, self)
         self.setWindowIcon(QtGui.QIcon(icon_window))
 
@@ -1485,6 +1543,22 @@ class AdminWindow(QDialog, BaseWindow):
 
         # Close Window
         self.close()
+
+
+class PasswordNotificationWindow(QDialog, BaseWindow):
+    def __init__(self):
+        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
+        self.setFixedSize(572, 382)
+        loadUi(ui_password_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
+
+
+class UsernameNotificationWindow(QDialog, BaseWindow):
+    def __init__(self):
+        super().__init__(None, QtCore.Qt.WindowCloseButtonHint)
+        self.setFixedSize(572, 382)
+        loadUi(ui_username_window, self)
+        self.setWindowIcon(QtGui.QIcon(icon_window))
 
 
 

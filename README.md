@@ -6,7 +6,7 @@
 ![Windows version](https://img.shields.io/badge/windows%20server-2016-green) &nbsp;
 ![Windows version](https://img.shields.io/badge/windows%20server-2019-yellow)
 
-Programma voor het uitrollen van Windows 10 computers. 
+Programma voor het uitrollen van Windows Pc's en Servers. 
 
 Alle informatie over de functionaliteiten en modules van de Windows Deployment Tool zijn terug te vinden in de 
 [Wiki](https://github.com/jebr/windows-deployment-tool/wiki).
@@ -29,10 +29,10 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 
 # Upcoming Features
 - [ ] Geavanceerde systeeminformatie `Planned for version 3.0`
-- [ ] Controle op gebruikerswachtwoord `Planned for version 2.2`
 - [ ] Disable wintracking intergratie `Planned for verion 3.0`
 - [ ] Group policy toevoegen `Planned for version 3.0`
 - [ ] Windows programma's deinstalleren `Planned for version 3.0`
+- [ ] Herstellen instellingen `Planned for version 2.3`
 ---
 - [x] Geavanceerde logging `(22-4-2020)`
 - [x] Logging wegschrijven naar bestand en via window op te vragen `(22-4-2020)`
@@ -43,3 +43,4 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 - [x] Exporteren systeeminformatie `(08-05-2020)`
 - [x] Administrator activeren via window `(29-5-2020)`
 - [x] Administrator wachtwoord aanmaken via window `(29-5-2020)`
+- [x] Controle op wachtwoord `(8-6-2020)`
