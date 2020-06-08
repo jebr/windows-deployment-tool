@@ -3,7 +3,6 @@ Veiligheid
 
 .. contents::
 
-
 Security policy
 ---------------
 
