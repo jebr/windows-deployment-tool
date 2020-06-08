@@ -91,7 +91,6 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 .. image:: https://img.shields.io/github/downloads/jebr/windows-deployment-tool/total?color=green&label=Downloads
 
 
-
 .. _`Download`: https://github.com/jebr/windows-deployment-tool/releases
 .. _`GNU General Public License`: https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/LICENSE
 .. _`Issue Tracker`: https://github.com/jebr/windows-deployment-tool/issues
