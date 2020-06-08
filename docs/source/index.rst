@@ -12,7 +12,7 @@ Hier vindt je alle details over de mogelijkheden en instellingen van de Windows 
 .. _hoofdfuncties-index:
 
 Hoofdfuncties
--------------
+=============
 
 .. toctree::
    :maxdepth: 1
@@ -26,7 +26,7 @@ Hoofdfuncties
 .. _modules-index:
 
 Modules
--------
+=======
 
 .. toctree::
    :maxdepth: 1
@@ -38,7 +38,7 @@ Modules
 .. _workflow-index:
 
 Workflow
---------
+========
 De ideale workflow voor de Windows Deployment Tool is als volgt:
 
 * Doorloop alle **Hoofdfuncties**
@@ -52,7 +52,7 @@ De ideale workflow voor de Windows Deployment Tool is als volgt:
 .. _download-install-index:
 
 Downloaden, installeren en updaten
-----------------------------------
+==================================
 De Windows Deployment Tool kan via de koppeling gedownload worden. `Download`_
 
 Doorloop de stappen van de installatie en start de Windows Deployment Tool.
@@ -66,7 +66,7 @@ via bovenstaande koppeling.
 .. _logging-index:
 
 Logging
--------
+=======
 Bij het uitvoeren van functies en controles worden de uitkomsten en mogelijke errors weggeschreven in een
 logbestand op de Pc. De log is te openen via het **Help** menu in de menubalk, klik vervolgens op **WDT Logging**.
 
@@ -75,13 +75,13 @@ De log kan bekeken, geleegd, geëxporteerd en verwijderd worden via het venster 
 .. _licentie-index:
 
 Licentie
---------
+========
 De Windows Deployment Tool is uitgegeven onder `GNU General Public License`_
 
 .. _laatste-info-index:
 
 Laatste info
-------------
+============
 Bedankt voor het gebruik van de Windows Deployment Tool, blijf op de hoogte van alle nieuwe mogelijkheden in toekomstige updates.
 Eventuele bugs, verbeteringen en suggesties voor Windows Deployment Tool kun je plaatsen in de `Issue Tracker`_
 Bij bugs graag de WDT log toevoegen aan de melding.
@@ -97,9 +97,9 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 .. _`Issue Tracker`: https://github.com/jebr/windows-deployment-tool/issues
 
 
-.. Indices and tables
-.. ==================
+Indices and tables
+==================
 
-.. * :ref:`genindex`
+* :ref:`genindex`
 .. * :ref:`modindex`
 .. * :ref:`search`
