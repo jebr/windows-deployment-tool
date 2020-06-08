@@ -56,8 +56,8 @@
       <height>851</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string notr="true"/>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -1479,12 +1479,30 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>570</y>
+         <y>600</y>
          <width>861</width>
-         <height>80</height>
+         <height>86</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_10">
+        <item row="2" column="1">
+         <widget class="QPushButton" name="pushButton_info_password">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Wachtwoord</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QPushButton" name="pushButton_import_csv">
           <property name="font">
@@ -1524,11 +1542,35 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="pushButton_info_username">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Gebruikersnaam</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_systeem_informatie">
+     <property name="focusPolicy">
+      <enum>Qt::ClickFocus</enum>
+     </property>
      <attribute name="title">
       <string>Systeeminformatie / Rapportage</string>
      </attribute>
@@ -2977,8 +3019,15 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLicence"/>
     <addaction name="actionVersion"/>
    </widget>
+   <widget class="QMenu" name="menuHelp_2">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionRead_The_Docs"/>
+   </widget>
    <addaction name="menuHelp"/>
    <addaction name="menuFile"/>
+   <addaction name="menuHelp_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="enabled">
@@ -3005,6 +3054,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Over deze Applicatie</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionSettings">
    <property name="text">
@@ -3028,15 +3080,24 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Controleer op updates</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionLogging">
    <property name="text">
     <string>Log weergeven</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
   </action>
   <action name="actionAdministrator_Account">
    <property name="text">
     <string>Administrator Account</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
   <action name="actionVersion">
@@ -3045,6 +3106,19 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Version</string>
+   </property>
+  </action>
+  <action name="actionUitleg_Applicatie">
+   <property name="text">
+    <string>Uitleg Applicatie</string>
+   </property>
+  </action>
+  <action name="actionRead_The_Docs">
+   <property name="text">
+    <string>Documentatie</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>
