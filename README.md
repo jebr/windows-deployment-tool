@@ -9,7 +9,7 @@
 Programma voor het uitrollen van Windows Pc's en Servers. 
 
 Alle informatie over de functionaliteiten en modules van de Windows Deployment Tool zijn terug te vinden in de 
-[Wiki](https://github.com/jebr/windows-deployment-tool/wiki).
+[Documentatie](https://windows-deployment-tool.readthedocs.io/nl/latest/).
 
 Bedankt voor het gebruik van de Windows Deployment Tool, blijf op de hoogte van alle nieuwe mogelijkheden
 in toekomstige updates. 
