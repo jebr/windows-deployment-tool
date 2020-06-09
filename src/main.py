@@ -104,7 +104,7 @@ def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
 
 def read_the_docs():
-    webbrowser.open('https://github.com/jebr/windows-deployment-tool/wiki')
+    webbrowser.open('https://windows-deployment-tool.readthedocs.io/')
 
 def thread(func):
         @functools.wraps(func)
