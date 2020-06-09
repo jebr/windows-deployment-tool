@@ -23,7 +23,7 @@ from reportlab.lib import colors
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem, QLabel, QTabWidget
+    QTableWidgetItem, QLabel
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -374,9 +374,11 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             self.pushButton_check_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_secpol.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('System check: Security policy applied ')
-            # self.secpol_check_return = True
+            # var voor maken rapportage
+            self.secpol_check_return = True
         else:
-            # self.secpol_check_return = False
+            # var voor maken rapportage
+            self.secpol_check_return = False
             logging.info('System check: Security policy not applied')
         self.counter_threads += 1
 

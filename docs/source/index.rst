@@ -16,6 +16,7 @@ Hoofdfuncties
 
 .. toctree::
    :maxdepth: 1
+   :caption: Hoofdfuncties
 
    veiligheid
    windows_firewall
@@ -30,6 +31,7 @@ Modules
 
 .. toctree::
    :maxdepth: 1
+   :caption: Modules
 
    windows_gebruikers
    systeeminformatie
@@ -89,6 +91,22 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 .. image:: https://img.shields.io/github/v/release/jebr/windows-deployment-tool?label=Release
 .. image:: https://img.shields.io/github/release-date/jebr/windows-deployment-tool?color=orange&label=Release%20date
 .. image:: https://img.shields.io/github/downloads/jebr/windows-deployment-tool/total?color=green&label=Downloads
+
+
+Aanvullende gegevens
+====================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Aanvullende gegevens
+   :hidden:
+
+   release_notes
+
+
+* :doc:`release_notes`
+
+
 
 
 .. _`Download`: https://github.com/jebr/windows-deployment-tool/releases
