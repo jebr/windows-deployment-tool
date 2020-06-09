@@ -1,8 +1,6 @@
 Energieplan Aanpassen
 =====================
 
-.. contents::
-
 Voor het aanpassen van het energieplan van de Pc zijn er 3 keuzes; **Altijd aan**, **Automatisch vergrendelen**, **Standaard energieplan**. Hieronder staat beschreven wat de verschillen zijn tussen de energieplannen.
 
 +------------------------------------------+------------+--------------------------+-----------------------+

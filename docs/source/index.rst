@@ -17,12 +17,20 @@ Hoofdfuncties
 .. toctree::
    :maxdepth: 1
    :caption: Hoofdfuncties
+   :hidden:
 
-   veiligheid
-   windows_firewall
-   computernaam_aanpassen
-   windows_instellingen
-   energieplan_aanpassen
+   hoofdfuncties/veiligheid
+   hoofdfuncties/windows_firewall
+   hoofdfuncties/computernaam_aanpassen
+   hoofdfuncties/windows_instellingen
+   hoofdfuncties/energieplan_aanpassen
+
+
+* :doc:`hoofdfuncties/veiligheid`
+* :doc:`hoofdfuncties/windows_firewall`
+* :doc:`hoofdfuncties/computernaam_aanpassen`
+* :doc:`hoofdfuncties/windows_instellingen`
+* :doc:`hoofdfuncties/energieplan_aanpassen`
 
 .. _modules-index:
 
@@ -32,10 +40,15 @@ Modules
 .. toctree::
    :maxdepth: 1
    :caption: Modules
+   :hidden:
 
-   windows_gebruikers
-   systeeminformatie
-   administrator_account
+   modules/windows_gebruikers
+   modules/systeeminformatie
+   modules/administrator_account
+
+* :doc:`modules/windows_gebruikers`
+* :doc:`modules/systeeminformatie`
+* :doc:`modules/administrator_account`
 
 .. _workflow-index:
 
@@ -44,10 +57,10 @@ Workflow
 De ideale workflow voor de Windows Deployment Tool is als volgt:
 
 * Doorloop alle **Hoofdfuncties**
-* Voeg :doc:`Windows gebruikers <windows_gebruikers>` toe
-* Installeer updates :doc:`(Systeeminformatie en Rapportage) <systeeminformatie>`
+* Voeg :doc:`Windows gebruikers <modules/windows_gebruikers>` toe
+* Installeer updates :doc:`(Systeeminformatie en Rapportage) <modules/systeeminformatie>`
 * Herstart de Pc
-* Voer een systeemcontrole uit :doc:`(Systeeminformatie en Rapportage) <systeeminformatie>`
+* Voer een systeemcontrole uit :doc:`(Systeeminformatie en Rapportage) <modules/systeeminformatie>`
 * Maak de rapportage
 * De rapportage moet opgeslagen worden in de projecten folder
 
@@ -101,10 +114,10 @@ Aanvullende gegevens
    :caption: Aanvullende gegevens
    :hidden:
 
-   release_notes
+   aanvullende-gegevens/release_notes
 
 
-* :doc:`release_notes`
+* :doc:`aanvullende-gegevens/release_notes`
 
 
 

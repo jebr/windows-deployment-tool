@@ -1,8 +1,6 @@
 Windows Instellingen
 ====================
 
-.. contents::
-
 De volgende Windows instellingen kunnen uitgevoerd worden via de Windows Deployment Tool.
 
 Remote Desktop Activeren

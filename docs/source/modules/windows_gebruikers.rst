@@ -1,8 +1,6 @@
 Lokale Windows gebruikers toevoegen
 ===================================
 
-.. contents::
-
 Met de Windows Deployment Tool is het mogelijk om lokale Windows gebruikers toe te voegen aan de Pc.
 De gebruikers kunnen op 2 manieren toegevoegd worden aan de Pc.
 
@@ -67,5 +65,5 @@ Knoppen
 **Gebruikers toevoegen** - gebruikers die in de tabel staan worden toegevoegd aan Windows.
 Na het toevoegen zal de tabel automatisch leeggemaakt worden.
 
-.. image:: images/WDT-screenshot-add-users.png
+.. image:: /images/WDT-screenshot-add-users.png
 

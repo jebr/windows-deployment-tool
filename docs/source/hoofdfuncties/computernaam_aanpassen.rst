@@ -1,8 +1,6 @@
 Computernaam aanpassen
 ======================
 
-.. contents::
-
 Criteria Computernaam
 ---------------------
 
