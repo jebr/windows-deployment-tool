@@ -300,7 +300,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             return ('Connection Error')
         latest_version = float(resp.text)
         self.new_version = latest_version
-        if latest_version > current_version:
+        if latest_version <= current_version:
             return ('Latest Version')
         return ('New Version')
 
