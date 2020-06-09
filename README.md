@@ -25,6 +25,9 @@ Bij bugs graag de WDT log toevoegen aan de melding.
     <img src="src/icons/download.png" alt="Download WDT" width="200" height="50"></a>
 
 
+# Release notes
+[Release notes](https://windows-deployment-tool.readthedocs.io/nl/latest/aanvullende-gegevens/release_notes.html)
+
 # Upcoming Features
 - [ ] Geavanceerde systeeminformatie `Planned for version 3.0`
 - [ ] Disable wintracking intergratie `Planned for verion 3.0`
