@@ -1,8 +1,6 @@
 Computernaam aanpassen
 ======================
 
-.. contents::
-
 Criteria Computernaam
 ---------------------
 
@@ -14,6 +12,7 @@ De naam van de Pc moet aan de volgende voorwaarden voldoen:
 * De computernaam mag niet korter zijn dan 3 karakters
 * De computernaam mag niet beginnen en eindigen met een **-**
 * De volgende karakters zijn toegestaan voor de computernaam
+
    * **abcdefghijklmnopqrstuvwxyz**
    * **ABCDEFGHIJKLMNOPQRSTUVWXYZ**
    * **-**

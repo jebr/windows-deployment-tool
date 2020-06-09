@@ -1,9 +1,6 @@
 Administrator Account
 =====================
 
-
-.. contents::
-
 Via deze module is het mogelijk om het Administrator account te activeren en een wachtwoord in te stellen voor
 de Administrator.
 

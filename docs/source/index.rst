@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Windows Deployment Tool documentatie
-====================================
+==============================================
+Windows Deployment Tool |release| documentatie
+==============================================
 
 Welkom op de Windows Deployment Tool documentatie pagina!
 Hier vindt je alle details over de mogelijkheden en instellingen van de Windows Deployment Tool.
@@ -14,38 +15,54 @@ Hier vindt je alle details over de mogelijkheden en instellingen van de Windows 
 Hoofdfuncties
 =============
 
+* :doc:`hoofdfuncties/veiligheid`
+* :doc:`hoofdfuncties/windows_firewall`
+* :doc:`hoofdfuncties/computernaam_aanpassen`
+* :doc:`hoofdfuncties/windows_instellingen`
+* :doc:`hoofdfuncties/energieplan_aanpassen`
+
 .. toctree::
    :maxdepth: 1
+   :caption: Hoofdfuncties
+   :hidden:
 
-   veiligheid
-   windows_firewall
-   computernaam_aanpassen
-   windows_instellingen
-   energieplan_aanpassen
+   hoofdfuncties/veiligheid
+   hoofdfuncties/windows_firewall
+   hoofdfuncties/computernaam_aanpassen
+   hoofdfuncties/windows_instellingen
+   hoofdfuncties/energieplan_aanpassen
+
 
 .. _modules-index:
 
 Modules
 =======
 
+* :doc:`modules/windows_gebruikers`
+* :doc:`modules/systeeminformatie`
+* :doc:`modules/administrator_account`
+
 .. toctree::
    :maxdepth: 1
+   :caption: Modules
+   :hidden:
 
-   windows_gebruikers
-   systeeminformatie
-   administrator_account
+   modules/windows_gebruikers
+   modules/systeeminformatie
+   modules/administrator_account
 
 .. _workflow-index:
 
 Workflow
 ========
+
 De ideale workflow voor de Windows Deployment Tool is als volgt:
 
-* Doorloop alle **Hoofdfuncties**
-* Voeg :doc:`Windows gebruikers <windows_gebruikers>` toe
-* Installeer updates :doc:`(Systeeminformatie en Rapportage) <systeeminformatie>`
+* Doorloop alle :ref:`hoofdfuncties-index`
+* Voeg :doc:`Windows gebruikers <modules/windows_gebruikers>` toe
+* Installeer updates :doc:`(Systeeminformatie en Rapportage) <modules/systeeminformatie>`
 * Herstart de Pc
-* Voer een systeemcontrole uit :doc:`(Systeeminformatie en Rapportage) <systeeminformatie>`
+* Voer een systeemcontrole uit :doc:`(Systeeminformatie en Rapportage) <modules/systeeminformatie>`
 * Maak de rapportage
 * De rapportage moet opgeslagen worden in de projecten folder
 
@@ -58,10 +75,9 @@ De Windows Deployment Tool kan via de koppeling gedownload worden. `Download`_
 Doorloop de stappen van de installatie en start de Windows Deployment Tool.
 
 Wanneer er een nieuwe versie beschikbaar is zal er een melding worden weergegeven in de applicatie.
-Ook kan via het **Help** menu in de menubalk gecontroleerd worden op updates door de knop **Controleer op updates**
-te gebruiken. Deze controles werken alleen als de Pc is verbonden met het internet.
-Wanneer er geen internetverbinding beschikbaar is zal de nieuwe versie gedownload moeten worden
-via bovenstaande koppeling.
+Ook kan via het menu **Info** -> **Controleer op updates** gecontroleerd worden op updates.
+De update controle werkt alleen als de Pc/Server is verbonden met het internet.
+Wanneer er geen internetverbinding beschikbaar is kan een nieuwe versie gedownload worden via bovenstaande koppeling.
 
 .. _logging-index:
 
@@ -79,6 +95,19 @@ Licentie
 De Windows Deployment Tool is uitgegeven onder `GNU General Public License`_
 
 .. _laatste-info-index:
+
+Aanvullende gegevens
+====================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Aanvullende gegevens
+   :hidden:
+
+   aanvullende-gegevens/release_notes
+
+
+* :doc:`aanvullende-gegevens/release_notes`
 
 Laatste info
 ============

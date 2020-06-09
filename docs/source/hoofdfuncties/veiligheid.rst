@@ -1,8 +1,6 @@
 Veiligheid
 ==========
 
-.. contents::
-
 Security policy
 ---------------
 

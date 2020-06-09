@@ -1,8 +1,6 @@
 Windows Firewall
 ================
 
-.. contents::
-
 De Windows Firewall functionaliteit biedt de mogelijkheid om uitzonderingen te maken in de firewall. Standaard worden de uitzonderingen toegepast op alle profielen (Domein, Privé, Openbaar).
 
 ICMP

@@ -1,8 +1,6 @@
 Systeeminformatie en Rapportage
 ===============================
 
-.. contents::
-
 Onder de tab Systeeminformatie zijn de volgende modules te vinden. De data van onderstaande onderdelen kan
 opgevraagd worden door de knop **Systeem controle** te gebruiken. Alle data die opgevraagd wordt zal ook gebruikt
 worden voor het maken van de deployment rapportage.
@@ -47,4 +45,4 @@ Deze knop is alleen te gebruiken wanneer er een systeemcontrole heeft plaatsgevo
 Voor het maken van de rapportage zijn de velden **Project**, **Medewerker** en **Datum** verplicht.
 De datum is automatisch ingesteld op de datum van vandaag, dit kan aangepast worden door de kalender te openen.
 
-.. image::images/WDT-screenshot-system-information.png
+.. image::/images/WDT-screenshot-system-information.png

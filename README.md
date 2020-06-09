@@ -9,7 +9,7 @@
 Programma voor het uitrollen van Windows Pc's en Servers. 
 
 Alle informatie over de functionaliteiten en modules van de Windows Deployment Tool zijn terug te vinden in de 
-[Documentatie](https://windows-deployment-tool.readthedocs.io/nl/latest/).
+[Documentatie](https://windows-deployment-tool.readthedocs.io).
 
 Bedankt voor het gebruik van de Windows Deployment Tool, blijf op de hoogte van alle nieuwe mogelijkheden
 in toekomstige updates. 
@@ -24,8 +24,9 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 <a href="https://github.com/jebr/windows-deployment-tool/releases" alt="Download">
     <img src="src/icons/download.png" alt="Download WDT" width="200" height="50"></a>
 
-# Release Notes
-[![Release Notes](https://img.shields.io/badge/release-notes-green)](https://github.com/jebr/windows-deployment-tool/blob/master/release_notes.md)
+
+# Release notes
+[Release notes](https://windows-deployment-tool.readthedocs.io/nl/latest/aanvullende-gegevens/release_notes.html)
 
 # Upcoming Features
 - [ ] Geavanceerde systeeminformatie `Planned for version 3.0`
