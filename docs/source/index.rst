@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Windows Deployment Tool documentatie
-====================================
+==============================================
+Windows Deployment Tool |release| documentatie
+==============================================
 
 Welkom op de Windows Deployment Tool documentatie pagina!
 Hier vindt je alle details over de mogelijkheden en instellingen van de Windows Deployment Tool.
@@ -13,6 +14,12 @@ Hier vindt je alle details over de mogelijkheden en instellingen van de Windows 
 
 Hoofdfuncties
 =============
+
+* :doc:`hoofdfuncties/veiligheid`
+* :doc:`hoofdfuncties/windows_firewall`
+* :doc:`hoofdfuncties/computernaam_aanpassen`
+* :doc:`hoofdfuncties/windows_instellingen`
+* :doc:`hoofdfuncties/energieplan_aanpassen`
 
 .. toctree::
    :maxdepth: 1
@@ -26,16 +33,14 @@ Hoofdfuncties
    hoofdfuncties/energieplan_aanpassen
 
 
-* :doc:`hoofdfuncties/veiligheid`
-* :doc:`hoofdfuncties/windows_firewall`
-* :doc:`hoofdfuncties/computernaam_aanpassen`
-* :doc:`hoofdfuncties/windows_instellingen`
-* :doc:`hoofdfuncties/energieplan_aanpassen`
-
 .. _modules-index:
 
 Modules
 =======
+
+* :doc:`modules/windows_gebruikers`
+* :doc:`modules/systeeminformatie`
+* :doc:`modules/administrator_account`
 
 .. toctree::
    :maxdepth: 1
@@ -46,25 +51,14 @@ Modules
    modules/systeeminformatie
    modules/administrator_account
 
-* :doc:`modules/windows_gebruikers`
-* :doc:`modules/systeeminformatie`
-* :doc:`modules/administrator_account`
-
 .. _workflow-index:
 
 Workflow
 ========
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Workflow
-   :hidden:
-
-   :ref:`workflow-index`
-
 De ideale workflow voor de Windows Deployment Tool is als volgt:
 
-* Doorloop alle **Hoofdfuncties**
+* Doorloop alle :ref:`hoofdfuncties-index`
 * Voeg :doc:`Windows gebruikers <modules/windows_gebruikers>` toe
 * Installeer updates :doc:`(Systeeminformatie en Rapportage) <modules/systeeminformatie>`
 * Herstart de Pc
@@ -81,10 +75,9 @@ De Windows Deployment Tool kan via de koppeling gedownload worden. `Download`_
 Doorloop de stappen van de installatie en start de Windows Deployment Tool.
 
 Wanneer er een nieuwe versie beschikbaar is zal er een melding worden weergegeven in de applicatie.
-Ook kan via het **Help** menu in de menubalk gecontroleerd worden op updates door de knop **Controleer op updates**
-te gebruiken. Deze controles werken alleen als de Pc is verbonden met het internet.
-Wanneer er geen internetverbinding beschikbaar is zal de nieuwe versie gedownload moeten worden
-via bovenstaande koppeling.
+Ook kan via het menu **Info** -> **Controleer op updates** gecontroleerd worden op updates.
+De update controle werkt alleen als de Pc/Server is verbonden met het internet.
+Wanneer er geen internetverbinding beschikbaar is kan een nieuwe versie gedownload worden via bovenstaande koppeling.
 
 .. _logging-index:
 
@@ -103,17 +96,6 @@ De Windows Deployment Tool is uitgegeven onder `GNU General Public License`_
 
 .. _laatste-info-index:
 
-Laatste info
-============
-Bedankt voor het gebruik van de Windows Deployment Tool, blijf op de hoogte van alle nieuwe mogelijkheden in toekomstige updates.
-Eventuele bugs, verbeteringen en suggesties voor Windows Deployment Tool kun je plaatsen in de `Issue Tracker`_
-Bij bugs graag de WDT log toevoegen aan de melding.
-
-.. image:: https://img.shields.io/github/v/release/jebr/windows-deployment-tool?label=Release
-.. image:: https://img.shields.io/github/release-date/jebr/windows-deployment-tool?color=orange&label=Release%20date
-.. image:: https://img.shields.io/github/downloads/jebr/windows-deployment-tool/total?color=green&label=Downloads
-
-
 Aanvullende gegevens
 ====================
 
@@ -127,7 +109,15 @@ Aanvullende gegevens
 
 * :doc:`aanvullende-gegevens/release_notes`
 
+Laatste info
+============
+Bedankt voor het gebruik van de Windows Deployment Tool, blijf op de hoogte van alle nieuwe mogelijkheden in toekomstige updates.
+Eventuele bugs, verbeteringen en suggesties voor Windows Deployment Tool kun je plaatsen in de `Issue Tracker`_
+Bij bugs graag de WDT log toevoegen aan de melding.
 
+.. image:: https://img.shields.io/github/v/release/jebr/windows-deployment-tool?label=Release
+.. image:: https://img.shields.io/github/release-date/jebr/windows-deployment-tool?color=orange&label=Release%20date
+.. image:: https://img.shields.io/github/downloads/jebr/windows-deployment-tool/total?color=green&label=Downloads
 
 
 .. _`Download`: https://github.com/jebr/windows-deployment-tool/releases

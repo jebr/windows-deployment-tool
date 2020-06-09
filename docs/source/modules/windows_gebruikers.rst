@@ -21,6 +21,7 @@ Windows gebruikersnaam moet voldoen aan de volgende voorwaarden:
 * De gebruikersnaam mag niet beginnen of eindigen met een spatie
 * De volgende karakters zijn niet toegestaan in een gebruikersnaam
 * De volgende karakters mogen niet in een gebruikersnaam gebruikt worden
+
    * **" / \ [ ] : ; | = , + * ? < > @**
 
 Criteria Wachtwoord
@@ -30,6 +31,7 @@ Criteria Wachtwoord
 * De volledige naam mag niet voorkomen in het wachtwoord
 * Het wachtwoord moet tenminste 8 karakters lang zijn
 * Het wachtwoord moet tekens bevatten uit de vier onderstaande categorieën
+
    * **abcdefghijklmnopqrstuvwxyz**
    * **ABCDEFGHIJKLMNOPQRSTUVWXYZ**
    * **1234567890**
