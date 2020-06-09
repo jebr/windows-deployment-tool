@@ -54,6 +54,14 @@ Modules
 
 Workflow
 ========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Workflow
+   :hidden:
+
+   :ref:`workflow-index`
+
 De ideale workflow voor de Windows Deployment Tool is als volgt:
 
 * Doorloop alle **Hoofdfuncties**
