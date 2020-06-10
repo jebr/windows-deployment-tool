@@ -70,7 +70,9 @@ De ideale workflow voor de Windows Deployment Tool is als volgt:
 
 Downloaden, installeren en updaten
 ==================================
-De Windows Deployment Tool kan via de koppeling gedownload worden. `Download`_
+De Windows Deployment Tool kan via onderstaande koppeling gedwonload worden.
+
+Download: `Windows Deployment Tool`_
 
 Doorloop de stappen van de installatie en start de Windows Deployment Tool.
 
@@ -120,7 +122,7 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 .. image:: https://img.shields.io/github/downloads/jebr/windows-deployment-tool/total?color=green&label=Downloads
 
 
-.. _`Download`: https://github.com/jebr/windows-deployment-tool/releases
+.. _`Windows Deployment Tool`: https://github.com/jebr/windows-deployment-tool/releases
 .. _`GNU General Public License`: https://raw.githubusercontent.com/jebr/windows-deployment-tool/master/LICENSE
 .. _`Issue Tracker`: https://github.com/jebr/windows-deployment-tool/issues
 
