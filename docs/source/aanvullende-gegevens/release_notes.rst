@@ -1,6 +1,18 @@
 Release notes
 =============
 
+.. _release-2.3:
+
+Windows Deployment Tool v2.3
+----------------------------------------
+
+Wat is nieuw
+~~~~~~~~~~~~
+* Controle op invoer wachtwoord Administrator account
+
+Opgeloste problemen
+~~~~~~~~~~~~~~~~~~~
+
 .. _release-2.2:
 
 Windows Deployment Tool v2.2 (10-6-2020)

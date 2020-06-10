@@ -160,6 +160,51 @@ class BaseWindow:
         if buttonReply == QMessageBox.Yes:
             webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
 
+    def checkout_password(self, password, samAccountName: str, displayName: str) -> bool:
+        """Password requirements based on
+        https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+        """
+        self.password_fault = ''
+        if samAccountName.lower() in password.lower() and len \
+                    (samAccountName) > 3:
+            self.password_fault = ('De gebruikersnaam mag niet voorkomen in het wachtwoord')
+            return False
+
+        splits = ',. \t_+/\\$'
+        for split in splits:
+            splitted_items = displayName.split(split)
+            for elem in splitted_items:
+                if len(elem) < 3:
+                    continue
+                if elem in password:
+                    self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
+                    return False
+
+        if displayName.lower() in password.lower():
+            self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
+            return False
+
+        if len(password) < 8:
+            self.password_fault = ('Het wachtwoord is te kort\ngebruik minimaal 8 karakters.')
+            return False
+
+        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        alphabet_up = alphabet.upper()
+        special = '~!@#$%^&*_-+=`|\\(){}[]:;"`\'<>,.?/'
+        number = '1234567890'
+
+        categories_in_password = 0
+        for category in [alphabet, alphabet_up, special, number]:
+            for char in category:
+                if char in password:
+                    categories_in_password += 1
+                    break
+        if categories_in_password < 3:
+            self.password_fault = ('Het wachtwoord niet complex genoeg.\nMaak gebruik van tekens, letters en cijfers')
+            return False
+
+        return True
+
 
 class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def __init__(self):
@@ -1135,51 +1180,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             return False
         return True
 
-    def checkout_password(self, password, samAccountName: str, displayName: str) -> bool:
-        """Password requirements based on
-        https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
-        """
-        self.password_fault = ''
-        if samAccountName.lower() in password.lower() and len \
-                    (samAccountName) > 3:
-            self.password_fault = ('De gebruikersnaam mag niet voorkomen in het wachtwoord')
-            return False
-
-        splits = ',. \t_+/\\$'
-        for split in splits:
-            splitted_items = displayName.split(split)
-            for elem in splitted_items:
-                if len(elem) < 3:
-                    continue
-                if elem in password:
-                    self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
-                    return False
-
-        if displayName.lower() in password.lower():
-            self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
-            return False
-
-        if len(password) < 8:
-            self.password_fault = ('Het wachtwoord is te kort\ngebruik minimaal 8 karakters.')
-            return False
-
-        alphabet = 'abcdefghijklmnopqrstuvwxyz'
-        alphabet_up = alphabet.upper()
-        special = '~!@#$%^&*_-+=`|\\(){}[]:;"`\'<>,.?/'
-        letter = '1234567890'
-
-        categories_in_password = 0
-        for category in [alphabet, alphabet_up, special, letter]:
-            for char in category:
-                if char in password:
-                    categories_in_password += 1
-                    break
-        if categories_in_password < 3:
-            self.password_fault = ('Het wachtwoord niet complex genoeg.\nMaak gebruik van tekens, letters en cijfers')
-            return False
-
-        return True
-
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
 
@@ -1525,6 +1525,12 @@ class AdminWindow(QDialog, BaseWindow):
             return False
         if not self.lineEdit_password.text() == self.lineEdit_password_check.text():
             self.warningbox('De ingevoerde wachtwoorden komen niet overeen')
+            return False
+        password = self.lineEdit_password_check.text()
+        user = 'Administrator'
+        fullname = 'Administrator'
+        if not self.checkout_password(password=password, samAccountName=user, displayName=fullname):
+            self.criticalbox(self.password_fault)
             return False
         try:
             # Change Admin password without activate

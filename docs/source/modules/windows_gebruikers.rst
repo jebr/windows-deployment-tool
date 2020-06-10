@@ -26,6 +26,7 @@ Windows gebruikersnaam moet voldoen aan de volgende voorwaarden:
 
 Criteria Wachtwoord
 -------------------
+Het wachtwoord voor de Windows gebruiker moet voldoen aan de volgende voorwaarden:
 
 * De gebruikersnaam mag niet voorkomen in het wachtwoord
 * De volledige naam mag niet voorkomen in het wachtwoord
