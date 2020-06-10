@@ -4,7 +4,7 @@ Release notes
 .. _release-2.2:
 
 Windows Deployment Tool v2.2 (10-6-2020)
----------------------------------------
+----------------------------------------
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
