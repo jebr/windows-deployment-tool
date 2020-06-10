@@ -1249,7 +1249,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             footer_text = '''
             <font size=6>Heijmans Utiliteit B.V. • Graafsebaan 65, 5248 JT  Rosmalen • Postbus 246, 5240 AE  Rosmalen • 
             Nederland<br/> 
-            Telefoon +31 (0)73 543 51 11 • E-mail info@heijmans.nl • www.heijmans.<br/>
+            Telefoon +31 (0)73 543 51 11 • E-mail info@heijmans.nl • Website www.heijmans.nl<br/>
             Niets van dit rapport en/of ontwerp mag worden vermenigvuldigd, openbaar gemaakt en/of overhandigd aan derden, 
             zonder voorafgaande schriftelijke toestemming van de samensteller.</font>
             '''
