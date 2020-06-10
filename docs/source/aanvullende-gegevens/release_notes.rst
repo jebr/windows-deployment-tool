@@ -1,6 +1,16 @@
 Release notes
 =============
 
+.. _release-2.2:
+
+Windows Deployment Tool v2.1 (8-6-2020)
+---------------------------------------
+
+Opgeloste problemen
+~~~~~~~~~~~~~~~~~~~
+* Probleem verholpen waarbij het niet mogelijk was om de rapportage te maken
+* De footer van de rapportage verbeterd
+
 .. _release-2.1:
 
 Windows Deployment Tool v2.1 (8-6-2020)
