@@ -22,7 +22,7 @@ copyright = '2020, Jeroen Brauns'
 author = 'Jeroen Brauns'
 
 # The full version, including alpha/beta/rc tags
-release = '2.1'
+release = '2.2'
 
 
 # -- General configuration ---------------------------------------------------
