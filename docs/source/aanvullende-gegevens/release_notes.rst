@@ -12,7 +12,7 @@ Wat is nieuw
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
-* Probleem verholpen waarbij de applicatie vastloopt bij heet opstarten op een Windows Server (`issue 15`_)
+* Probleem verholpen waarbij de applicatie vastloopt bij het opstarten op een Windows Server (`issue 15`_)
 
 .. _release-2.2:
 
