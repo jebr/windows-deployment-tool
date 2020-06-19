@@ -53,7 +53,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.2)
+current_version = float(2.3)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -379,7 +379,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.error(f'Initial check: Windows 7 is not supported')
             sys.exit()
 
-    @thread
     def windows_version_check(self):
         # Check Windows version
         self.windows_version = self.powershell(['(Get-WmiObject -class Win32_OperatingSystem).Caption'])
