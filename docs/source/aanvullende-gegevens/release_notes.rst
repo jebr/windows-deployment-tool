@@ -1,6 +1,19 @@
 Release notes
 =============
 
+.. _release-2.3:
+
+Windows Deployment Tool v2.3
+----------------------------------------
+
+Wat is nieuw
+~~~~~~~~~~~~
+* Controle op invoer wachtwoord Administrator account
+
+Opgeloste problemen
+~~~~~~~~~~~~~~~~~~~
+* Probleem verholpen waarbij de applicatie vastloopt bij heet opstarten op een Windows Server (`issue 15`_)
+
 .. _release-2.2:
 
 Windows Deployment Tool v2.2 (10-6-2020)
@@ -62,3 +75,6 @@ Windows Deployment Tool v1.0 (13-5-2020)
 ----------------------------------------
 
 * Release Windows Deployment Tool
+
+.. Koppelingen naar Issues
+.. _`issue 15`: https://github.com/jebr/windows-deployment-tool/issues/15

@@ -33,7 +33,7 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 - [ ] Disable wintracking intergratie `Planned for verion 3.0`
 - [ ] Group policy toevoegen `Planned for version 3.0`
 - [ ] Windows programma's deinstalleren `Planned for version 3.0`
-- [ ] Herstellen instellingen `Planned for version 2.3`
+- [ ] Herstellen instellingen `Planned for version 3.0`
 ---
 - [x] Geavanceerde logging `(22-4-2020)`
 - [x] Logging wegschrijven naar bestand en via window op te vragen `(22-4-2020)`
