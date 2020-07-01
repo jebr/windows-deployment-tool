@@ -211,7 +211,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def __init__(self):
         super().__init__()
         loadUi(ui_main_window, self)
-        self.setFixedSize(900, 760)
+        self.setFixedSize(900, 780)
         self.setWindowIcon(QtGui.QIcon(icon_window))
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
@@ -246,6 +246,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_check_energy_lock.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_transparant_image)))
 
         # Pre-system checks
         logging.info(f'========{date_time}========')
@@ -298,10 +299,16 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         # Remote desktop (RDP)
         self.pushButton_rdp_enable.clicked.connect(self.enable_rdp)
 
+        # Add OEM information
+        self.pushButton_add_oem_info.clicked.connect(self.add_oem_info)
+
         # Energy settings
         self.pushButton_energy_on.clicked.connect(self.energy_on)
         self.pushButton_energy_lock.clicked.connect(self.energy_lock)
         self.pushButton_energy_default.clicked.connect(self.energy_restore)
+
+        # Systemcontrol
+        self.pushButton_systemcontrol.clicked.connect(self.system_checks)
 
         # Restart system
         self.pushButton_restart_system.clicked.connect(self.restart_system)
@@ -624,6 +631,17 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.label_windows_build.setText(f'{w_release_version.rstrip()} / {w_release_id.rstrip()}')
         self.label_windows_build.setToolTip(f'{w_release_version.rstrip()} / {w_release_id.rstrip()}')
         logging.info(f'System check: Windows build - {w_release_version.rstrip()} / {w_release_id.rstrip()}')
+
+        # Get Bios version
+        biosversion = self.powershell(['(Get-WmiObject -class Win32_Bios).SMBIOSBIOSVersion'])
+        self.label_bios_version.setText(f'{biosversion}')
+        self.label_bios_version.setToolTip(f'{biosversion}')
+
+        # Get Servicetag
+        serialnumber = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber'])
+        self.label_servicetag.setText(f'{serialnumber}')
+        self.label_servicetag.setToolTip(f'{serialnumber}')
+
         self.counter_threads += 1
 
     def open_update(self):
@@ -1366,44 +1384,50 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def add_oem_info(self):
-    # Toevoegen van OEM info via register
-    # New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" -Name "Model" -Value "Servicetag M23456" -PropertyType "String"
+        # Toevoegen van OEM info via register
+        # New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" -Name "Model" -Value "Servicetag M23456" -PropertyType "String"
 
-    # Logo
-    # Manufacturer (Bedrijfsnaam)
-    # Model (Computer model)
-    # SupportHours (HCCC openingstijden)
-    # SupportPhone (Storingsnummer (HCCC))
-    # SupportURL (Link website bedrijf)
-        manufacturer_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).manufacturer'])
-        model_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).model'])
-        servicetag = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber'])
-        manufacturer = 'Heijmans Utiliteit Safety & Security'
-        model = f'{manufacturer_pc} / {model_pc}'
+        # Logo
+        # Manufacturer (Bedrijfsnaam)
+        # Model (Computer model)
+        # SupportHours (HCCC openingstijden)
+        # SupportPhone (Storingsnummer (HCCC))
+        # SupportURL (Link website bedrijf)
+        manufacturer_pc = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).manufacturer']).decode('utf-8')
+        model_pc = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).model']).decode('utf-8')
+        servicetag = subprocess.check_output(['powershell.exe', '(Get-WmiObject -class Win32_Bios).serialnumber']).decode('utf-8')
+        # manufacturer = 'Heijmans Utiliteit Safety & Security'
+        manufacturer = 'Heijmans Safety & Security'
+        model = f'{manufacturer_pc} {model_pc}'
         supporthours = '24/7'
         supportphone = '+31 (0) 88 443 50 03'
         supporturl = 'https://www.heijmans.nl'
-        try:
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "Logo" -Value "{icon_heijmans_logo_square}" -PropertyType "String"'])
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "Manufacturer" -Value "{manufacturer}" -PropertyType "String"'])
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "Model" -Value "{model}" -PropertyType "String"'])
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportHours" -Value "{supporthours}" -PropertyType "String"'])
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
-            self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportURL" -Value "{supporturl}" -PropertyType "String"'])
-            # Add servicetag to cmputer description
-            self.powershell([f'net config server /srvcomment:"{servicetag}"'])
-            # (Get-WmiObject -class Win32_Bios).SMBIOSBIOSVersion
-            # (Get-WmiObject -class Win32_Bios).serialnumber
-        except Exception as e:
-            logging.error(e)
+        subprocess.check_call(['powershell.exe', f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
+        self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
+        # try:
+        #     self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
+
+            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+            #                  f'-Name "Logo" -Value "{icon_heijmans_logo_square}" -PropertyType "String"'])
+            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+            #                  f'-Name "Manufacturer" -Value "{manufacturer}" -PropertyType "String"'])
+            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+            #                  f'-Name "Model" -Value "{model}" -PropertyType "String"'])
+            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+            #                  f'-Name "SupportHours" -Value "{supporthours}" -PropertyType "String"'])
+            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+            #                  f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
+            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+            #                  f'-Name "SupportURL" -Value "{supporturl}" -PropertyType "String"'])
+            # Add servicetag to computer description
+            # subprocess.check_call(['powershell.exe', f'net config server /srvcomment:"Servicetag: {servicetag}"'])
+            # self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_circle_check)))
+            # logging.info('Added support information')
+        # except Exception as e:
+        #     logging.error(e)
+
+
+
 
 
     # Windows

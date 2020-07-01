@@ -35,13 +35,13 @@
    <property name="minimumSize">
     <size>
      <width>900</width>
-     <height>850</height>
+     <height>900</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>900</width>
-     <height>850</height>
+     <height>900</height>
     </size>
    </property>
    <widget class="QTabWidget" name="tabWidget">
@@ -53,7 +53,7 @@
       <x>0</x>
       <y>0</y>
       <width>900</width>
-      <height>760</height>
+      <height>780</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -1750,7 +1750,7 @@ p, li { white-space: pre-wrap; }
         <x>10</x>
         <y>10</y>
         <width>431</width>
-        <height>421</height>
+        <height>441</height>
        </rect>
       </property>
       <property name="font">
@@ -1770,18 +1770,12 @@ p, li { white-space: pre-wrap; }
          <x>10</x>
          <y>30</y>
          <width>411</width>
-         <height>381</height>
+         <height>404</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_9">
         <item row="10" column="1">
          <widget class="QLabel" name="label_bios_version">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -1896,6 +1890,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="0" column="1">
          <widget class="QLabel" name="label_windows_version">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -1935,6 +1935,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="8" column="1">
          <widget class="QLabel" name="label_cores">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -1989,6 +1995,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="1">
          <widget class="QLabel" name="label_domain_workgroup">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2007,6 +2019,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="5" column="1">
          <widget class="QLabel" name="label_type">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2019,6 +2037,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="1" column="1">
          <widget class="QLabel" name="label_windows_lang">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2037,6 +2061,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="6" column="1">
          <widget class="QLabel" name="label_physicalmemory">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2049,6 +2079,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="4" column="1">
          <widget class="QLabel" name="label_manufacturer_model">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2061,6 +2097,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="3" column="1">
          <widget class="QLabel" name="label_windows_hostname">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2091,6 +2133,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="7" column="1">
          <widget class="QLabel" name="label_processor">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2103,12 +2151,6 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="9" column="1">
          <widget class="QLabel" name="label_windows_build">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2265,12 +2307,6 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="11" column="1">
          <widget class="QLabel" name="label_servicetag">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2305,7 +2341,7 @@ p, li { white-space: pre-wrap; }
         <x>440</x>
         <y>10</y>
         <width>441</width>
-        <height>421</height>
+        <height>441</height>
        </rect>
       </property>
       <property name="font">
@@ -2502,7 +2538,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>440</y>
+        <y>460</y>
         <width>431</width>
         <height>251</height>
        </rect>
@@ -2928,7 +2964,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>440</x>
-        <y>440</y>
+        <y>460</y>
         <width>441</width>
         <height>251</height>
        </rect>
