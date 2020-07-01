@@ -92,7 +92,7 @@ icon_transparant_image = resource_path('icons/transparent.png')
 icon_circle_info = resource_path('icons/circle-info.png')
 icon_circle_check = resource_path('icons/circle-check.png')
 icon_heijmans_logo = resource_path('icons/heijmans-logo.jpg')
-icon_heijmans_logo_square = resource_path('icons/heijmans-logo-vierkant.jpg')
+icon_heijmans_logo_square = resource_path('icons/heijmans-vierkant.bmp')
 icon_workstation = resource_path('icons/icon_workstation')
 secpol_new = resource_path('resources/security/secpol_new.inf')
 energy_config_on = resource_path('resources/energy/energy-full.pow')
@@ -1377,11 +1377,12 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     # SupportURL (Link website bedrijf)
         manufacturer_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).manufacturer'])
         model_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).model'])
+        servicetag = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber'])
         manufacturer = 'Heijmans Utiliteit Safety & Security'
         model = f'{manufacturer_pc} / {model_pc}'
-        supporthours = ''
-        supportphone = ''
-        supporturl = ''
+        supporthours = '24/7'
+        supportphone = '+31 (0) 88 443 50 03'
+        supporturl = 'https://www.heijmans.nl'
         try:
             self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
                              f'-Name "Logo" -Value "{icon_heijmans_logo_square}" -PropertyType "String"'])
@@ -1397,14 +1398,13 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                              f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
             self.powershell([f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
                              f'-Name "SupportURL" -Value "{supporturl}" -PropertyType "String"'])
+            # Add servicetag to cmputer description
+            self.powershell([f'net config server /srvcomment:"{servicetag}"'])
+            # (Get-WmiObject -class Win32_Bios).SMBIOSBIOSVersion
+            # (Get-WmiObject -class Win32_Bios).serialnumber
         except Exception as e:
             logging.error(e)
 
-    @thread
-    def add_dell_servicetag(self):
-        # Aanpassen van de beschrijving van de computer
-        # net config server /srvcomment:"computer description"
-        pass
 
     # Windows
     def open_hostname_help_window(self):
