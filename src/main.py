@@ -27,6 +27,8 @@ from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
+from src.wdt_table_users import BaseTable
+
 
 try:
     os.chdir(os.path.dirname(sys.argv[0]))
@@ -138,6 +140,10 @@ class BaseWindow:
             return outs.decode('U8')
         except Exception as e:
             logging.warning(e)
+
+    @staticmethod
+    def escape_windows_cmd(command: str) -> str:
+        return command.replace('&', '^&')
 
     # Messageboxen
     def infobox(self, message):
@@ -284,6 +290,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_info_username.clicked.connect(self.open_username_notification_window)
         self.pushButton_info_username.setToolTip('Klik voor info over Gebruikersnaam')
         self.pushButton_info_password.setToolTip('Klik voor info over Wachtwoord')
+        self.pushButton_users_add_row.clicked.connect(self.table_add_row)
 
         # Security policy
         self.pushButton_sec_policy.clicked.connect(self.import_sec_policy)
@@ -325,6 +332,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
         # Set counter for started threads
         self.counter_threads = 0
+
+        self.add_user_table = BaseTable(self.tableWidget_add_users)
+        self.get_users_table = BaseTable(self.tableWidget_active_users)
 
     # Button to check on updates
     def check_update_wdt_trigger(self):
@@ -655,17 +665,21 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         w_users = self.powershell(['Get-LocalUser | select name, enabled'])
         w_users_output = w_users.splitlines()
         w_group_admin = self.powershell(['net localgroup administrators'])
-        self.tableWidget_active_users.clearContents()
+        self.get_users_table.clearContents()
         i = 0
         for user in w_users_output:
-            if 'True' in user:
-                new_user = user.replace('True', "").replace(" ", "")
-                self.tableWidget_active_users.setItem(i, 0, QTableWidgetItem(new_user))
-                if new_user in w_group_admin:
-                    self.tableWidget_active_users.setItem(i, 1, QTableWidgetItem('Ja'))
-                else:
-                    self.tableWidget_active_users.setItem(i, 1, QTableWidgetItem('Nee'))
-                i += 1
+            if 'True' not in user:
+                continue
+            rowcount = self.get_users_table.get_rows()
+            if rowcount == i:
+                self.get_users_table.add_row()
+            new_user = user.replace('True', "").replace(" ", "")
+            self.get_users_table.set_item(i, 0, new_user)
+            if new_user in w_group_admin:
+                self.get_users_table.set_item(i, 1, 'Ja')
+            else:
+                self.get_users_table.set_item(i, 1, 'Nee')
+            i += 1
         self.counter_threads += 1
 
     @thread
@@ -1024,29 +1038,33 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     # Add Local Windows Users
     def load_csv_file(self):
-        self.clear_users_table()
+        # self.clear_users_table()
         fileName, _ = QFileDialog.getOpenFileName(self,
             "selecteer cvs bestand", "", "csv (*.csv)")
         if not fileName:
             # If window is clicked away
             return
+        row_count = self.add_user_table.get_rows()
         with open(fileName) as csvfile:
             readCSV = csv.reader(csvfile, delimiter=',')
             # Get the first non empty row number
-            for i in range(20):
-                if not self.tableWidget_add_users.item(i, 0):
+            for i in range(row_count):
+                if not self.add_user_table.get_item(i, 0):
                     break
             # Append the data from cvs to the table
             try:
                 for row in readCSV:
+                    if i == row_count:
+                        self.add_user_table.add_row()
+                        row_count += 1
                     for j in range(5):
                         if j == 4:
                             if row[j].lower() == 'ja':
-                                self.tableWidget_add_users.setItem(i, j, QTableWidgetItem('Ja'))
+                                self.add_user_table.set_item(i, j, 'Ja')
                             else:
-                                self.tableWidget_add_users.setItem(i, j, QTableWidgetItem('Nee'))
+                                self.add_user_table.set_item(i, j, 'Nee')
                         else:
-                            self.tableWidget_add_users.setItem(i,j, QTableWidgetItem(row[j]))
+                            self.add_user_table.set_item(i, j, row[j])
                     i += 1
             except Exception as e:
                 self.warningbox('Let op, bestand niet geimporteerd')
@@ -1097,39 +1115,34 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def add_windows_users(self):
         w_users = self.powershell(['(Get-LocalUser).name']).splitlines()
         w_users = [element.lower() for element in w_users]  # Gebruikers naar lowercase
-        for i in range(20):
+        for i in range(self.add_user_table.get_rows()):
             empty_fields = []
-            try:
-                user = self.tableWidget_add_users.item(i, 0).text().lower()
-                if not user: raise
-            except Exception as e:
-                empty_fields.append('Gebruikersnaam')
-            try:
-                password = self.tableWidget_add_users.item(i, 1).text()
-                if not password: raise
-            except Exception as e:
-                empty_fields.append('Wachtwoord')
-            try:
-                fullname = self.tableWidget_add_users.item(i, 2).text()
-                if not fullname: raise
-            except Exception as e:
-                empty_fields.append('Volledige naam')
-            try:
-                desc = self.tableWidget_add_users.item(i, 3).text()
-                if not desc: raise
-            except Exception as e:
-                empty_fields.append('Beschrijving')
-            try:
-                admin = self.tableWidget_add_users.item(i, 4).text()
-                if not admin: raise
-            except Exception as e:
+
+            user = self.add_user_table.get_item(i, 0).lower()
+            if not user:
+                empty_fields.append(f'Gebruikersnaam')
+
+            password = self.add_user_table.get_item(i, 1)
+            if not password:
+                empty_fields.append(f'Wachtwoord')
+
+            fullname = self.add_user_table.get_item(i, 2)
+            if not fullname:
+                empty_fields.append(f'Volledige Naam')
+
+            desc = self.add_user_table.get_item(i, 3)
+            if not desc:
+                empty_fields.append(f'Beschrijving')
+
+            admin = self.add_user_table.get_item(i, 4)
+            if not admin:
                 empty_fields.append('Administrator')
 
             if len(empty_fields) == 5:
                 continue
 
             if empty_fields:
-                self.warningbox(f'De volgende velden zijn niet ingevuld: ' + ', '.join(empty_fields))
+                self.warningbox(f'De volgende velden zijn niet ingevuld in rij {i + 1}: \n - ' + '\n - '.join(empty_fields))
                 return False
 
             # Admin veld Ja/ja en anders nee
@@ -1152,7 +1165,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 user = user.replace(' ', '')
                 user = user.capitalize()
                 self.powershell([f'net user "{user}" "{password}" /add /active:yes '
-                                                         f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
+                                 f'/fullname:"{fullname}" /comment:"{desc}" /expires:never /Y'])
                 self.powershell([f'wmic useraccount where "name=\'{user}\'" set PasswordExpires=False '])
                 # subprocess.check_call(['powershell.exe', f'$password = {password} -AsSecureString && New-LocalUser "{user}" -Password $password -Fullname {fullname} -Description {desc}'])
                 self.tableWidget_add_users.setItem(i, 0, QTableWidgetItem(''))
@@ -1200,6 +1213,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     def clear_users_table(self):
         self.tableWidget_add_users.clearContents()
+
+    def table_add_row(self):
+        self.add_user_table.add_row()
 
     def create_pdf_report(self):
         if not self.lineEdit_project.text():
@@ -1396,39 +1412,34 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         manufacturer_pc = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).manufacturer']).decode('utf-8')
         model_pc = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).model']).decode('utf-8')
         servicetag = subprocess.check_output(['powershell.exe', '(Get-WmiObject -class Win32_Bios).serialnumber']).decode('utf-8')
-        # manufacturer = 'Heijmans Utiliteit Safety & Security'
-        manufacturer = 'Heijmans Safety & Security'
+        manufacturer = self.escape_windows_cmd('Heijmans Utiliteit Safety & Security')
         model = f'{manufacturer_pc} {model_pc}'
         supporthours = '24/7'
         supportphone = '+31 (0) 88 443 50 03'
         supporturl = 'https://www.heijmans.nl'
-        subprocess.check_call(['powershell.exe', f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
+        # subprocess.check_call(['powershell.exe', f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
         self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
-        # try:
-        #     self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
-
-            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-            #                  f'-Name "Logo" -Value "{icon_heijmans_logo_square}" -PropertyType "String"'])
-            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-            #                  f'-Name "Manufacturer" -Value "{manufacturer}" -PropertyType "String"'])
-            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-            #                  f'-Name "Model" -Value "{model}" -PropertyType "String"'])
-            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-            #                  f'-Name "SupportHours" -Value "{supporthours}" -PropertyType "String"'])
-            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-            #                  f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
-            # subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-            #                  f'-Name "SupportURL" -Value "{supporturl}" -PropertyType "String"'])
+        logging.info('Functie uitgevoerd')
+        try:
+            self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
+            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+                             f'-Name "Logo" -Value "{icon_heijmans_logo_square}" -PropertyType "String"'])
+            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+                             f'-Name "Manufacturer" -Value "{manufacturer}" -PropertyType "String"'])
+            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+                             f'-Name "Model" -Value "{model}" -PropertyType "String"'])
+            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+                             f'-Name "SupportHours" -Value "{supporthours}" -PropertyType "String"'])
+            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+                             f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
+            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
+                             f'-Name "SupportURL" -Value "{supporturl}" -PropertyType "String"'])
             # Add servicetag to computer description
-            # subprocess.check_call(['powershell.exe', f'net config server /srvcomment:"Servicetag: {servicetag}"'])
-            # self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_circle_check)))
-            # logging.info('Added support information')
-        # except Exception as e:
-        #     logging.error(e)
-
-
-
-
+            subprocess.check_call(['powershell.exe', f'net config server /srvcomment:"Servicetag: {servicetag}"'])
+            self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_circle_check)))
+            logging.info('Added support information')
+        except Exception as e:
+            logging.error(e)
 
     # Windows
     def open_hostname_help_window(self):
