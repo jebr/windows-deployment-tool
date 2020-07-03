@@ -27,8 +27,7 @@ from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-from src.wdt_table_users import BaseTable
-
+DEBUG = False
 
 try:
     os.chdir(os.path.dirname(sys.argv[0]))
@@ -45,6 +44,32 @@ def resource_path(relative_path):
         base_path = os.environ.get("_MEIPASS2", os.path.abspath("."))
     # logging.info('Pyinstaller file location {}'.format(base_path))
     return os.path.join(base_path, relative_path)
+
+
+# External files
+ui_main_window = resource_path('resources/ui/main_window.ui')
+ui_hostname_window = resource_path('resources/ui/hostname_help_dialog.ui')
+ui_info_window = resource_path('resources/ui/info_dialog.ui')
+ui_license_window = resource_path('resources/ui/license_dialog.ui')
+ui_logging_window = resource_path('resources/ui/wdt_logging_dialog.ui')
+ui_admin_window = resource_path('resources/ui/admin_dialog.ui')
+ui_password_window = resource_path('resources/ui/password_help_dialog.ui')
+ui_username_window = resource_path('resources/ui/username_help_dialog.ui')
+icon_window = resource_path('icons/wdt.ico')
+icon_transparant_image = resource_path('icons/transparent.png')
+icon_circle_info = resource_path('icons/circle-info.png')
+icon_circle_check = resource_path('icons/circle-check.png')
+icon_heijmans_logo = resource_path('icons/heijmans-logo.jpg')
+icon_heijmans_logo_square = resource_path('icons/heijmans-vierkant.bmp')
+icon_workstation = resource_path('icons/icon_workstation')
+secpol_new = resource_path('resources/security/secpol_new.inf')
+energy_config_on = resource_path('resources/energy/energy-full.pow')
+energy_config_lock = resource_path('resources/energy/energy-auto-lock.pow')
+energy_config_default = resource_path('resources/energy/energy-default.pow')
+license_file = resource_path('resources/license/license.txt')
+wdt_table_users = resource_path('wdt_table_users.py')
+
+from wdt_table_users import BaseTable
 
 # Programm uitvoeren als Administrator
 def is_admin():
@@ -80,27 +105,6 @@ console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-# External files
-ui_main_window = resource_path('resources/ui/main_window.ui')
-ui_hostname_window = resource_path('resources/ui/hostname_help_dialog.ui')
-ui_info_window = resource_path('resources/ui/info_dialog.ui')
-ui_license_window = resource_path('resources/ui/license_dialog.ui')
-ui_logging_window = resource_path('resources/ui/wdt_logging_dialog.ui')
-ui_admin_window = resource_path('resources/ui/admin_dialog.ui')
-ui_password_window = resource_path('resources/ui/password_help_dialog.ui')
-ui_username_window = resource_path('resources/ui/username_help_dialog.ui')
-icon_window = resource_path('icons/wdt.ico')
-icon_transparant_image = resource_path('icons/transparent.png')
-icon_circle_info = resource_path('icons/circle-info.png')
-icon_circle_check = resource_path('icons/circle-check.png')
-icon_heijmans_logo = resource_path('icons/heijmans-logo.jpg')
-icon_heijmans_logo_square = resource_path('icons/heijmans-vierkant.bmp')
-icon_workstation = resource_path('icons/icon_workstation')
-secpol_new = resource_path('resources/security/secpol_new.inf')
-energy_config_on = resource_path('resources/energy/energy-full.pow')
-energy_config_lock = resource_path('resources/energy/energy-auto-lock.pow')
-energy_config_default = resource_path('resources/energy/energy-default.pow')
-license_file = resource_path('resources/license/license.txt')
 
 # Release page
 def website_update():
@@ -121,14 +125,26 @@ def thread(func):
         return wrapper
 
 
+
 class BaseWindow:
+    @staticmethod
+    def escape_cmd(command):
+        return command.replace('&', '^&')
+
     def powershell(self, input_: list) -> str:
         """
         Returns a string when no error
         If an exception occurs the exeption is logged and None is returned
         """
+        if sys.platform == 'win32':
+            input_ = [self.escape_cmd(elem) for elem in input_]
+        execute = ['powershell.exe'] + input_
+
+        if DEBUG:
+            return ' '.join(execute)
+
         try:
-            proc = subprocess.Popen(['powershell.exe'] + input_,
+            proc = subprocess.Popen(execute,
                                     shell=True,
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT,
@@ -139,7 +155,28 @@ class BaseWindow:
             outs, errs = proc.communicate(timeout=15)
             return outs.decode('U8')
         except Exception as e:
+            print(e)
             logging.warning(e)
+
+    # print(powershell(['hostname']))
+    # def powershell(self, input_: list) -> str:
+    #     """
+    #     Returns a string when no error
+    #     If an exception occurs the exeption is logged and None is returned
+    #     """
+    #     try:
+    #         proc = subprocess.Popen(['powershell.exe'] + input_,
+    #                                 shell=True,
+    #                                 stdout=subprocess.PIPE,
+    #                                 stderr=subprocess.STDOUT,
+    #                                 stdin=subprocess.PIPE,
+    #                                 cwd=os.getcwd(),
+    #                                 env=os.environ)
+    #         proc.stdin.close()
+    #         outs, errs = proc.communicate(timeout=15)
+    #         return outs.decode('U8')
+    #     except Exception as e:
+    #         logging.warning(e)
 
     @staticmethod
     def escape_windows_cmd(command: str) -> str:
@@ -253,6 +290,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_check_energy_on.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_add_oem_info_check.setIcon(QIcon(QPixmap(icon_transparant_image)))
 
         # Pre-system checks
         logging.info(f'========{date_time}========')
@@ -379,23 +417,25 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.fw_discovery_check()
         self.energy_check()
         self.get_users()
+        self.support_info_check()
 
         while True:
             # print(self.counter_threads)
-            if self.counter_threads == 7:  # Verhogen als er meer threads in
+            if self.counter_threads == 8:  # Verhogen als er meer threads in
                 # deze functie geplaatst worden
                 break
             time.sleep(0.05)
         self.pushButton_export_system_settings.setEnabled(True)
         self.pushButton_system_check.setEnabled(True)
 
-    @thread
     def windows7_check(self):
         os_version = platform.platform()
         if "Windows-7" in os_version:
-            self.warningbox('Windows 7 wordt niet meer ondersteund\nDe applicatie zal afgesloten worden')
+            self.warningbox('****** BELANRIJKE MEDEDELING! ******\n\n'
+                            'Windows 7 wordt niet meer ondersteund door Microsoft\n\n'
+                            'Niet alle functionaliteit in de applicatie zal werken zoals verwacht\n\n'
+                            'Dringend advies: Update de Pc naar Windows 10!')
             logging.error(f'Initial check: Windows 7 is not supported')
-            sys.exit()
 
     def windows_version_check(self):
         # Check Windows version
@@ -458,6 +498,23 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         else:
             self.rdp_check_return = False
             logging.info('System check: RDP not activated')
+        self.counter_threads += 1
+
+    @thread
+    def support_info_check(self):
+        oem_info_path = 'Registry::"HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation"'
+        oem_reg_sz = "Manufacturer"
+        support_info_check = self.powershell([f'Get-ItemProperty -Path {oem_info_path} -Name {oem_reg_sz}'])
+        if "Heijmans" in support_info_check:
+            logging.info('Support info check: Support info added')
+            self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_add_oem_info_check.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.support_info_check_return = True
+        else:
+            logging.info('Support info check: No Support info added')
+            self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.pushButton_add_oem_info_check.setIcon(QIcon(QPixmap(icon_transparant_image)))
+            self.support_info_check_return = False
         self.counter_threads += 1
 
     @thread
@@ -613,8 +670,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.info('System check: Computer type - Unknown')
 
         # Calculate RAM
-        bytes_number = self.powershell(['(get-wmiobject '
-                                        'Win32_ComputerSystem).totalphysicalmemory'])
+        bytes_number = self.powershell(['(get-wmiobject Win32_ComputerSystem).totalphysicalmemory'])
         bytes_number = int(bytes_number)
         gb_number = bytes_number / (1024 ** 3)
         gb_number = round(gb_number)
@@ -643,12 +699,12 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         logging.info(f'System check: Windows build - {w_release_version.rstrip()} / {w_release_id.rstrip()}')
 
         # Get Bios version
-        biosversion = self.powershell(['(Get-WmiObject -class Win32_Bios).SMBIOSBIOSVersion'])
+        biosversion = self.powershell(['(Get-WmiObject -class Win32_Bios).SMBIOSBIOSVersion']).rstrip()
         self.label_bios_version.setText(f'{biosversion}')
         self.label_bios_version.setToolTip(f'{biosversion}')
 
         # Get Servicetag
-        serialnumber = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber'])
+        serialnumber = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber']).rstrip()
         self.label_servicetag.setText(f'{serialnumber}')
         self.label_servicetag.setToolTip(f'{serialnumber}')
 
@@ -1259,7 +1315,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             <font size=24><b>Deployment rapportage</b></font><br/>
             <br/>
             <br/>
-            <font size=16><b>{self.lineEdit_project.text()}</b><br/></font>
+            <br/>
+            <font size=16><b>{self.lineEdit_project.text()}</b><br/><br/></font>
             <font size=12 color=gray>Server / Workstation: {hostname}</font>
             '''
             para_project_data = Paragraph(project_data, style=styles['Normal'])
@@ -1291,7 +1348,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             para_footer.wrapOn(my_canvas, width, height)
             para_footer.drawOn(my_canvas, 50, 20)
             # Page number
-            para_page_number_1 = Paragraph('<font size=6>pagina 1 van 2</font>', style=styles['Normal'])
+            para_page_number_1 = Paragraph('<font size=6>pagina 1 van 3</font>', style=styles['Normal'])
             para_page_number_1.wrapOn(my_canvas, width, height)
             para_page_number_1.drawOn(my_canvas, width / 2, 5)
 
@@ -1307,9 +1364,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             # System info
             title_system_info = Paragraph('<font size=14><b>Windows Informatie</b></font>', style=styles['Normal'])
             title_system_info.wrapOn(my_canvas, width, height)
-            title_system_info.drawOn(my_canvas, 50, 700)
+            title_system_info.drawOn(my_canvas, 50, 740)
             system_info_data = [
-                ['Windows versie', str(self.label_windows_version.text())],
+                ['Windows Versie', str(self.label_windows_version.text())],
                 ['Windows Taal', str(self.label_windows_lang.text())],
                 ['Domein / Werkgroep', self.label_domain_workgroup.text()],
                 ['Computernaam', self.label_windows_hostname.text()],
@@ -1318,7 +1375,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 ['RAM', self.label_physicalmemory.text()],
                 ['Processor', self.label_processor.text()],
                 ['Core / Logical Processors', self.label_cores.text()],
-                ['Windows Build', self.label_windows_build.text()]
+                ['Windows Version / Build', self.label_windows_build.text()],
+                ['BIOS Versie', self.label_bios_version.text()],
+                ['Servicetag', self.label_servicetag.text()]
             ]
             table_system_info = Table(system_info_data, style=[('OUTLINE', (0,0), (-1,-1), 0.25, colors.black),
                                                                ('LINEAFTER', (0,0), (0,-1), 0.25, colors.black)], colWidths=250)
@@ -1335,6 +1394,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             rdp_enabled = 'Ja' if self.rdp_check_return else 'Nee'
             icmp_enabled = 'Ja' if self.fw_icmp_check_return else 'Nee'
             discovery_enabled = 'Ja' if self.fw_discovery_check_return else 'Nee'
+            support_info_added = 'Ja' if self.support_info_check else 'Nee'
 
             application_settings_data = [
                 ['Security Policy toegepast', secpol_enabled],
@@ -1342,21 +1402,39 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 ['Remote Desktop geactiveerd', rdp_enabled],
                 ['Windows Firewall ICMP toegestaan', icmp_enabled],
                 ['Windows Firewall Discovery toegestaan', discovery_enabled],
-                ['Energiebeheer', self.label_energie_settings.text()]
+                ['Energiebeheer', self.label_energie_settings.text()],
+                ['Energiebeheer', support_info_added]
             ]
             table_application_settings = Table(application_settings_data, style=[('OUTLINE', (0, 0), (-1, -1), 0.25, colors.black),
                                                                                  ('LINEAFTER', (0, 0), (0, -1), 0.25, colors.black)], colWidths=250)
             table_application_settings.wrapOn(my_canvas, width, height)
-            table_application_settings.drawOn(my_canvas, 50, 372)
+            table_application_settings.drawOn(my_canvas, 50, 350)
 
+            # Footer
+            para_footer.drawOn(my_canvas, 50, 20)
+            # Page number
+            para_page_number_1 = Paragraph('<font size=6>pagina 2 van 3</font>', style=styles['Normal'])
+            para_page_number_1.wrapOn(my_canvas, width, height)
+            para_page_number_1.drawOn(my_canvas, width / 2, 5)
+
+            # Page Break
+            my_canvas.showPage()
+
+            # Page 3
+            my_canvas.drawImage(icon_heijmans_logo, 400, 770, 156.35, 39.6)
+            para_logo_sub.drawOn(my_canvas, 400, 755)
+
+            # Body
             # Windows Users
-            title_windows_users = Paragraph('<font size=14><b>Lokale Windows Gebruikers</b></font>', style=styles['Normal'])
+            title_windows_users = Paragraph('<font size=14><b>Lokale Windows Gebruikers</b></font>',
+                                            style=styles['Normal'])
             title_windows_users.wrapOn(my_canvas, width, height)
-            title_windows_users.drawOn(my_canvas, 50, 352)
+            title_windows_users.drawOn(my_canvas, 50, 740)
 
             windows_users_data = [['Gebruiker', 'Administrator']]
-            height_windows_users_table = 318
-            for i in range(20):
+            height_windows_users_table = 690
+            rowcount = self.get_users_table.get_rows()
+            for i in range(rowcount):
                 try:
                     user_cell = self.tableWidget_active_users.item(i, 0)
                     admin_cell = self.tableWidget_active_users.item(i, 1)
@@ -1365,7 +1443,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                     user_cell = user_cell.text()
                     admin_cell = admin_cell.text()
                     windows_users_data.append([user_cell, admin_cell])
-                    height_windows_users_table -= 16
+                    height_windows_users_table -= 18
                 except Exception as e:
                     logging.error(f'Error message: {e}')
 
@@ -1379,7 +1457,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             # Footer
             para_footer.drawOn(my_canvas, 50, 20)
             # Page number
-            para_page_number_1 = Paragraph('<font size=6>pagina 2 van 2</font>', style=styles['Normal'])
+            para_page_number_1 = Paragraph('<font size=6>pagina 3 van 3</font>', style=styles['Normal'])
             para_page_number_1.wrapOn(my_canvas, width, height)
             para_page_number_1.drawOn(my_canvas, width / 2, 5)
 
@@ -1400,46 +1478,27 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def add_oem_info(self):
-        # Toevoegen van OEM info via register
-        # New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" -Name "Model" -Value "Servicetag M23456" -PropertyType "String"
-
-        # Logo
-        # Manufacturer (Bedrijfsnaam)
-        # Model (Computer model)
-        # SupportHours (HCCC openingstijden)
-        # SupportPhone (Storingsnummer (HCCC))
-        # SupportURL (Link website bedrijf)
-        manufacturer_pc = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).manufacturer']).decode('utf-8')
-        model_pc = subprocess.check_output(['powershell.exe', '(get-wmiobject Win32_ComputerSystem).model']).decode('utf-8')
-        servicetag = subprocess.check_output(['powershell.exe', '(Get-WmiObject -class Win32_Bios).serialnumber']).decode('utf-8')
-        manufacturer = self.escape_windows_cmd('Heijmans Utiliteit Safety & Security')
-        model = f'{manufacturer_pc} {model_pc}'
+        manufacturer_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).manufacturer'])
+        model_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).model'])
+        servicetag = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber'])
+        manufacturer = 'Heijmans Utiliteit Safety & Security'
         supporthours = '24/7'
         supportphone = '+31 (0) 88 443 50 03'
         supporturl = 'https://www.heijmans.nl'
-        # subprocess.check_call(['powershell.exe', f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
-        self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
-        logging.info('Functie uitgevoerd')
         try:
             self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
-            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "Logo" -Value "{icon_heijmans_logo_square}" -PropertyType "String"'])
-            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "Manufacturer" -Value "{manufacturer}" -PropertyType "String"'])
-            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "Model" -Value "{model}" -PropertyType "String"'])
-            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportHours" -Value "{supporthours}" -PropertyType "String"'])
-            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportPhone" -Value "{supportphone}" -PropertyType "String"'])
-            subprocess.check_call(['powershell.exe', f'New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation" '
-                             f'-Name "SupportURL" -Value "{supporturl}" -PropertyType "String"'])
+            self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Logo /t REG_SZ /d "{icon_heijmans_logo_square}" /f'])
+            subprocess.call(['powershell.exe', f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Model /t REG_SZ /d "{manufacturer_pc} {model_pc}" /f'])
+            self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v SupportHours /t REG_SZ /d "{supporthours}" /f'])
+            self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v SupportPhone /t REG_SZ /d "{supportphone}" /f'])
+            self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v SupportURL /t REG_SZ /d "{supporturl}" /f'])
+
             # Add servicetag to computer description
             subprocess.check_call(['powershell.exe', f'net config server /srvcomment:"Servicetag: {servicetag}"'])
             self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info('Added support information')
         except Exception as e:
-            logging.error(e)
+            logging.error(f'Import support information failed with message {e}')
 
     # Windows
     def open_hostname_help_window(self):
@@ -1469,6 +1528,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def open_username_notification_window(self):
         password_window = UsernameNotificationWindow()
         password_window.exec_()
+
 
 class HostnameWindow(QDialog, BaseWindow):
     def __init__(self):
