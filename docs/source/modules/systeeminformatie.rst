@@ -19,6 +19,8 @@ Bij het uitvoeren van de **Systeemcontrole** zal de volgend informatie opgevraag
 * Processor
 * Cores / Logical processors
 * Windows Build
+* BIOS versie
+* Servicetag
 
 Bij het gebruik van de knop **Controleer op updates** zal het Windows venster **Naar updates zoeken**
 worden geopend waarna handmatig gezocht kan worden naar updates. De eventuele updates kunnen direct gedownload

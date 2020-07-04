@@ -18,7 +18,7 @@ kun je plaatsen in de [Issue Tracker](https://github.com/jebr/windows-deployment
 Bij bugs graag de WDT log toevoegen aan de melding.
 
 
-[![Screenshot](https://github.com/jebr/windows-deployment-tool/blob/master/docs/readme-docs/windows-deployment-tool-v20.gif "WDT screenshot")](https://github.com/jebr/windows-deployment-tool/releases)
+[![Screenshot](https://github.com/jebr/windows-deployment-tool/blob/master/docs/readme-docs/windows-deployment-tool-v24.gif "WDT screenshot")](https://github.com/jebr/windows-deployment-tool/releases)
 
 # Download
 <a href="https://github.com/jebr/windows-deployment-tool/releases" alt="Download">
@@ -29,11 +29,11 @@ Bij bugs graag de WDT log toevoegen aan de melding.
 [Release notes](https://windows-deployment-tool.readthedocs.io/nl/latest/aanvullende-gegevens/release_notes.html)
 
 # Upcoming Features
-- [ ] Geavanceerde systeeminformatie `Planned for version 3.0`
-- [ ] Disable wintracking intergratie `Planned for verion 3.0`
-- [ ] Group policy toevoegen `Planned for version 3.0`
-- [ ] Windows programma's deinstalleren `Planned for version 3.0`
-- [ ] Herstellen instellingen `Planned for version 3.0`
+- [ ] Geavanceerde systeeminformatie `Planned`
+- [ ] Disable wintracking intergratie `Planned`
+- [ ] Group policy toevoegen `Planned`
+- [ ] Windows programma's deinstalleren `Planned`
+- [ ] Herstellen instellingen `Planned`
 ---
 - [x] Geavanceerde logging `(22-4-2020)`
 - [x] Logging wegschrijven naar bestand en via window op te vragen `(22-4-2020)`

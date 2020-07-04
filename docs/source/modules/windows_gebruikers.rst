@@ -8,7 +8,8 @@ De gebruikers kunnen op 2 manieren toegevoegd worden aan de Pc.
 2. Invullen van de tabel in de Windows Deployment Tool.
 
 Een combinatie van deze twee is ook mogelijk. Wanneer een CSV bestand is geüpload naar de Windows Deployment Tool
-kunnen daarna nog gebruikers aan de tabel toegevoegd worden. Er kunnen maximaal 20 gebruikers per keer worden toegevoegd.
+kunnen daarna nog gebruikers aan de tabel toegevoegd worden. Standaard voorziet de invoertabel voor het toevoegen van 20
+gebruikers. Om meer gebruikers toe te voegen kan de knop **Rij toevoegen** worden gebruikt.
 
 Criteria Gebruikersnaam
 -----------------------
@@ -62,6 +63,8 @@ Kolommen die gebruikt moeten worden in de CSV voor het toevoegen van de lokale W
 Knoppen
 -------
 **Import CSV** - Importeer gebruikers middels een CSV bestand wat voldoet aan de bovenstaande beschrijving.
+
+**Rij toevoegen** - Voeg een nieuwe rij toe aan de tabel.
 
 **Tabel leegmaken** - Alle data wordt uit de tabel verwijderd. Huidige Windows gebruikers zullen niet verwijderd worden.
 
