@@ -1,6 +1,26 @@
 Release notes
 =============
 
+.. _release-2.4:
+
+Windows Deployment Tool v2.4
+-----------------------------
+
+Wat is nieuw
+~~~~~~~~~~~~
+* De Servicetag wordt opgehaald en opgeslagen in de rapportage en in de beschrijving van de Pc/Server
+* De BIOS versie wordt opgehaald en opgeslagen in de rapportage
+* Op de hoofd tab is de knop **Systeem controle** toegevoegd (`#17`_ by `TechNL`_)
+* Support (OEM) informatie kan nu toegevoegd worden aan de Pc/Server (`#18`_)
+* Aangepaste ondersteuning voor Windows 7. Let op niet alle functionaliteit werkt op een Windows 7 Pc, update naar Windows 10! (`#20`_)
+* Het is nu mogelijk om meer dan 20 personen handmatig toe te voegen. Meer informatie over het :doc:`toevoegen van gebruikers <modules/windows_gebruikers>`.
+
+Opgeloste problemen
+~~~~~~~~~~~~~~~~~~~
+* Probleem opgelost waarbij het niet mogelijk was om meer dan 20 gebruikers te importeren via een CSV bestand
+* Probleem opgelost waarbij niet alle gebruikers zichtbaar waren bij een systeem controle
+* Probleem opgelost waarbij niet meer dan 20 gebruikers zichtbaar waren in de rapportage
+
 .. _release-2.3:
 
 Windows Deployment Tool v2.3
@@ -12,7 +32,7 @@ Wat is nieuw
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
-* Probleem verholpen waarbij de applicatie vastloopt bij het opstarten op een Windows Server (`issue 15`_)
+* Probleem verholpen waarbij de applicatie vastloopt bij het opstarten op een Windows Server (`#15`_)
 
 .. _release-2.2:
 
@@ -77,4 +97,10 @@ Windows Deployment Tool v1.0 (13-5-2020)
 * Release Windows Deployment Tool
 
 .. Koppelingen naar Issues
-.. _`issue 15`: https://github.com/jebr/windows-deployment-tool/issues/15
+.. _`#15`: https://github.com/jebr/windows-deployment-tool/issues/15
+.. _`#17`: https://github.com/jebr/windows-deployment-tool/issues/17
+.. _`#18`: https://github.com/jebr/windows-deployment-tool/issues/18
+.. _`#20`: https://github.com/jebr/windows-deployment-tool/issues/20
+
+.. Koppelingen
+.. _`TechNL`: https://github.com/technl
