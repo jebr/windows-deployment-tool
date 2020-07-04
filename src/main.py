@@ -45,7 +45,6 @@ def resource_path(relative_path):
     # logging.info('Pyinstaller file location {}'.format(base_path))
     return os.path.join(base_path, relative_path)
 
-
 # External files
 ui_main_window = resource_path('resources/ui/main_window.ui')
 ui_hostname_window = resource_path('resources/ui/hostname_help_dialog.ui')
@@ -80,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.3)
+current_version = float(2.4)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -125,7 +124,6 @@ def thread(func):
         return wrapper
 
 
-
 class BaseWindow:
     @staticmethod
     def escape_cmd(command):
@@ -157,30 +155,6 @@ class BaseWindow:
         except Exception as e:
             print(e)
             logging.warning(e)
-
-    # print(powershell(['hostname']))
-    # def powershell(self, input_: list) -> str:
-    #     """
-    #     Returns a string when no error
-    #     If an exception occurs the exeption is logged and None is returned
-    #     """
-    #     try:
-    #         proc = subprocess.Popen(['powershell.exe'] + input_,
-    #                                 shell=True,
-    #                                 stdout=subprocess.PIPE,
-    #                                 stderr=subprocess.STDOUT,
-    #                                 stdin=subprocess.PIPE,
-    #                                 cwd=os.getcwd(),
-    #                                 env=os.environ)
-    #         proc.stdin.close()
-    #         outs, errs = proc.communicate(timeout=15)
-    #         return outs.decode('U8')
-    #     except Exception as e:
-    #         logging.warning(e)
-
-    @staticmethod
-    def escape_windows_cmd(command: str) -> str:
-        return command.replace('&', '^&')
 
     # Messageboxen
     def infobox(self, message):
@@ -307,9 +281,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
         # Initil checks
         self.windows7_check()
-        self.windows_version_check()
         self.usb_check()
         self.energy_check()
+        self.windows_version_check()
 
         # Hostname
         self.pushButton_info_hostname.clicked.connect(self.open_hostname_help_window)
@@ -1704,7 +1678,6 @@ class UsernameNotificationWindow(QDialog, BaseWindow):
         self.setFixedSize(572, 382)
         loadUi(ui_username_window, self)
         self.setWindowIcon(QtGui.QIcon(icon_window))
-
 
 
 def main():
