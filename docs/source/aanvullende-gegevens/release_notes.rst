@@ -13,7 +13,7 @@ Wat is nieuw
 * Op de hoofd tab is de knop **Systeem controle** toegevoegd (`#17`_ by `TechNL`_)
 * Support (OEM) informatie kan nu toegevoegd worden aan de Pc/Server (`#18`_)
 * Aangepaste ondersteuning voor Windows 7. Let op niet alle functionaliteit werkt op een Windows 7 Pc, update naar Windows 10! (`#20`_)
-* Het is nu mogelijk om meer dan 20 personen handmatig toe te voegen. Meer informatie over het :doc:`toevoegen van gebruikers <modules/windows_gebruikers>`.
+* Het is nu mogelijk om meer dan 20 personen handmatig toe te voegen. Meer informatie over het :doc:`toevoegen van gebruikers </modules/windows_gebruikers>`.
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
