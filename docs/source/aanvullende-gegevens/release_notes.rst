@@ -1,6 +1,15 @@
 Release notes
 =============
 
+.. _release-2.42:
+
+Windows Deployment Tool v2.42
+-----------------------------
+
+Opgeloste problemen
+~~~~~~~~~~~~~~~~~~~
+* Probleem opgelost waarbij de support informatie niet goed werd weergegeven.
+
 .. _release-2.41:
 
 Windows Deployment Tool v2.41
@@ -8,7 +17,7 @@ Windows Deployment Tool v2.41
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
-* Probleem opgelost waarbij de Windows Firewall niet werd aangepast op een NL versie.
+* Probleem opgelost waarbij de Windows Firewall niet werd aangepast op een Nederlandse Windows versie.
 
 .. _release-2.4:
 
