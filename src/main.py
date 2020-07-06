@@ -79,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.4)
+current_version = float(2.41)
 
 # Create temp folder
 current_user = getpass.getuser()
