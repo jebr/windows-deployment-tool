@@ -3,7 +3,7 @@ Release notes
 
 .. _release-2.41:
 
-Windows Deployment Tool v2.4
+Windows Deployment Tool v2.41
 -----------------------------
 
 Opgeloste problemen
