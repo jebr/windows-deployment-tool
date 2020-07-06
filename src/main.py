@@ -79,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.4)
+current_version = float(2.41)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -736,7 +736,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if "nl" in self.os_language:
             try:
                 self.powershell(['netsh advfirewall firewall '
-                                                         'set rule group=”Network Discovery” new enable=Yes'])
+                                                         'set rule group=”Netwerk detecteren” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
             except Exception as e:

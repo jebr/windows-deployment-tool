@@ -2,7 +2,7 @@
    sphinx-quickstart on Mon Jun  8 16:32:15 2020.
 
 ==============================================
-Windows Deployment Tool |release| documentatie
+Windows Deployment Tool v2.41 documentatie
 ==============================================
 
 Welkom op de Windows Deployment Tool documentatie pagina!
