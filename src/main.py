@@ -79,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.41)
+current_version = float(2.42)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -279,6 +279,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             self.statusBar().showMessage(f'Windows Deployment Tool v{self.new_version}')
             logging.info(f'Initial check: Current software version v{current_version}')
 
+        # Set counter for started threads
+        self.counter_threads = 0
+
         # Initil checks
         self.windows7_check()
         self.usb_check()
@@ -342,8 +345,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         datetime = QDateTime.currentDateTime()
         self.dateEdit_date.setDateTime(datetime)
 
-        # Set counter for started threads
-        self.counter_threads = 0
 
         self.add_user_table = BaseTable(self.tableWidget_add_users)
         self.get_users_table = BaseTable(self.tableWidget_active_users)
@@ -734,21 +735,23 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     @thread
     def firewall_network_discovery(self):
         if "nl" in self.os_language:
+            out = self.powershell(['netsh advfirewall firewall set rule group=”Netwerk detecteren” new enable=Yes'])
+            if not out.strip().endswith('Ok.'):
+                logging.error(f'Firewall Discovery failed with message: {out.strip()}')
+                self.warningbox('Functie niet uitgevoerd, zie logging voor meer info.')
+            else:
+                self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
+                logging.info('Firewall Discovery activated')
+        elif "en" in self.os_language:
             try:
-                self.powershell(['netsh advfirewall firewall '
-                                                         'set rule group=”Netwerk detecteren” new enable=Yes'])
+                self.powershell(['netsh advfirewall firewall set rule group=”Network Discovery” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
             except Exception as e:
                 logging.error(f'Firewall Discovery failed with message: {e}')
         else:
-            try:
-                self.powershell(['netsh advfirewall firewall '
-                                                         'set rule group=”Network Discovery” new enable=Yes'])
-                self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
-                logging.info('Firewall Discovery activated')
-            except Exception as e:
-                logging.error(f'Firewall Discovery failed with message: {e}')
+            logging.error(f'Language {self.os_language} is not supported.')
+            self.warningbox('Functie niet uitgevoerd, zie logging voor meer info.')
     
     # Functie voor het wijzigen van de computernaam
     def checkout_hostname(self, hostname):
@@ -1452,9 +1455,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def add_oem_info(self):
-        manufacturer_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).manufacturer'])
-        model_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).model'])
-        servicetag = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber'])
+        manufacturer_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).manufacturer']).strip()
+        model_pc = self.powershell(['(get-wmiobject Win32_ComputerSystem).model']).strip()
+        servicetag = self.powershell(['(Get-WmiObject -class Win32_Bios).serialnumber']).strip()
         manufacturer = 'Heijmans Utiliteit Safety & Security'
         supporthours = '24/7'
         supportphone = '+31 (0) 88 443 50 03'
@@ -1462,7 +1465,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         try:
             self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Manufacturer /t REG_SZ /d "{manufacturer}" /f'])
             self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Logo /t REG_SZ /d "{icon_heijmans_logo_square}" /f'])
-            subprocess.call(['powershell.exe', f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Model /t REG_SZ /d "{manufacturer_pc} {model_pc}" /f'])
+            self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v Model /t REG_SZ /d "{manufacturer_pc} {model_pc}" /f'])
             self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v SupportHours /t REG_SZ /d "{supporthours}" /f'])
             self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v SupportPhone /t REG_SZ /d "{supportphone}" /f'])
             self.powershell([f'reg add "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\OEMInformation" /v SupportURL /t REG_SZ /d "{supporturl}" /f'])
