@@ -736,7 +736,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if "nl" in self.os_language:
             try:
                 self.powershell(['netsh advfirewall firewall '
-                                                         'set rule group=”Network Discovery” new enable=Yes'])
+                                                         'set rule group=”Netwerk detecteren” new enable=Yes'])
                 self.pushButton_check_fw_discovery.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall Discovery activated')
             except Exception as e:
