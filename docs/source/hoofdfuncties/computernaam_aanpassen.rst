@@ -17,6 +17,10 @@ De naam van de Pc moet aan de volgende voorwaarden voldoen:
    * **ABCDEFGHIJKLMNOPQRSTUVWXYZ**
    * **-**
 
+De criteria voor de computernaam voldoen aan de `richtlijnen van Microsoft`_.
+
+.. _`richtlijnen van Microsoft`: https://support.microsoft.com/en-us/help/909264/naming-conventions-in-active-directory-for-computers-domains-sites-and
+
 De huidige computernaam is zichtbaar in de applicatie op de de hoofdpagina onder **Computernaam**.
 Ook is de computernaam op te vragen via de tab **Systeeminformatie**
 
