@@ -3,8 +3,8 @@ Release notes
 
 .. _release-2.42:
 
-Windows Deployment Tool v2.42
------------------------------
+Windows Deployment Tool v2.42 (6-7-2020)
+----------------------------------------
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
@@ -12,8 +12,8 @@ Opgeloste problemen
 
 .. _release-2.41:
 
-Windows Deployment Tool v2.41
------------------------------
+Windows Deployment Tool v2.41 (6-7-2020)
+----------------------------------------
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
@@ -21,8 +21,8 @@ Opgeloste problemen
 
 .. _release-2.4:
 
-Windows Deployment Tool v2.4
------------------------------
+Windows Deployment Tool v2.4 (4-7-2020)
+---------------------------------------
 
 Wat is nieuw
 ~~~~~~~~~~~~
@@ -41,7 +41,7 @@ Opgeloste problemen
 
 .. _release-2.3:
 
-Windows Deployment Tool v2.3
+Windows Deployment Tool v2.3 (18-6-2020)
 ----------------------------------------
 
 Wat is nieuw
