@@ -566,8 +566,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def windows_chars(self):
-        w_version = self.powershell(['(Get-WmiObject -class '
-                                         'Win32_OperatingSystem).Caption'])
+        w_version = self.powershell(['(Get-WmiObject -class Win32_OperatingSystem).Caption'])
         self.label_windows_version.setText(w_version.rstrip())
         self.label_windows_version.setToolTip(w_version.rstrip())
         logging.info(f'System check: Windows version - {w_version.rstrip()}')
