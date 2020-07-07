@@ -1307,6 +1307,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             Datum: {self.dateEdit_date.text()}<br/>
             <br/>
             Engineer: {self.lineEdit_engineer.text()}<br/>
+            <br/>
+            Windows Deployment Tool v{current_version}
             </font>
             '''
             para_character_data = Paragraph(character_data, style=styles['Normal'])

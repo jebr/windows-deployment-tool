@@ -1,5 +1,5 @@
-Systeeminformatie en Rapportage
-===============================
+Systeeminformatie
+=================
 
 Onder de tab Systeeminformatie zijn de volgende modules te vinden. De data van onderstaande onderdelen kan
 opgevraagd worden door de knop **Systeem controle** te gebruiken. Alle data die opgevraagd wordt zal ook gebruikt
