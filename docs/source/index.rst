@@ -107,9 +107,11 @@ Aanvullende gegevens
    :hidden:
 
    aanvullende-gegevens/release_notes
+   aanvullende-gegevens/syntaxis
 
 
 * :doc:`aanvullende-gegevens/release_notes`
+* :doc:`aanvullende-gegevens/syntaxis`
 
 Laatste info
 ============
