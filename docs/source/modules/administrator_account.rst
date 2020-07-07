@@ -19,3 +19,7 @@ Het wachtwoord voor het Administrator account moet voldoen aan de volgende voorw
    * **ABCDEFGHIJKLMNOPQRSTUVWXYZ**
    * **1234567890**
    * **~!@#$%^&*_-+=`|\(){}[]:;"`',.?/**
+
+Het wachtwoord criteria voldoet aan de `richtlijn van Microsoft`_ voor het gebruik van veilige wachtwoorden.
+
+.. _`richtlijn van Microsoft`: https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
