@@ -16,7 +16,7 @@ datum te selecteren.
 
 Benaming rapportage
 -------------------
-De rapportage krijgt een samengestelde naam waarin het project en de computernaam verwertk zijn.
+De rapportage krijgt een samengestelde naam waarin het project en de computernaam verwerkt zijn.
 Bijvoorbeeld: deploy_report_ProjectX_Computernaam.pdf
 
 .. image::/images/WDT-screenshot-system-information.png
