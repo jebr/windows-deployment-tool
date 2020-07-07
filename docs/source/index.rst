@@ -39,6 +39,7 @@ Modules
 * :doc:`modules/windows_gebruikers`
 * :doc:`modules/systeeminformatie`
 * :doc:`modules/administrator_account`
+* :doc:`modules/rapportage`
 
 .. toctree::
    :maxdepth: 1
@@ -48,6 +49,7 @@ Modules
    modules/windows_gebruikers
    modules/systeeminformatie
    modules/administrator_account
+   modules/rapportage
 
 .. _workflow-index:
 
