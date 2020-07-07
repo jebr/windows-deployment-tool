@@ -8,7 +8,7 @@ Windows Deployment Tool v2.42
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
-* Probleem opgelost waarbij de support informatie niet goed werd weergegeven.
+* Probleem opgelost waarbij de support informatie niet goed werd weergegeven. (`#22`_)
 
 .. _release-2.41:
 
@@ -17,7 +17,7 @@ Windows Deployment Tool v2.41
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
-* Probleem opgelost waarbij de Windows Firewall niet werd aangepast op een Nederlandse Windows versie.
+* Probleem opgelost waarbij de Windows Firewall niet werd aangepast op een Nederlandse Windows versie. (`#21`_ by `TechNL`_)
 
 .. _release-2.4:
 
@@ -119,6 +119,8 @@ Windows Deployment Tool v1.0 (13-5-2020)
 .. _`#17`: https://github.com/jebr/windows-deployment-tool/issues/17
 .. _`#18`: https://github.com/jebr/windows-deployment-tool/issues/18
 .. _`#20`: https://github.com/jebr/windows-deployment-tool/issues/20
+.. _`#21`: https://github.com/jebr/windows-deployment-tool/issues/21
+.. _`#22`: https://github.com/jebr/windows-deployment-tool/issues/22
 
 .. Koppelingen
 .. _`TechNL`: https://github.com/technl
