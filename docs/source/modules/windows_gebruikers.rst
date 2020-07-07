@@ -25,7 +25,7 @@ Windows gebruikersnaam moet voldoen aan de volgende voorwaarden:
 
    * **" / \ [ ] : ; | = , + * ? < > @**
 
-De gebruikersnaam criteria voldoet aan de `richtlijn van Microsoft`_.
+De gebruikersnaam criteria voldoen aan de `richtlijn van Microsoft`_.
 
 .. _`richtlijn van Microsoft`: https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-shell-setup-autologon-username
 
@@ -43,7 +43,7 @@ Het wachtwoord voor de Windows gebruiker moet voldoen aan de volgende voorwaarde
    * **1234567890**
    * **~!@#$%^&*_-+=`|\(){}[]:;"`',.?/**
 
-Het wachtwoord criteria voldoet aan de richtlijn van Microsoft voor het gebruik van `veilige wachtwoorden`_.
+De wachtwoord criteria voldoen aan de richtlijn van Microsoft voor het gebruik van `veilige wachtwoorden`_.
 
 .. _`veilige wachtwoorden`: https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
 
