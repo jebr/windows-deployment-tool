@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-DEBUG = False
+MOCK = False
 
 try:
     os.chdir(os.path.dirname(sys.argv[0]))
@@ -141,7 +141,9 @@ class BaseWindow:
             input_ = [self.escape_cmd(elem) for elem in input_]
         execute = ['powershell.exe'] + input_
 
-        if DEBUG:
+        if MOCK:
+            # Look up return value from a dict - if string not in dict then
+            # throw
             return ' '.join(execute)
 
         proc = subprocess.Popen(execute,
