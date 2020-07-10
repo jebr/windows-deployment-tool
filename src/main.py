@@ -265,6 +265,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_add_oem_info_check.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_transparant_image)))
 
         # Pre-system checks
         logging.info(f'========{date_time}========')
@@ -344,6 +346,10 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         # Set date for report
         datetime = QDateTime.currentDateTime()
         self.dateEdit_date.setDateTime(datetime)
+
+        # Set NTP Server / Client
+        self.pushButton_ntp_server.clicked.connect(self.activate_ntp_server)
+        self.pushButton_ntp_client.clicked.connect(self.activate_ntp_client)
 
 
         self.add_user_table = BaseTable(self.tableWidget_add_users)
@@ -1477,6 +1483,14 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.info('Added support information')
         except Exception as e:
             logging.error(f'Import support information failed with message {e}')
+
+    @thread
+    def activate_ntp_server(self):
+        pass
+
+    @thread
+    def activate_ntp_client(self):
+        pass
 
     # Windows
     def open_hostname_help_window(self):
