@@ -123,6 +123,9 @@ def thread(func):
             t.start()
         return wrapper
 
+class UnexpectedPowershellOutput(Exception):
+    pass
+
 
 class BaseWindow:
     @staticmethod
@@ -141,20 +144,18 @@ class BaseWindow:
         if DEBUG:
             return ' '.join(execute)
 
-        try:
-            proc = subprocess.Popen(execute,
-                                    shell=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT,
-                                    stdin=subprocess.PIPE,
-                                    cwd=os.getcwd(),
-                                    env=os.environ)
-            proc.stdin.close()
-            outs, errs = proc.communicate(timeout=15)
-            return outs.decode('U8')
-        except Exception as e:
-            print(e)
-            logging.warning(e)
+        proc = subprocess.Popen(execute,
+                                shell=True,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                stdin=subprocess.PIPE,
+                                cwd=os.getcwd(),
+                                env=os.environ)
+        proc.stdin.close()
+        outs, errs = proc.communicate(timeout=15)
+        if proc.returncode != 0:
+            raise UnexpectedPowershellOutput(outs.decode('U8'))
+        return outs.decode('U8')
 
     # Messageboxen
     def infobox(self, message):
