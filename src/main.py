@@ -1508,7 +1508,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if call.strip() != '0':
             logging.error(f'Activate NTP server failed with message: {call.strip()}')
 
-        self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
+        self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
 
     @thread
     def check_ntp_server(self):
@@ -1545,7 +1545,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         call = self.powershell(['Restart-Service w32Time'])
         if call.strip() != '0':
             logging.error(f'Activate NTP client failed with message: {call.strip()}')
-
+        self.label_ntp_server_address.setText(f'{self.ntp_server},0x8')
         self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
 
     @thread
@@ -1556,6 +1556,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         ntp_server_address = self.powershell([f'(Get-ItemProperty -Path {ntp_register_path} -Name {ntp_reg_sz}).NtpServer']).strip()
         if "0" in ntp_server_address:
             self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.label_ntp_server_address.setText(f'{ntp_server_address}')
             logging.info(f'System check: NTP client set to {ntp_server_address}')
             return True
         else:
