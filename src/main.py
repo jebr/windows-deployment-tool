@@ -1486,11 +1486,45 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def activate_ntp_server(self):
-        pass
+        call = self.powershell(['Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services'
+                                '\\w32time\\TimeProviders\\NtpServer" -Name "Enabled" -Value 1'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+            self.warningbox('NTP is niet geactiveerd, zie logging voor meer info.')
+
+        call = self.powershell(['Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\services'
+                                '\\W32Time\\Config" -Name "AnnounceFlags" -Value 5'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+            self.warningbox('NTP is niet geactiveerd, zie logging voor meer info.')
+
+        call = self.powershell(['netsh advfirewall firewall add rule name = "Allow NTP sync" '
+                                'dir=in action=allow protocol=UDP localport=123'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+            self.warningbox('NTP is niet geactiveerd, zie logging voor meer info.')
+
+        call = self.powershell(['Restart-Service w32Time'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+            self.warningbox('NTP is niet geactiveerd, zie logging voor meer info.')
 
     @thread
     def activate_ntp_client(self):
-        pass
+        ntp_server = self.lineEdit_ntp_client.text()
+        if not ntp_server:
+            self.warningbox('Voer het IP adres of de DNS naam in van de NTP server')
+            return
+        call = self.powershell([f'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services'
+                                f'\\w32time\\Parameters" -Name "NtpServer" -Value "{ntp_server},0x8"'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP client failed with message: {call.strip()}')
+            self.warningbox('NTP is niet geactiveerd, zie logging voor meer info.')
+
+        call = self.powershell(['Restart-Service w32Time'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP client failed with message: {call.strip()}')
+            self.warningbox('NTP is niet geactiveerd, zie logging voor meer info.')
 
     # Windows
     def open_hostname_help_window(self):
