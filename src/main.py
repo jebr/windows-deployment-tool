@@ -1491,21 +1491,21 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def activate_ntp_server(self):
         call = self.powershell(['Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services'
                                 '\\w32time\\TimeProviders\\NtpServer" -Name "Enabled" -Value 1'])
-        if call.strip() != '0':
+        if call.strip() != '':
             logging.error(f'Activate NTP server failed with message: {call.strip()}')
 
         call = self.powershell(['Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\services'
                                 '\\W32Time\\Config" -Name "AnnounceFlags" -Value 5'])
-        if call.strip() != '0':
+        if call.strip() != '':
             logging.error(f'Activate NTP server failed with message: {call.strip()}')
 
         call = self.powershell(['netsh advfirewall firewall add rule name = "Allow NTP sync" '
                                 'dir=in action=allow protocol=UDP localport=123'])
-        if call.strip() != '0':
+        if not call.strip().endswith('Ok.'):
             logging.error(f'Activate NTP server failed with message: {call.strip()}')
 
         call = self.powershell(['Restart-Service w32Time'])
-        if call.strip() != '0':
+        if call.strip() != '':
             logging.error(f'Activate NTP server failed with message: {call.strip()}')
 
         self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
