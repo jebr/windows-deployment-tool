@@ -1520,10 +1520,10 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if "1" in ntp_server_address:
             self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info(f'System check: NTP server enabled')
-            self.check_ntp_server = True
+            return True
         else:
-            self.check_ntp_server = False
             logging.info('System check: NTP server not enabled')
+            return False
 
         self.counter_threads += 1
 
@@ -1557,10 +1557,10 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if "0" in ntp_server_address:
             self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info(f'System check: NTP client set to {ntp_server_address}')
-            self.check_ntp_client = True
+            return True
         else:
-            self.check_ntp_client = False
             logging.info('System check: NTP client not set')
+            return False
 
         self.counter_threads += 1
 
