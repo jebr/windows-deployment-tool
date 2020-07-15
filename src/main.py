@@ -79,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.42)
+current_version = float(2.5)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -1563,7 +1563,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.info('System check: NTP client not set')
 
         self.counter_threads += 1
-
 
     # Windows
     def open_hostname_help_window(self):
