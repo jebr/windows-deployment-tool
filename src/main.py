@@ -1512,7 +1512,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def check_ntp_server(self):
-        ntp_register_path = 'Registry::"Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\w32time\\TimeProviders\\NtpServer"'
+        ntp_register_path = 'Registry::"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\w32time\\TimeProviders\\NtpServer"'
         ntp_reg_sz = "Enabled"
         # Controleer de waarde van het register
         ntp_server_address = self.powershell(
@@ -1547,7 +1547,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.error(f'Activate NTP client failed with message: {call.strip()}')
         self.label_ntp_server_address.setText(f'{self.ntp_server_address},0x8')
         self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
-        self.lineEdit_ntp_client.clear()
+        self.lineEdit_ntp_client.setText('')
 
     @thread
     def check_ntp_client(self):
