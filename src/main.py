@@ -1516,7 +1516,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         ntp_reg_sz = "Enabled"
         # Controleer de waarde van het register
         ntp_server_address = self.powershell(
-            [f'(Get-ItemProperty -Path {ntp_register_path} -Name {ntp_reg_sz}).NtpServer']).strip()
+            [f'(Get-ItemProperty -Path {ntp_register_path} -Name {ntp_reg_sz}).enabled']).strip()
         if "1" in ntp_server_address:
             self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
             logging.info(f'System check: NTP server enabled')
@@ -1528,8 +1528,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.counter_threads += 1
 
     def activate_ntp_client(self):
-        self.ntp_server = self.lineEdit_ntp_client.text()
-        if not self.ntp_server:
+        self.ntp_server_address = self.lineEdit_ntp_client.text()
+        if not self.ntp_server_address:
             self.warningbox('Voer het IP adres of de DNS naam in van de NTP server')
             return False
         else:
@@ -1538,15 +1538,16 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     @thread
     def activate_ntp_client_thread(self):
         call = self.powershell([f'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services'
-                                f'\\w32time\\Parameters" -Name "NtpServer" -Value "{self.ntp_server},0x8"'])
+                                f'\\w32time\\Parameters" -Name "NtpServer" -Value "{self.ntp_server_address},0x8"'])
         if call.strip() != '0':
             logging.error(f'Activate NTP client failed with message: {call.strip()}')
 
         call = self.powershell(['Restart-Service w32Time'])
         if call.strip() != '0':
             logging.error(f'Activate NTP client failed with message: {call.strip()}')
-        self.label_ntp_server_address.setText(f'{self.ntp_server},0x8')
+        self.label_ntp_server_address.setText(f'{self.ntp_server_address},0x8')
         self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
+        self.lineEdit_ntp_client.clear()
 
     @thread
     def check_ntp_client(self):
