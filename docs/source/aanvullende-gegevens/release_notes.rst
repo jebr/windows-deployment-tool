@@ -9,8 +9,8 @@ Windows Deployment Tool v2.5 (17-7-2020)
 Wat is nieuw
 ~~~~~~~~~~~~
 * Windows Deployment Tool versienummer toegevoegd aan de rapportage
-* NTP Server instellen
-* NTP client instellen
+* NTP Server instellen (`#19`_ by `TechNL`_)
+* NTP client instellen (`#19`_ by `TechNL`_)
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
@@ -137,6 +137,7 @@ Windows Deployment Tool v1.0 (13-5-2020)
 .. _`#20`: https://github.com/jebr/windows-deployment-tool/issues/20
 .. _`#21`: https://github.com/jebr/windows-deployment-tool/issues/21
 .. _`#22`: https://github.com/jebr/windows-deployment-tool/issues/22
+.. _`#19`: https://github.com/jebr/windows-deployment-tool/issues/19
 
-.. Koppelingen
+.. Koppelingen naar personen
 .. _`TechNL`: https://github.com/technl
