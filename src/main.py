@@ -79,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.42)
+current_version = float(2.5)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -228,7 +228,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def __init__(self):
         super().__init__()
         loadUi(ui_main_window, self)
-        self.setFixedSize(900, 780)
+        self.setFixedSize(900, 850)
         self.setWindowIcon(QtGui.QIcon(icon_window))
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
@@ -265,6 +265,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_check_energy_default.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_add_oem_info_check.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_ntp_server.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_transparant_image)))
 
         # Pre-system checks
         logging.info(f'========{date_time}========')
@@ -345,6 +348,10 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         datetime = QDateTime.currentDateTime()
         self.dateEdit_date.setDateTime(datetime)
 
+        # Set NTP Server / Client
+        self.pushButton_ntp_server_enable.clicked.connect(self.activate_ntp_server)
+        self.pushButton_ntp_client_enable.clicked.connect(self.activate_ntp_client)
+
 
         self.add_user_table = BaseTable(self.tableWidget_add_users)
         self.get_users_table = BaseTable(self.tableWidget_active_users)
@@ -380,6 +387,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             return ('Latest Version')
         return ('New Version')
 
+    # Systeemcontrole button
     @thread
     def system_checks(self):
         self.counter_threads = 0
@@ -393,10 +401,12 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.energy_check()
         self.get_users()
         self.support_info_check()
+        self.check_ntp_server()
+        self.check_ntp_client()
 
         while True:
             # print(self.counter_threads)
-            if self.counter_threads == 8:  # Verhogen als er meer threads in
+            if self.counter_threads == 10: # Verhogen als er meer threads in
                 # deze functie geplaatst worden
                 break
             time.sleep(0.05)
@@ -565,6 +575,41 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.counter_threads += 1
 
     @thread
+    def check_ntp_server(self):
+        ntp_register_path = 'Registry::"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\w32time\\TimeProviders\\NtpServer"'
+        ntp_reg_sz = "Enabled"
+        # Controleer de waarde van het register
+        ntp_server_enabled = \
+            self.powershell([f'Get-ItemPropertyValue -Path {ntp_register_path} -Name {ntp_reg_sz}']).strip()
+        if ntp_server_enabled == '1':
+            self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.ntp_server_return = True
+            logging.info(f'System check: NTP server enabled')
+        else:
+            self.ntp_server_return = False
+            logging.info('System check: NTP server not enabled')
+
+        self.counter_threads += 1
+
+    @thread
+    def check_ntp_client(self):
+        ntp_register_path = 'Registry::"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\w32time\\Parameters"'
+        ntp_reg_sz = "NtpServer"
+        # Controleer de waarde van het register
+        ntp_server_address = \
+            self.powershell([f'Get-ItemPropertyValue -Path {ntp_register_path} -Name {ntp_reg_sz}']).strip()
+        if "0" in ntp_server_address:
+            self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.label_ntp_server_address.setText(f'{ntp_server_address}')
+            self.l_ntp_client.setText(f'{ntp_server_address}')
+            logging.info(f'System check: NTP client set to {ntp_server_address}')
+        else:
+            logging.info('System check: NTP client not set')
+
+        self.counter_threads += 1
+
+    @thread
     def windows_chars(self):
         w_version = self.powershell(['(Get-WmiObject -class Win32_OperatingSystem).Caption'])
         self.label_windows_version.setText(w_version.rstrip())
@@ -717,7 +762,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if "nl" in self.os_language:
             try:
                 self.powershell(['Set-NetFirewallRule -DisplayName \"Bestands- en '
-                                       'printerdeling (Echoaanvraag - ICMPv4-In)\" -Profile Any -Enabled True'])
+                                 'printerdeling (Echoaanvraag - ICMPv4-In)\" -Profile Any -Enabled True'])
                 self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall ICMP activated')
             except Exception as e:
@@ -725,7 +770,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         else:
             try:
                 self.powershell(['Set-NetFirewallRule -DisplayName \"File and Printer Sharing '
-                                                         '(Echo Request - ICMPv4-In)\" -Profile Any -Enabled True'])
+                                 '(Echo Request - ICMPv4-In)\" -Profile Any -Enabled True'])
                 self.pushButton_check_fw_icmp.setIcon(QIcon(QPixmap(icon_circle_check)))
                 logging.info('Firewall ICMP activated')
             except Exception as e:
@@ -751,7 +796,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         else:
             logging.error(f'Language {self.os_language} is not supported.')
             self.warningbox('Functie niet uitgevoerd, zie logging voor meer info.')
-    
+
     # Functie voor het wijzigen van de computernaam
     def checkout_hostname(self, hostname):
         if len(hostname) > 15 or len(hostname) < 2:
@@ -818,9 +863,9 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 # Import secpol_new policy
                 try:
                     self.powershell([f'c:\\windows\\system32\\secedit /configure '
-                                                             f'/db c:\\windows\\system32\\defltbase.sdb /cfg {secpol_new} '
-                                                             f'/overwrite /log c:\\windows\\system32\\secpol_import.log '
-                                                             f'/quiet'])
+                                     f'/db c:\\windows\\system32\\defltbase.sdb /cfg {secpol_new} '
+                                     f'/overwrite /log c:\\windows\\system32\\secpol_import.log '
+                                     f'/quiet'])
                     logging.info('Import security policy succesful')
                     try:
                         self.powershell(['echo y | gpupdate /force /wait:0'])
@@ -873,7 +918,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def enable_usb(self):
         try:
             self.powershell(['reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
-                                                     '\\Services\\USBSTOR /v Start /t REG_DWORD /d 3 /f'])
+                             '\\Services\\USBSTOR /v Start /t REG_DWORD /d 3 /f'])
             self.pushButton_usb_enable.setDisabled(True)
             self.pushButton_usb_disable.setDisabled(False)
             self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(icon_circle_check)))
@@ -887,7 +932,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def disable_usb(self):
         try:
             self.powershell(['reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet'
-                                                     '\\Services\\USBSTOR /v Start /t REG_DWORD /d 4 /f'])
+                             '\\Services\\USBSTOR /v Start /t REG_DWORD /d 4 /f'])
             self.pushButton_usb_disable.setDisabled(True)
             self.pushButton_usb_enable.setDisabled(False)
             self.pushButton_check_usb_enable.setIcon(QIcon(QPixmap(icon_transparant_image)))
@@ -907,22 +952,22 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             if "nl" in self.os_language:
                 try:
                     self.powershell(['Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
-                                                             'Gebruikersmodus (TCP-In)\" -Profile Any -Enabled True'])
+                                     'Gebruikersmodus (TCP-In)\" -Profile Any -Enabled True'])
                     self.powershell(['Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
-                                                             'Gebruikersmodus (UDP-In)\" -Profile Any -Enabled True'])
+                                     'Gebruikersmodus (UDP-In)\" -Profile Any -Enabled True'])
                     self.powershell(['Set-NetFirewallRule -DisplayName \"Extern bureaublad - '
-                                                             'Schaduw (TCP-In)\" -Profile Any -Enabled True'])
+                                     'Schaduw (TCP-In)\" -Profile Any -Enabled True'])
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
                 except Exception as e:
                     logging.error(f'Firewall settings RDP failed with message: {e}')
             elif "en" in self.os_language:
                 try:
                     self.powershell(['Set-NetFirewallRule -DisplayName \"Remote Desktop - '
-                                                             'User Mode (TCP-In)\" -Profile Any -Enabled True'])
+                                     'User Mode (TCP-In)\" -Profile Any -Enabled True'])
                     self.powershell(['Set-NetFirewallRule -DisplayName \"Remote Desktop - '
-                                                             'User Mode (UDP-In)\" -Profile Any -Enabled True'])
+                                     'User Mode (UDP-In)\" -Profile Any -Enabled True'])
                     self.powershell(['Set-NetFirewallRule -DisplayName \"Remote Desktop - '
-                                                             'Shadow (TCP-In)\" -Profile Any -Enabled True'])
+                                     'Shadow (TCP-In)\" -Profile Any -Enabled True'])
                     logging.info('Firewall instellingen voor RDP zijn geactiveerd')
                 except Exception as e:
                     logging.error(f'Firewall settings RDP failed with message: {e}')
@@ -976,7 +1021,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 logging.info('Energy plan: always on activated')
             except Exception as e:
                 logging.error(f'Import energy plan failed with message {e}')
-                
+
     @thread
     def energy_lock(self):
         global energy_config_lock
@@ -1072,7 +1117,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def load_csv_file(self):
         # self.clear_users_table()
         fileName, _ = QFileDialog.getOpenFileName(self,
-            "selecteer cvs bestand", "", "csv (*.csv)")
+                                                  "selecteer cvs bestand", "", "csv (*.csv)")
         if not fileName:
             # If window is clicked away
             return
@@ -1373,6 +1418,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             icmp_enabled = 'Ja' if self.fw_icmp_check_return else 'Nee'
             discovery_enabled = 'Ja' if self.fw_discovery_check_return else 'Nee'
             support_info_added = 'Ja' if self.support_info_check else 'Nee'
+            ntp_server_enabled = 'Ja' if self.ntp_server_return else 'Nee'
 
             application_settings_data = [
                 ['Security Policy toegepast', secpol_enabled],
@@ -1381,12 +1427,14 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 ['Windows Firewall ICMP toegestaan', icmp_enabled],
                 ['Windows Firewall Discovery toegestaan', discovery_enabled],
                 ['Energiebeheer', self.label_energie_settings.text()],
-                ['Energiebeheer', support_info_added]
+                ['Energiebeheer', support_info_added],
+                ['NTP server', ntp_server_enabled],
+                ['NTP client', self.label_ntp_server_address.text()]
             ]
             table_application_settings = Table(application_settings_data, style=[('OUTLINE', (0, 0), (-1, -1), 0.25, colors.black),
                                                                                  ('LINEAFTER', (0, 0), (0, -1), 0.25, colors.black)], colWidths=250)
             table_application_settings.wrapOn(my_canvas, width, height)
-            table_application_settings.drawOn(my_canvas, 50, 350)
+            table_application_settings.drawOn(my_canvas, 50, 310)
 
             # Footer
             para_footer.drawOn(my_canvas, 50, 20)
@@ -1477,6 +1525,52 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             logging.info('Added support information')
         except Exception as e:
             logging.error(f'Import support information failed with message {e}')
+
+    @thread
+    def activate_ntp_server(self):
+        call = self.powershell(['Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services'
+                                '\\w32time\\TimeProviders\\NtpServer" -Name "Enabled" -Value 1'])
+        if call.strip() != '':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+
+        call = self.powershell(['Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\services'
+                                '\\W32Time\\Config" -Name "AnnounceFlags" -Value 5'])
+        if call.strip() != '':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+
+        call = self.powershell(['netsh advfirewall firewall add rule name = "Allow NTP sync" '
+                                'dir=in action=allow protocol=UDP localport=123'])
+        if not call.strip().endswith('Ok.'):
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+
+        call = self.powershell(['Restart-Service w32Time'])
+        if call.strip() != '':
+            logging.error(f'Activate NTP server failed with message: {call.strip()}')
+
+        logging.info(f'System check: NTP server enabled')
+        self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
+
+    def activate_ntp_client(self):
+        self.ntp_server_address = self.lineEdit_ntp_client.text()
+        if not self.ntp_server_address:
+            self.warningbox('Voer het IP adres of de DNS naam in van de NTP server')
+            return False
+        else:
+            self.activate_ntp_client_thread()
+
+    @thread
+    def activate_ntp_client_thread(self):
+        call = self.powershell([f'Set-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Services'
+                                f'\\w32time\\Parameters" -Name "NtpServer" -Value "{self.ntp_server_address},0x8"'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP client failed with message: {call.strip()}')
+
+        call = self.powershell(['Restart-Service w32Time'])
+        if call.strip() != '0':
+            logging.error(f'Activate NTP client failed with message: {call.strip()}')
+        self.label_ntp_server_address.setText(f'{self.ntp_server_address},0x8')
+        self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
+        self.lineEdit_ntp_client.setText('')
 
     # Windows
     def open_hostname_help_window(self):
