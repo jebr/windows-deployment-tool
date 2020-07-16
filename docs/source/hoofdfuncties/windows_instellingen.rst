@@ -3,10 +3,10 @@ Windows Instellingen
 
 De volgende Windows instellingen kunnen uitgevoerd worden via de Windows Deployment Tool.
 
-* :ref:`remote_desktop` Remote Desktop
-* :ref:`add_support_info` Support informatie toevoegen
-* :ref:`ntp_server` NTP Server activeren
-* :ref:`ntp_client` NTP Client activeren
+* :ref:`remote_desktop`
+* :ref:`add_support_info`
+* :ref:`ntp_server`
+* :ref:`ntp_client`
 
 
 .. _remote_desktop:
