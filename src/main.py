@@ -1417,7 +1417,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             rdp_enabled = 'Ja' if self.rdp_check_return else 'Nee'
             icmp_enabled = 'Ja' if self.fw_icmp_check_return else 'Nee'
             discovery_enabled = 'Ja' if self.fw_discovery_check_return else 'Nee'
-            support_info_added = 'Ja' if self.support_info_check else 'Nee'
+            support_info_added = 'Ja' if self.support_info_check_return else 'Nee'
             ntp_server_enabled = 'Ja' if self.ntp_server_return else 'Nee'
 
             application_settings_data = [
@@ -1427,7 +1427,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 ['Windows Firewall ICMP toegestaan', icmp_enabled],
                 ['Windows Firewall Discovery toegestaan', discovery_enabled],
                 ['Energiebeheer', self.label_energie_settings.text()],
-                ['Energiebeheer', support_info_added],
+                ['Support Info toegevoegd', support_info_added],
                 ['NTP server', ntp_server_enabled],
                 ['NTP client', self.label_ntp_server_address.text()]
             ]
