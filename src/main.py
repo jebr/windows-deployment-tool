@@ -228,7 +228,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
     def __init__(self):
         super().__init__()
         loadUi(ui_main_window, self)
-        self.setFixedSize(900, 780)
+        self.setFixedSize(900, 850)
         self.setWindowIcon(QtGui.QIcon(icon_window))
         self.actionAbout.triggered.connect(self.open_info_window)
         self.actionLicence.triggered.connect(self.open_license_window)
@@ -266,6 +266,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_check_support_info.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_add_oem_info_check.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_transparant_image)))
+        self.pushButton_ntp_server.setIcon(QIcon(QPixmap(icon_transparant_image)))
         self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_transparant_image)))
 
         # Pre-system checks
@@ -348,8 +349,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.dateEdit_date.setDateTime(datetime)
 
         # Set NTP Server / Client
-        self.pushButton_ntp_server.clicked.connect(self.activate_ntp_server)
-        self.pushButton_ntp_client.clicked.connect(self.activate_ntp_client)
+        self.pushButton_ntp_server_enable.clicked.connect(self.activate_ntp_server)
+        self.pushButton_ntp_client_enable.clicked.connect(self.activate_ntp_client)
 
 
         self.add_user_table = BaseTable(self.tableWidget_add_users)
@@ -571,6 +572,39 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                     logging.info('System check: Firewall discovery blocked')
             except Exception as e:
                 logging.info(f'System check: Firewall discovery check failed with message: {e}')
+        self.counter_threads += 1
+
+    @thread
+    def check_ntp_server(self):
+        ntp_register_path = 'Registry::"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\w32time\\TimeProviders\\NtpServer"'
+        ntp_reg_sz = "Enabled"
+        # Controleer de waarde van het register
+        ntp_server_enabled = \
+            self.powershell([f'Get-ItemPropertyValue -Path {ntp_register_path} -Name {ntp_reg_sz}']).strip()
+        if ntp_server_enabled == '1':
+            self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.pushButton_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
+            logging.info(f'System check: NTP server enabled')
+        else:
+            logging.info('System check: NTP server not enabled')
+
+        self.counter_threads += 1
+
+    @thread
+    def check_ntp_client(self):
+        ntp_register_path = 'Registry::"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\w32time\\Parameters"'
+        ntp_reg_sz = "NtpServer"
+        # Controleer de waarde van het register
+        ntp_server_address = \
+            self.powershell([f'Get-ItemPropertyValue -Path {ntp_register_path} -Name {ntp_reg_sz}']).strip()
+        if "0" in ntp_server_address:
+            self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.label_ntp_server_address.setText(f'{ntp_server_address}')
+            self.l_ntp_client.setText(f'{ntp_server_address}')
+            logging.info(f'System check: NTP client set to {ntp_server_address}')
+        else:
+            logging.info('System check: NTP client not set')
+
         self.counter_threads += 1
 
     @thread
@@ -1508,24 +1542,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if call.strip() != '':
             logging.error(f'Activate NTP server failed with message: {call.strip()}')
 
+        logging.info(f'System check: NTP server enabled')
         self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
-
-    @thread
-    def check_ntp_server(self):
-        ntp_register_path = 'Registry::"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\w32time\\TimeProviders\\NtpServer"'
-        ntp_reg_sz = "Enabled"
-        # Controleer de waarde van het register
-        ntp_server_address = self.powershell(
-            [f'(Get-ItemProperty -Path {ntp_register_path} -Name {ntp_reg_sz}).enabled']).strip()
-        if "1" in ntp_server_address:
-            self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
-            logging.info(f'System check: NTP server enabled')
-            return True
-        else:
-            logging.info('System check: NTP server not enabled')
-            return False
-
-        self.counter_threads += 1
 
     def activate_ntp_client(self):
         self.ntp_server_address = self.lineEdit_ntp_client.text()
@@ -1548,23 +1566,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.label_ntp_server_address.setText(f'{self.ntp_server_address},0x8')
         self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
         self.lineEdit_ntp_client.setText('')
-
-    @thread
-    def check_ntp_client(self):
-        ntp_register_path = 'Registry::"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\w32time\\Parameters"'
-        ntp_reg_sz = "NtpServer"
-        # Controleer de waarde van het register
-        ntp_server_address = self.powershell([f'(Get-ItemProperty -Path {ntp_register_path} -Name {ntp_reg_sz}).NtpServer']).strip()
-        if "0" in ntp_server_address:
-            self.pushButton_check_ntp_client.setIcon(QIcon(QPixmap(icon_circle_check)))
-            self.label_ntp_server_address.setText(f'{ntp_server_address}')
-            logging.info(f'System check: NTP client set to {ntp_server_address}')
-            return True
-        else:
-            logging.info('System check: NTP client not set')
-            return False
-
-        self.counter_threads += 1
 
     # Windows
     def open_hostname_help_window(self):
