@@ -1,10 +1,26 @@
 Release notes
 =============
 
+.. _release-2.5::
+
+Windows Deployment Tool v2.5 (17-7-2020)
+----------------------------------------
+
+Wat is nieuw
+~~~~~~~~~~~~
+* Windows Deployment Tool versienummer toegevoegd aan de rapportage
+* NTP Server instellen
+* NTP client instellen
+
+Opgeloste problemen
+~~~~~~~~~~~~~~~~~~~
+* Verschillende verbeteringen aan de rapportage
+* Algemene verbeteringen aan de applicatie
+
 .. _release-2.42:
 
-Windows Deployment Tool v2.42
------------------------------
+Windows Deployment Tool v2.42 (6-7-2020)
+----------------------------------------
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
@@ -12,8 +28,8 @@ Opgeloste problemen
 
 .. _release-2.41:
 
-Windows Deployment Tool v2.41
------------------------------
+Windows Deployment Tool v2.41 (6-7-2020)
+----------------------------------------
 
 Opgeloste problemen
 ~~~~~~~~~~~~~~~~~~~
@@ -21,8 +37,8 @@ Opgeloste problemen
 
 .. _release-2.4:
 
-Windows Deployment Tool v2.4
------------------------------
+Windows Deployment Tool v2.4 (4-7-2020)
+---------------------------------------
 
 Wat is nieuw
 ~~~~~~~~~~~~
@@ -41,7 +57,7 @@ Opgeloste problemen
 
 .. _release-2.3:
 
-Windows Deployment Tool v2.3
+Windows Deployment Tool v2.3 (18-6-2020)
 ----------------------------------------
 
 Wat is nieuw
