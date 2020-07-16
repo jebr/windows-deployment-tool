@@ -584,8 +584,10 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         if ntp_server_enabled == '1':
             self.pushButton_check_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
             self.pushButton_ntp_server.setIcon(QIcon(QPixmap(icon_circle_check)))
+            self.ntp_server_return = True
             logging.info(f'System check: NTP server enabled')
         else:
+            self.ntp_server_return = False
             logging.info('System check: NTP server not enabled')
 
         self.counter_threads += 1
@@ -1416,6 +1418,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             icmp_enabled = 'Ja' if self.fw_icmp_check_return else 'Nee'
             discovery_enabled = 'Ja' if self.fw_discovery_check_return else 'Nee'
             support_info_added = 'Ja' if self.support_info_check else 'Nee'
+            ntp_server_enabled = 'Ja' if self.ntp_server_return else 'Nee'
 
             application_settings_data = [
                 ['Security Policy toegepast', secpol_enabled],
@@ -1424,12 +1427,14 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 ['Windows Firewall ICMP toegestaan', icmp_enabled],
                 ['Windows Firewall Discovery toegestaan', discovery_enabled],
                 ['Energiebeheer', self.label_energie_settings.text()],
-                ['Energiebeheer', support_info_added]
+                ['Energiebeheer', support_info_added],
+                ['NTP server', ntp_server_enabled],
+                ['NTP client', self.label_ntp_server_address.text()]
             ]
             table_application_settings = Table(application_settings_data, style=[('OUTLINE', (0, 0), (-1, -1), 0.25, colors.black),
                                                                                  ('LINEAFTER', (0, 0), (0, -1), 0.25, colors.black)], colWidths=250)
             table_application_settings.wrapOn(my_canvas, width, height)
-            table_application_settings.drawOn(my_canvas, 50, 350)
+            table_application_settings.drawOn(my_canvas, 50, 310)
 
             # Footer
             para_footer.drawOn(my_canvas, 50, 20)
