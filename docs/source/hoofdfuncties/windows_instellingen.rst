@@ -3,11 +3,21 @@ Windows Instellingen
 
 De volgende Windows instellingen kunnen uitgevoerd worden via de Windows Deployment Tool.
 
+* :ref:`remote_desktop` Remote Desktop
+* :ref:`add_support_info` Support informatie toevoegen
+* :ref:`ntp_server` NTP Server activeren
+* :ref:`ntp_client` NTP Client activeren
+
+
+.. _remote_desktop:
+
 Remote Desktop Activeren
 ------------------------
 
 Wanneer Remote Desktop wordt geactiveerd is het mogelijk om de Pc op afstand volledig over te nemen.
 `Uitleg over Remote Desktop (Wikipedia)`_
+
+.. _add_support_info:
 
 Support informatie toevoegen
 ----------------------------
@@ -23,6 +33,8 @@ Met het toevoegen van de Support informatie worden de volgende onderdelen ingevu
 Verder wordt de servicetag van de Pc of Server toegevoegd aan de beschrijving van de Pc of Server. De servicetag
 wordt gebruikt als basis voor het contract met de leverancier.
 
+.. _ntp_server:
+
 NTP Server activeren
 ----------------------------
 
@@ -30,6 +42,8 @@ Met het activeren van de NTP server wordt de Pc / Server ingesteld als NTP Serve
 Apparaten binnen het netwerk kunnen vervolgens de tijd synchroniseren met de NTP Server. Merk op dat wanneer de NTP
 Server wordt geactiveerd ook de NTP Client ingesteld kan worden. Op deze manier fungeert de Pc / Server als NTP Server
 binnen het netwerk en wordt de tijd van de server gesynchroniseerd met de tijd van de ingestelde NTP Client gegevens.
+
+.. _ntp_client:
 
 NTP Client activeren
 ----------------------------
