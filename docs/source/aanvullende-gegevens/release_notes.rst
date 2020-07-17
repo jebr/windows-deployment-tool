@@ -1,7 +1,7 @@
 Release notes
 =============
 
-.. _release-2.5::
+.. _release-2.5:
 
 Windows Deployment Tool v2.5 (17-7-2020)
 ----------------------------------------
