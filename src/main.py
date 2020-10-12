@@ -744,25 +744,47 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def get_users(self):
-        w_users = self.powershell(['Get-LocalUser | select name, enabled'])
-        w_users_output = w_users.splitlines()
-        w_group_admin = self.powershell(['net localgroup administrators'])
-        self.get_users_table.clearContents()
-        i = 0
-        for user in w_users_output:
-            if 'True' not in user:
-                continue
-            rowcount = self.get_users_table.get_rows()
-            if rowcount == i:
-                self.get_users_table.add_row()
-            new_user = user.replace('True', "").replace(" ", "")
-            self.get_users_table.set_item(i, 0, new_user)
-            if new_user in w_group_admin:
-                self.get_users_table.set_item(i, 1, 'Ja')
-            else:
-                self.get_users_table.set_item(i, 1, 'Nee')
-            i += 1
-        self.counter_threads += 1
+        if "Windows-7" in self.os_version:
+            w7_users = self.powershell(['Get-WmiObject -Class Win32_UserAccount -Filter {LocalAccount="True" and Disabled="False"} | Select Name, Disabled'])
+            w7_users_output = w7_users.splitlines()
+            logging.error(w7_users_output)
+            w7_group_admin = self.powershell(['net localgroup administrators'])
+            self.get_users_table.clearContents()
+            i = 0
+            for user in w7_users_output:
+                if "False" not in user:
+                    continue
+                rowcount = self.get_users_table.get_rows()
+                if rowcount == i:
+                    self.get_users_table.add_row()
+                new_user = user.replace('False', "").replace(" ", "")
+                self.get_users_table.set_item(i, 0, new_user)
+                if new_user in w7_group_admin:
+                    self.get_users_table.set_item(i, 1, 'Ja')
+                else:
+                    self.get_users_table.set_item(i, 1, 'Nee')
+                i += 1
+            self.counter_threads += 1
+        else:
+            w_users = self.powershell(['Get-LocalUser | select name, enabled'])
+            w_users_output = w_users.splitlines()
+            w_group_admin = self.powershell(['net localgroup administrators'])
+            self.get_users_table.clearContents()
+            i = 0
+            for user in w_users_output:
+                if 'True' not in user:
+                    continue
+                rowcount = self.get_users_table.get_rows()
+                if rowcount == i:
+                    self.get_users_table.add_row()
+                new_user = user.replace('True', "").replace(" ", "")
+                self.get_users_table.set_item(i, 0, new_user)
+                if new_user in w_group_admin:
+                    self.get_users_table.set_item(i, 1, 'Ja')
+                else:
+                    self.get_users_table.set_item(i, 1, 'Nee')
+                i += 1
+            self.counter_threads += 1
 
     @thread
     def firewall_ping(self):
