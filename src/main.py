@@ -23,7 +23,7 @@ from reportlab.lib import colors
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
-    QTableWidgetItem, QLabel
+    QTableWidgetItem, QLabel, QTabWidget
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -79,7 +79,7 @@ def is_admin():
 
 
 # Software version
-current_version = float(2.5)
+current_version = float(2.6)
 
 # Create temp folder
 current_user = getpass.getuser()
@@ -355,6 +355,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
         self.add_user_table = BaseTable(self.tableWidget_add_users)
         self.get_users_table = BaseTable(self.tableWidget_active_users)
+
 
     # Button to check on updates
     def check_update_wdt_trigger(self):
@@ -649,44 +650,50 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         logging.info(f'System check: Manufacturer / Model - {manufacturer.rstrip()} / {model.rstrip()}')
 
         # Get PC Type
-        type_number = self.powershell(['(get-wmiobject Win32_ComputerSystem).PCSystemTypeEx'])
-        type_number = int(type_number.rstrip())
-        if type_number == 1:
-            self.label_type.setText('Desktop')
-            self.label_type.setToolTip('Desktop')
+
+        if "Windows-7" in self.os_version:
+            self.label_type.setText('Windows 7 - Unknown')
+            self.label_type.setToolTip('Windows 7 - Unknown')
             logging.info('System check: Computer type - Desktop')
-        elif type_number == 2:
-            self.label_type.setText('Mobile / Laptop')
-            self.label_type.setToolTip('Mobile / Laptop')
-            logging.info('System check: Computer type - Mobile / Laptop')
-        elif type_number == 3:
-            self.label.type.setText('Workstation')
-            self.label_type.setToolTip('Workstation')
-            logging.info('System check: Computer type - Workstation')
-        elif type_number == 4:
-            self.label_type.setText('Enterprise Server')
-            self.label_type.setToolTip('Enterprise Server')
-            logging.info('System check: Computer type - Server')
-        elif type_number == 5:
-            self.label_type.setText('Small Office Server (SOHO)')
-            self.label_type.setToolTip('Small Office Server (SOHO)')
-            logging.info('System check: Computer type - Small Office Server')
-        elif type_number == 6:
-            self.label_type.setText('Appliance PC')
-            self.label_type.setToolTip('Appliance PC')
-            logging.info('System check: Computer type - Appliance PC')
-        elif type_number == 7:
-            self.label_type.setText('Performance Server')
-            self.label_type.setToolTip('Performance Server')
-            logging.info('System check: Computer type - Performance Server')
-        elif type_number == 8:
-            self.label_type.setText('Maximum')
-            self.label_type.setToolTip('Maximum')
-            logging.info('System check: Computer type - Maximum')
         else:
-            self.label_type('Onbekend product type')
-            self.label_type.setToolTip('Onbekend product type')
-            logging.info('System check: Computer type - Unknown')
+            type_number = self.powershell(['(get-wmiobject Win32_ComputerSystem).PCSystemTypeEx'])
+            type_number = int(type_number.rstrip())
+            if type_number == 1:
+                self.label_type.setText('Desktop')
+                self.label_type.setToolTip('Desktop')
+                logging.info('System check: Computer type - Desktop')
+            elif type_number == 2:
+                self.label_type.setText('Mobile / Laptop')
+                self.label_type.setToolTip('Mobile / Laptop')
+                logging.info('System check: Computer type - Mobile / Laptop')
+            elif type_number == 3:
+                self.label.type.setText('Workstation')
+                self.label_type.setToolTip('Workstation')
+                logging.info('System check: Computer type - Workstation')
+            elif type_number == 4:
+                self.label_type.setText('Enterprise Server')
+                self.label_type.setToolTip('Enterprise Server')
+                logging.info('System check: Computer type - Server')
+            elif type_number == 5:
+                self.label_type.setText('Small Office Server (SOHO)')
+                self.label_type.setToolTip('Small Office Server (SOHO)')
+                logging.info('System check: Computer type - Small Office Server')
+            elif type_number == 6:
+                self.label_type.setText('Appliance PC')
+                self.label_type.setToolTip('Appliance PC')
+                logging.info('System check: Computer type - Appliance PC')
+            elif type_number == 7:
+                self.label_type.setText('Performance Server')
+                self.label_type.setToolTip('Performance Server')
+                logging.info('System check: Computer type - Performance Server')
+            elif type_number == 8:
+                self.label_type.setText('Maximum')
+                self.label_type.setToolTip('Maximum')
+                logging.info('System check: Computer type - Maximum')
+            else:
+                self.label_type('Onbekend product type')
+                self.label_type.setToolTip('Onbekend product type')
+                logging.info('System check: Computer type - Unknown')
 
         # Calculate RAM
         bytes_number = self.powershell(['(get-wmiobject Win32_ComputerSystem).totalphysicalmemory'])
@@ -737,25 +744,47 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
 
     @thread
     def get_users(self):
-        w_users = self.powershell(['Get-LocalUser | select name, enabled'])
-        w_users_output = w_users.splitlines()
-        w_group_admin = self.powershell(['net localgroup administrators'])
-        self.get_users_table.clearContents()
-        i = 0
-        for user in w_users_output:
-            if 'True' not in user:
-                continue
-            rowcount = self.get_users_table.get_rows()
-            if rowcount == i:
-                self.get_users_table.add_row()
-            new_user = user.replace('True', "").replace(" ", "")
-            self.get_users_table.set_item(i, 0, new_user)
-            if new_user in w_group_admin:
-                self.get_users_table.set_item(i, 1, 'Ja')
-            else:
-                self.get_users_table.set_item(i, 1, 'Nee')
-            i += 1
-        self.counter_threads += 1
+        if "Windows-7" in self.os_version:
+            w7_users = self.powershell(['Get-WmiObject -Class Win32_UserAccount -Filter {LocalAccount="True" and Disabled="False"} | Select Name, Disabled'])
+            w7_users_output = w7_users.splitlines()
+            logging.error(w7_users_output)
+            w7_group_admin = self.powershell(['net localgroup administrators'])
+            self.get_users_table.clearContents()
+            i = 0
+            for user in w7_users_output:
+                if "False" not in user:
+                    continue
+                rowcount = self.get_users_table.get_rows()
+                if rowcount == i:
+                    self.get_users_table.add_row()
+                new_user = user.replace('False', "").replace(" ", "")
+                self.get_users_table.set_item(i, 0, new_user)
+                if new_user in w7_group_admin:
+                    self.get_users_table.set_item(i, 1, 'Ja')
+                else:
+                    self.get_users_table.set_item(i, 1, 'Nee')
+                i += 1
+            self.counter_threads += 1
+        else:
+            w_users = self.powershell(['Get-LocalUser | select name, enabled'])
+            w_users_output = w_users.splitlines()
+            w_group_admin = self.powershell(['net localgroup administrators'])
+            self.get_users_table.clearContents()
+            i = 0
+            for user in w_users_output:
+                if 'True' not in user:
+                    continue
+                rowcount = self.get_users_table.get_rows()
+                if rowcount == i:
+                    self.get_users_table.add_row()
+                new_user = user.replace('True', "").replace(" ", "")
+                self.get_users_table.set_item(i, 0, new_user)
+                if new_user in w_group_admin:
+                    self.get_users_table.set_item(i, 1, 'Ja')
+                else:
+                    self.get_users_table.set_item(i, 1, 'Nee')
+                i += 1
+            self.counter_threads += 1
 
     @thread
     def firewall_ping(self):
