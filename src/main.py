@@ -116,15 +116,15 @@ def read_the_docs():
 
 
 def thread(func):
-        @functools.wraps(func)
-        def wrapper(self, **kwargs):
-            if 'daemon' in kwargs:
-                daemon = kwargs.pop('daemon')
-            else:
-                daemon = True
-            t = threading.Thread(target=func, args=[self], daemon=daemon)
-            t.start()
-        return wrapper
+    @functools.wraps(func)
+    def wrapper(self, **kwargs):
+        if 'daemon' in kwargs:
+            daemon = kwargs.pop('daemon')
+        else:
+            daemon = True
+        t = threading.Thread(target=func, args=[self], daemon=daemon)
+        t.start()
+    return wrapper
 
 
 class BaseWindow:
