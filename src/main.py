@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox, \
     QTableWidgetItem, QLabel, QTabWidget
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets, QtGui, QtCore
+from wdt_table_users import BaseTable
 
 DEBUG = False
 
@@ -44,6 +45,7 @@ def resource_path(relative_path):
         base_path = os.environ.get("_MEIPASS2", os.path.abspath("."))
     # logging.info('Pyinstaller file location {}'.format(base_path))
     return os.path.join(base_path, relative_path)
+
 
 # External files
 ui_main_window = resource_path('resources/ui/main_window.ui')
@@ -68,9 +70,8 @@ energy_config_default = resource_path('resources/energy/energy-default.pow')
 license_file = resource_path('resources/license/license.txt')
 wdt_table_users = resource_path('wdt_table_users.py')
 
-from wdt_table_users import BaseTable
 
-# Programm uitvoeren als Administrator
+# Programma uitvoeren als Administrator
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
@@ -109,8 +110,10 @@ logging.getLogger('').addHandler(console)
 def website_update():
     webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
 
+
 def read_the_docs():
     webbrowser.open('https://windows-deployment-tool.readthedocs.io/')
+
 
 def thread(func):
         @functools.wraps(func)
@@ -174,36 +177,35 @@ class BaseWindow:
 
     def infobox_update(self, message):
         title = f'Windows Deployment Tool v{current_version}'
-        buttonReply = QMessageBox.information(self, title, message, QMessageBox.Yes, QMessageBox.No)
-        if buttonReply == QMessageBox.Yes:
+        button_reply = QMessageBox.information(self, title, message, QMessageBox.Yes, QMessageBox.No)
+        if button_reply == QMessageBox.Yes:
             webbrowser.open('https://github.com/jebr/windows-deployment-tool/releases')
 
-    def checkout_password(self, password, samAccountName: str, displayName: str) -> bool:
+    def checkout_password(self, password, sam_account_name: str, display_name: str) -> bool:
         """Password requirements based on
         https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
         """
         self.password_fault = ''
-        if samAccountName.lower() in password.lower() and len \
-                    (samAccountName) > 3:
-            self.password_fault = ('De gebruikersnaam mag niet voorkomen in het wachtwoord')
+        if sam_account_name.lower() in password.lower() and len(sam_account_name) > 3:
+            self.password_fault = 'De gebruikersnaam mag niet voorkomen in het wachtwoord'
             return False
 
         splits = ',. \t_+/\\$'
         for split in splits:
-            splitted_items = displayName.split(split)
+            splitted_items = display_name.split(split)
             for elem in splitted_items:
                 if len(elem) < 3:
                     continue
                 if elem in password:
-                    self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
+                    self.password_fault = 'De volledige naam mag niet voorkomen in het wachtwoord'
                     return False
 
-        if displayName.lower() in password.lower():
-            self.password_fault = ('De volledige naam mag niet voorkomen in het wachtwoord')
+        if display_name.lower() in password.lower():
+            self.password_fault = 'De volledige naam mag niet voorkomen in het wachtwoord'
             return False
 
         if len(password) < 8:
-            self.password_fault = ('Het wachtwoord is te kort\ngebruik minimaal 8 karakters.')
+            self.password_fault = 'Het wachtwoord is te kort\ngebruik minimaal 8 karakters.'
             return False
 
         alphabet = 'abcdefghijklmnopqrstuvwxyz'
@@ -218,7 +220,7 @@ class BaseWindow:
                     categories_in_password += 1
                     break
         if categories_in_password < 3:
-            self.password_fault = ('Het wachtwoord niet complex genoeg.\nMaak gebruik van tekens, letters en cijfers')
+            self.password_fault = 'Het wachtwoord niet complex genoeg.\nMaak gebruik van tekens, letters en cijfers'
             return False
 
         return True
@@ -352,10 +354,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.pushButton_ntp_server_enable.clicked.connect(self.activate_ntp_server)
         self.pushButton_ntp_client_enable.clicked.connect(self.activate_ntp_client)
 
-
         self.add_user_table = BaseTable(self.tableWidget_add_users)
         self.get_users_table = BaseTable(self.tableWidget_active_users)
-
 
     # Button to check on updates
     def check_update_wdt_trigger(self):
@@ -1258,7 +1258,7 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
                 self.criticalbox(self.username_fault)
                 return False
 
-            if not self.checkout_password(password=password, samAccountName=user, displayName=fullname):
+            if not self.checkout_password(password=password, sam_account_name=user, display_name=fullname):
                 self.criticalbox(self.password_fault)
                 return False
 
@@ -1767,7 +1767,7 @@ class AdminWindow(QDialog, BaseWindow):
         password = self.lineEdit_password_check.text()
         user = 'Administrator'
         fullname = 'Administrator'
-        if not self.checkout_password(password=password, samAccountName=user, displayName=fullname):
+        if not self.checkout_password(password=password, sam_account_name=user, display_name=fullname):
             self.criticalbox(self.password_fault)
             return False
         try:
