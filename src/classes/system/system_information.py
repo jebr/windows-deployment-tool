@@ -1,17 +1,57 @@
+from ..basics.base_functions import BaseFunctions
+powershell = BaseFunctions.powershell
 
-# from .base_functions import powershell
-import base_functions as bf
-import windows_information as wi
+
+class WindowsInformation:
+    """Gather Windows information"""
+
+    @staticmethod
+    def windows_operating_system() -> str:
+        """Returns Windows Operating System Version"""
+        syntax = ["(Get-WmiObject Win32_OperatingSystem).Caption"]
+        os = powershell(syntax)
+        return os.rstrip()
+
+    @staticmethod
+    def windows_language() -> str:
+        """Returns system language"""
+        syntax = "(Get-Culture).DisplayName"
+        os_language = powershell([syntax])
+        return os_language.rstrip()
+
+    @staticmethod
+    def domain_or_workgroup() -> str:
+        """Returns whether the Pc is in a workgroup or a domain"""
+        syntax = "(Get-WmiObject Win32_ComputerSystem).domain"
+        domain_workgroup = powershell([syntax])
+        return domain_workgroup.rstrip()
+
+    @staticmethod
+    def computername() -> str:
+        """Returns the hostname/computername of the Pc"""
+        syntax = "(Get-WMIObject Win32_ComputerSystem).name"
+        hostname = powershell([syntax])
+        return hostname.rstrip()
+
+    @staticmethod
+    def windows_release_build() -> str:
+        """Returns Windows Build Number"""
+        syntax = "(Get-ItemProperty " \
+                 "'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')." \
+                 "ReleaseID"
+        w_release_build = powershell([syntax])
+        return w_release_build.rstrip()
+
+    @staticmethod
+    def windows_release_version() -> str:
+        """Returns Windows release version number"""
+        syntax = "(Get-WmiObject Win32_OperatingSystem).Version"
+        w_release_version = powershell([syntax])
+        return w_release_version.rstrip()
 
 
 class HardWareInformation:
     """Gather hardware information of the Pc"""
-
-    def __init__(self):
-        windows_os = wi.WindowsInformation.windows_operating_system
-        powershell = bf.BaseFunctions.powershell
-        print(self.pc_manufacturer)
-
 
     @staticmethod
     def pc_manufacturer() -> str:
@@ -21,21 +61,21 @@ class HardWareInformation:
         return manufacturer.rstrip()
 
     @staticmethod
-    def pc_model(self) -> str:
+    def pc_model() -> str:
         """Return de model of the Pc's manufacturer"""
         syntax = "(Get-WmiObject Win32_ComputerSystem).model"
-        model = self.powershell([syntax])
+        model = powershell([syntax])
         return model.rstrip()
 
     @staticmethod
-    def pc_type(self) -> str:
+    def pc_type() -> str:
         """Returns Pc type like desktop/laptop/server etc."""
 
         syntax = "(Get-WmiObject Win32_ComputerSystem).PCSystemTypeEx"
-        if "7" in self.windows_os:
+        if "7" in WindowsInformation.windows_operating_system():
             pc_type = "Desktop"
         else:
-            type_number = self.powershell([syntax])
+            type_number = powershell([syntax])
             type_number = int(type_number.rstrip())
             if type_number == 1:
                 pc_type = "Desktop"
@@ -59,49 +99,47 @@ class HardWareInformation:
         return pc_type.rstrip()
 
     @staticmethod
-    def pc_ram(self) -> str:
+    def pc_ram() -> str:
         """Returns RAM value in GB"""
         syntax = "(Get-WmiObject Win32_ComputerSystem).totalphysicalmemory"
-        bytes_number = self.powershell([syntax])
+        bytes_number = powershell([syntax])
         bytes_number = int(bytes_number)
         gb_number = bytes_number / (1024 ** 3)
         gb_number = round(gb_number)
         return f"{gb_number} GB"
 
     @staticmethod
-    def pc_processor(self) -> str:
+    def pc_processor() -> str:
         """Returns Processor type"""
         syntax = "(Get-WmiObject Win32_Processor).name"
-        processor_name = self.powershell([syntax])
+        processor_name = powershell([syntax])
         return processor_name.rstrip()
 
     @staticmethod
-    def pc_processor_cores(self) -> str:
+    def pc_processor_cores() -> str:
         """Returns number of cores"""
         syntax = "(Get-WmiObject Win32_Processor).NumberOfCores"
-        processor_cores = self.powershell([syntax])
+        processor_cores = powershell([syntax])
         return processor_cores.rstrip()
 
     @staticmethod
-    def pc_processor_logical_processors(self) -> str:
+    def pc_processor_logical_processors() -> str:
         """Returns number of logical processors"""
         syntax = "(Get-WmiObject Win32_Processor).NumberOfLogicalProcessors"
-        processor_logical_processors = self.powershell([syntax])
+        processor_logical_processors = powershell([syntax])
         return processor_logical_processors.rstrip()
 
     @staticmethod
-    def pc_bios_version(self) -> str:
+    def pc_bios_version() -> str:
         """Returns BIOS version"""
         syntax = "(Get-WmiObject -class Win32_Bios).SMBIOSBIOSVersion"
-        bios_version = self.powershell([syntax])
+        bios_version = powershell([syntax])
         return bios_version.rstrip()
 
     @staticmethod
-    def pc_servicetag(self) -> str:
+    def pc_servicetag() -> str:
         """Returns servicetag of manufacturer"""
         syntax = "(Get-WmiObject -class Win32_Bios).serialnumber"
-        serialnumber = self.powershell([syntax])
+        serialnumber = powershell([syntax])
         return serialnumber.rstrip()
 
-hi = HardWareInformation()
-print(hi.pc_manufacturer())

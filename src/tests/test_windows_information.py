@@ -1,7 +1,8 @@
 import unittest
 
-from windows_information import WindowsInformation
-from powershell import powershell
+from ..classes.system.system_information import WindowsInformation
+from ..classes.basics.base_functions import BaseFunctions
+powershell = BaseFunctions.powershell
 
 
 class TestWindowsInformation(unittest.TestCase):

@@ -9,17 +9,17 @@ class UnexpectedPowershellOutput(Exception):
 
 class BaseFunctions:
     @staticmethod
-    def escape_cmd(self, command):
+    def escape_cmd(command):
         return command.replace('&', '^&')
 
     @staticmethod
-    def powershell(self, input_: list) -> str:
+    def powershell(input_: list) -> str:
         """
         Returns a string when no error
         If an exception occurs the exeption is logged and None is returned
         """
         if sys.platform == 'win32':
-            input_ = [self.escape_cmd(elem) for elem in input_]
+            input_ = [BaseFunctions.escape_cmd(elem) for elem in input_]
         execute = ['powershell.exe'] + input_
 
         # if DEBUG:
@@ -42,3 +42,16 @@ class BaseFunctions:
             # print(e)
             return f"{e}"
             # logging.warning(e)
+
+    @staticmethod
+    def resource_path(relative_path):
+        """
+        Get absolute path to resource, works for dev and for PyInstaller
+        """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.environ.get("_MEIPASS2", os.path.abspath("."))
+        # logging.info('Pyinstaller file location {}'.format(base_path))
+        return os.path.join(base_path, relative_path)

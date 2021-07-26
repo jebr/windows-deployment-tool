@@ -1,10 +1,21 @@
-# import WindowsProductKey
-# import WindowsInformation
 
-# import classes.WindowsProductkey
-# import classes.windows_information as wi
-import classes.hardware_information as hi
 
+# from classes.basics.base_functions import BaseFunctions
+from classes.productkey.windows_productkey import WindowsProductKey
+from classes.basics.base_functions import BaseFunctions
+from classes.system.system_information import HardWareInformation
+
+powershell = BaseFunctions.powershell
+
+extract_key = WindowsProductKey.write_product_key_to_file()
+print(extract_key)
+key = WindowsProductKey.extract_product_key()
+print(key)
+
+# delete_key_file = WindowsProductKey.remove_product_key_json()
+# print(delete_key_file)
+
+print(HardWareInformation.pc_type())
 
 # wp = classes.WindowsProductkey()
 # print(wp.write_product_key_to_file())
@@ -17,4 +28,7 @@ import classes.hardware_information as hi
 # wi = WindowsInformation.windows_language()
 # print(wi)
 
-print(hi.HardWareInformation.pc_ram())
+# print(powershell(['hostname']))
+
+
+
