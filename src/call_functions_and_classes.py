@@ -9,6 +9,9 @@ powershell = BaseFunctions.powershell
 print("==== TEST SYSTEM CHECKS IMPORT")
 print(SystemChecks.windows7_check())
 print(SystemChecks.windows_version_check())
+print(SystemChecks.energy_check())
+print(SystemChecks.secpol_check())
+
 
 print("==== TEST WINDOWS PRODUCT KEY IMPORT ====")
 extract_key = WindowsProductKey.write_product_key_to_file()
@@ -27,7 +30,7 @@ print(HardWareInformation.pc_type())
 
 print("==== TEST BASE FUNCTIONS ====")
 print("Clipboard information")
-print(powershell(['Get-Clipboard']))
+print(f"'{powershell(['Get-Clipboard']).rstrip()}'")
 
 
 

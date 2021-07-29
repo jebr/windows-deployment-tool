@@ -503,6 +503,8 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
             self.support_info_check_return = False
         self.counter_threads += 1
 
+
+
     @thread
     def fw_icmp_check(self):
         icmp_rule_nl = str('Get-NetFirewallRule -DisplayName \"Bestands- en printerdeling '
