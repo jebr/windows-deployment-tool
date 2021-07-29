@@ -143,3 +143,9 @@ class HardWareInformation:
         serialnumber = powershell([syntax])
         return serialnumber.rstrip()
 
+    @staticmethod
+    def get_test() -> str:
+        """Function for test purposes"""
+        syntax = "hostname"
+        hostname = powershell([syntax])
+        return hostname.rstrip()
