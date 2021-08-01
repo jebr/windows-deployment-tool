@@ -1,0 +1,25 @@
+{
+  "application_info": {
+    "version": "3.0",
+    "developers": ["Jeroen Brauns", "Niels van den Bos"]
+  },
+  "support_info": {
+    "manufacturer": "Heijmans Utiliteit Safety & Security",
+    "supporthours": "24/7",
+    "supportphone": "+31 (0) 88 443 50 03",
+    "supporturl": "https://www.heijmans.nl"
+  },
+  "application_settings": {
+    "security-policy": false,
+    "usb-enabled": false,
+    "remote-desktop": false,
+    "windows-firewall": [{
+      "ping": false,
+      "discovery": false
+    }],
+    "power-options": "default",
+    "support_info": false,
+    "ntp-server": false,
+    "ntp-client": ""
+  }
+}
