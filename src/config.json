@@ -1,25 +1,43 @@
 {
-  "application_info": {
+  "application_information": {
     "version": "3.0",
-    "developers": ["Jeroen Brauns", "Niels van den Bos"]
+    "developers": ["Jeroen Brauns", "Niels van den Bos"],
+    "releases_website": "https://github.com/jebr/windows-deployment-tool/releases",
+    "documentation_website": "https://windows-deployment-tool.readthedocs.io/"
   },
-  "support_info": {
+  "support_information": {
     "manufacturer": "Heijmans Utiliteit Safety & Security",
     "supporthours": "24/7",
     "supportphone": "+31 (0) 88 443 50 03",
     "supporturl": "https://www.heijmans.nl"
   },
   "application_settings": {
-    "security-policy": false,
-    "usb-enabled": false,
-    "remote-desktop": false,
-    "windows-firewall": [{
-      "ping": false,
-      "discovery": false
-    }],
-    "power-options": "default",
+    "security_policy": false,
+    "usb_status": true,
+    "remote_desktop": false,
+    "wf_icmp": false,
+    "wf_discovery": false,
+    "power_options": "default",
     "support_info": false,
-    "ntp-server": false,
-    "ntp-client": ""
+    "ntp_server": false,
+    "ntp_client": ""
+  },
+  "system_information": {
+    "os_version": "",
+    "windows_language": "",
+    "domain_workgroup": "",
+    "computername": "",
+    "windows_version": "",
+    "windows_build": "",
+    "pc_manufacturer": "",
+    "pc_model": "",
+    "pc_type": "",
+    "pc_ram": "",
+    "pc_processor": "",
+    "pc_processor_cores": "",
+    "pc_processor_logical_processors": "",
+    "pc_bios_version": "",
+    "pc_servicetag": "",
+    "windows_productkey": ""
   }
 }

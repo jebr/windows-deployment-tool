@@ -47,7 +47,7 @@
       <x>0</x>
       <y>0</y>
       <width>900</width>
-      <height>811</height>
+      <height>841</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -1984,7 +1984,7 @@ p, li { white-space: pre-wrap; }
         <x>10</x>
         <y>10</y>
         <width>431</width>
-        <height>441</height>
+        <height>481</height>
        </rect>
       </property>
       <property name="font">
@@ -2004,34 +2004,10 @@ p, li { white-space: pre-wrap; }
          <x>10</x>
          <y>30</y>
          <width>411</width>
-         <height>404</height>
+         <height>441</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_9">
-        <item row="10" column="1">
-         <widget class="QLabel" name="label_bios_version">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
         <item row="10" column="0">
          <widget class="QLabel" name="l_bios_version">
           <property name="minimumSize">
@@ -2062,12 +2038,18 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="l_domain_workgroup">
-          <property name="sizeIncrement">
+        <item row="10" column="1">
+         <widget class="QLabel" name="label_bios_version">
+          <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>25</height>
            </size>
           </property>
           <property name="font">
@@ -2076,13 +2058,7 @@ p, li { white-space: pre-wrap; }
            </font>
           </property>
           <property name="text">
-           <string>Domein / werkgroep</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::AutoText</enum>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::NoTextInteraction</set>
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -2122,6 +2098,30 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="l_domain_workgroup">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Domein / werkgroep</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="1">
          <widget class="QLabel" name="label_windows_version">
           <property name="minimumSize">
@@ -2140,66 +2140,6 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>-</string>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::NoTextInteraction</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="l_manufacturer_model">
-          <property name="sizeIncrement">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Fabrikant / Model</string>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::NoTextInteraction</set>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1">
-         <widget class="QLabel" name="label_cores">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="l_ram">
-          <property name="sizeIncrement">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>RAM</string>
           </property>
           <property name="textInteractionFlags">
            <set>Qt::NoTextInteraction</set>
@@ -2227,8 +2167,92 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
+        <item row="8" column="1">
+         <widget class="QLabel" name="label_cores">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="l_manufacturer_model">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Fabrikant / Model</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="l_ram">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>RAM</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="label_domain_workgroup">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::NoContextMenu</enum>
+          </property>
+          <property name="text">
+           <string>-</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_windows_lang">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2269,30 +2293,6 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="label_windows_lang">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="contextMenuPolicy">
-           <enum>Qt::NoContextMenu</enum>
-          </property>
-          <property name="text">
-           <string>-</string>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::NoTextInteraction</set>
-          </property>
-         </widget>
-        </item>
         <item row="6" column="1">
          <widget class="QLabel" name="label_physicalmemory">
           <property name="minimumSize">
@@ -2311,8 +2311,20 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="label_manufacturer_model">
+        <item row="8" column="0">
+         <widget class="QLabel" name="l_cores">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Cores / Logical processors</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QLabel" name="label_processor">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2353,20 +2365,8 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="l_cores">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Cores / Logical processors</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QLabel" name="label_processor">
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_manufacturer_model">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2380,6 +2380,51 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="l_processor">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Processor</string>
+          </property>
+         </widget>
+        </item>
+        <item row="13" column="1">
+         <widget class="QPushButton" name="pushButton_check_windows_updates">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>200</horstretch>
+            <verstretch>25</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Controleer op Windows Updates</string>
+          </property>
+          <property name="text">
+           <string>Controleer op updates</string>
           </property>
          </widget>
         </item>
@@ -2434,36 +2479,18 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="l_processor">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Processor</string>
-          </property>
-         </widget>
-        </item>
-        <item row="12" column="1">
-         <widget class="QPushButton" name="pushButton_check_windows_updates">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>200</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
+        <item row="11" column="1">
+         <widget class="QLabel" name="label_servicetag">
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>30</height>
+            <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>200</width>
-            <height>30</height>
+            <width>16777215</width>
+            <height>25</height>
            </size>
           </property>
           <property name="font">
@@ -2471,11 +2498,8 @@ p, li { white-space: pre-wrap; }
             <pointsize>10</pointsize>
            </font>
           </property>
-          <property name="toolTip">
-           <string>Controleer op Windows Updates</string>
-          </property>
           <property name="text">
-           <string>Controleer op updates</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
@@ -2539,8 +2563,38 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="11" column="1">
-         <widget class="QLabel" name="label_servicetag">
+        <item row="12" column="0">
+         <widget class="QLabel" name="l_windows_productkey">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="text">
+           <string>Windows Product Key</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="1">
+         <widget class="QLabel" name="label_windows_productkey">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2575,7 +2629,7 @@ p, li { white-space: pre-wrap; }
         <x>440</x>
         <y>10</y>
         <width>441</width>
-        <height>441</height>
+        <height>481</height>
        </rect>
       </property>
       <property name="font">
@@ -2598,7 +2652,7 @@ p, li { white-space: pre-wrap; }
          <x>10</x>
          <y>40</y>
          <width>401</width>
-         <height>391</height>
+         <height>431</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -2649,7 +2703,7 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
        <property name="rowCount">
-        <number>17</number>
+        <number>19</number>
        </property>
        <attribute name="horizontalHeaderDefaultSectionSize">
         <number>190</number>
@@ -2660,6 +2714,16 @@ p, li { white-space: pre-wrap; }
        <attribute name="verticalHeaderDefaultSectionSize">
         <number>20</number>
        </attribute>
+       <row>
+        <property name="text">
+         <string>New Row</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>New Row</string>
+        </property>
+       </row>
        <row>
         <property name="text">
          <string>New Row</string>
@@ -2777,7 +2841,7 @@ p, li { white-space: pre-wrap; }
          <set>AlignCenter</set>
         </property>
        </item>
-       <item row="8" column="0">
+       <item row="10" column="0">
         <property name="text">
          <string/>
         </property>
@@ -2785,7 +2849,7 @@ p, li { white-space: pre-wrap; }
          <set>AlignCenter</set>
         </property>
        </item>
-       <item row="8" column="1">
+       <item row="10" column="1">
         <property name="text">
          <string/>
         </property>
@@ -2801,8 +2865,8 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>460</y>
+        <x>20</x>
+        <y>490</y>
         <width>431</width>
         <height>321</height>
        </rect>
@@ -3420,7 +3484,7 @@ p, li { white-space: pre-wrap; }
       <property name="geometry">
        <rect>
         <x>440</x>
-        <y>460</y>
+        <y>490</y>
         <width>441</width>
         <height>321</height>
        </rect>
@@ -3802,7 +3866,7 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionRead_The_Docs"/>
+    <addaction name="action_documentaion"/>
    </widget>
    <addaction name="menuHelp"/>
    <addaction name="menuFile"/>
@@ -3892,7 +3956,7 @@ p, li { white-space: pre-wrap; }
     <string>Uitleg Applicatie</string>
    </property>
   </action>
-  <action name="actionRead_The_Docs">
+  <action name="action_documentaion">
    <property name="text">
     <string>Documentatie</string>
    </property>

@@ -1,8 +1,7 @@
 import os
 import json
-
-from ..basics.base_functions import BaseFunctions
-resource_path = BaseFunctions.resource_path
+from ..basics.base_functions import resource_path
+from ..app_settings.app_settings import productkey_file_location
 
 
 class WindowsProductKey:
@@ -24,11 +23,11 @@ class WindowsProductKey:
                      f"/OfficeKeys 0 /IEKeys 0 /ExtrackEdition 0 " \
                      f"/ExtractExchangeKeys 0 /ExtraxtSQLKeys 0 " \
                      f"/nosavereg /sjson " \
-                     f"{resource_path('w_key.json')}"
+                     f"{productkey_file_location}"
             try:
                 os.system(syntax)
                 return f"File saved at " \
-                       f"{resource_path('w_key.json')}"
+                       f"{productkey_file_location}"
             except Exception as e:
                 return f"Error: {e}"
         else:
@@ -38,7 +37,7 @@ class WindowsProductKey:
     @staticmethod
     def extract_product_key() -> str:
         """Read Windows Product Key form w_key.json"""
-        fn = "w_key.json"
+        fn = productkey_file_location
         if not os.path.exists(fn):
             return f"Error: {fn} not found"
 
@@ -53,8 +52,8 @@ class WindowsProductKey:
     @staticmethod
     def remove_product_key_json() -> str:
         """""Remove file with licence key data"""
-        if os.path.exists("w_key.json"):
-            os.remove('w_key.json')
+        if os.path.exists(productkey_file_location):
+            os.remove(productkey_file_location)
             return "File deleted"
         else:
             return "w_key.json doesn't exist"

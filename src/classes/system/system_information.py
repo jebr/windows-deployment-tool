@@ -1,12 +1,11 @@
-from ..basics.base_functions import BaseFunctions
-powershell = BaseFunctions.powershell
+from ..basics.base_functions import powershell
 
 
 class WindowsInformation:
     """Gather Windows information"""
 
     @staticmethod
-    def windows_operating_system() -> str:
+    def os_version() -> str:
         """Returns Windows Operating System Version"""
         syntax = ["(Get-WmiObject Win32_OperatingSystem).Caption"]
         os = powershell(syntax)
@@ -20,7 +19,7 @@ class WindowsInformation:
         return os_language.rstrip()
 
     @staticmethod
-    def domain_or_workgroup() -> str:
+    def domain_workgroup() -> str:
         """Returns whether the Pc is in a workgroup or a domain"""
         syntax = "(Get-WmiObject Win32_ComputerSystem).domain"
         domain_workgroup = powershell([syntax])
@@ -34,20 +33,20 @@ class WindowsInformation:
         return hostname.rstrip()
 
     @staticmethod
-    def windows_release_build() -> str:
+    def windows_version() -> str:
+        """Returns Windows release version number"""
+        syntax = "(Get-WmiObject Win32_OperatingSystem).Version"
+        w_release_version = powershell([syntax])
+        return w_release_version.rstrip()
+
+    @staticmethod
+    def windows_build() -> str:
         """Returns Windows Build Number"""
         syntax = "(Get-ItemProperty " \
                  "'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')." \
                  "ReleaseID"
         w_release_build = powershell([syntax])
         return w_release_build.rstrip()
-
-    @staticmethod
-    def windows_release_version() -> str:
-        """Returns Windows release version number"""
-        syntax = "(Get-WmiObject Win32_OperatingSystem).Version"
-        w_release_version = powershell([syntax])
-        return w_release_version.rstrip()
 
 
 class HardWareInformation:
@@ -72,29 +71,26 @@ class HardWareInformation:
         """Returns Pc type like desktop/laptop/server etc."""
 
         syntax = "(Get-WmiObject Win32_ComputerSystem).PCSystemTypeEx"
-        if "7" in WindowsInformation.windows_operating_system():
+        type_number = powershell([syntax])
+        type_number = int(type_number.rstrip())
+        if type_number == 1:
             pc_type = "Desktop"
+        elif type_number == 2:
+            pc_type = "Mobile / Laptop"
+        elif type_number == 3:
+            pc_type = "Workstation"
+        elif type_number == 4:
+            pc_type = "Enterprise Server"
+        elif type_number == 5:
+            pc_type = "Small Office Server (SOHO)"
+        elif type_number == 6:
+            pc_type = "Appliance PC"
+        elif type_number == 7:
+            pc_type = "Performance Server"
+        elif type_number == 8:
+            pc_type = "Maximum"
         else:
-            type_number = powershell([syntax])
-            type_number = int(type_number.rstrip())
-            if type_number == 1:
-                pc_type = "Desktop"
-            elif type_number == 2:
-                pc_type = "Mobile / Laptop"
-            elif type_number == 3:
-                pc_type = "Workstation"
-            elif type_number == 4:
-                pc_type = "Enterprise Server"
-            elif type_number == 5:
-                pc_type = "Small Office Server (SOHO)"
-            elif type_number == 6:
-                pc_type = "Appliance PC"
-            elif type_number == 7:
-                pc_type = "Performance Server"
-            elif type_number == 8:
-                pc_type = "Maximum"
-            else:
-                pc_type = "Onbekend product type"
+            pc_type = "Onbekend product type"
 
         return pc_type.rstrip()
 
@@ -143,9 +139,3 @@ class HardWareInformation:
         serialnumber = powershell([syntax])
         return serialnumber.rstrip()
 
-    @staticmethod
-    def get_test() -> str:
-        """Function for test purposes"""
-        syntax = "hostname"
-        hostname = powershell([syntax])
-        return hostname.rstrip()
