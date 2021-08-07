@@ -2,9 +2,10 @@ import os
 from classes.productkey.windows_productkey import WindowsProductKey
 from classes.system.system_information import HardWareInformation
 from classes.system.system_information import WindowsInformation
-from classes.system_checks.system_checks import SystemChecks
+from classes.system_checks.system_checks import
+
 import classes.config.config as config
-import classes.basics.base_functions as basics
+from classes.basics.base_functions import thread
 from classes.app_settings.app_settings import productkey_file_location
 import getpass
 import webbrowser
@@ -26,7 +27,7 @@ def open_documentation_website():
     webbrowser.open(config.get_application_config_subject_item("application_information", "documentation_website"))
 
 
-@basics.thread
+@thread
 def initial_run():
     config.create_config_file()
     if not os.path.exists(productkey_file_location):

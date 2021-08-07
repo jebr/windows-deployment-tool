@@ -72,16 +72,17 @@ def thread(func, *args, **kwargs):
     return wrapper
 
 # FIXME: Hoe krijg ik het voor elkaar om vanaf level 2 te schrijven naar een bestand en vanaf level 0 weer te geven in de console?
-def wdt_log(msg: str, lvl=1):
+def wdt_log(msg: str, lvl=0):
     """
     Log information to log file.
     Levels:
+    0 - Debug
     1 - Info
     2 - Warning
     3 - Error
     4 - Critical
      """
-    logging.basicConfig(level=logging.INFO,
+    logging.basicConfig(level=logging.WARNING,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         filename=log_file_location,
                         filemode='a')
@@ -89,7 +90,7 @@ def wdt_log(msg: str, lvl=1):
     # Console logging alleen voor ontwikkeling, uitzetten bij een release
     # define a Handler which writes INFO messages or higher to the sys.stderr
     console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
+    console.setLevel(logging.DEBUG)
     # set a format which is simpler for console use
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     # tell the handler to use this format
