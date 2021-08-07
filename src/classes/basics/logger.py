@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 
+
 class Logger:
     def __init__(self, file, verbose=True):
         self.file = file

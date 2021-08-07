@@ -269,8 +269,6 @@ class MainPage(QtWidgets.QMainWindow, BaseWindow):
         self.label_windows_productkey.setText(handler.config.get_application_config_subject_item("system_information", "windows_productkey"))
         self.label_windows_productkey.setToolTip(handler.config.get_application_config_subject_item("system_information", "windows_productkey"))
 
-        handler.basics.wdt_log("Application started")
-
         # Pre-system checks
         # logging.info(f'========{date_time}========')
         self.new_version = handler.wdt_current_version()
@@ -1851,7 +1849,10 @@ def main():
 if __name__ == '__main__':
     # main()
     if is_admin():  # Check admin rights
-        main()
+        try:
+            main()
+        finally:
+            handler.logger.write_to_file()
     else:
         # Re-run the program with admin rights
         ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)

@@ -4,6 +4,7 @@ from ..system.system_information import WindowsInformation, HardWareInformation
 from ..productkey.windows_productkey import WindowsProductKey
 from ..app_settings.app_settings import wdt_folder_path, config_file_location
 from ..system_checks.system_checks import SystemChecks
+from ..basics.base_functions import thread
 
 
 def create_config_file():
