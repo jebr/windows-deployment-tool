@@ -71,42 +71,42 @@ def thread(func, *args, **kwargs):
         t.start()
     return wrapper
 
-# FIXME: Hoe krijg ik het voor elkaar om vanaf level 2 te schrijven naar een bestand en vanaf level 0 weer te geven in de console?
-def wdt_log(msg: str, lvl=0):
-    """
-    Log information to log file.
-    Levels:
-    0 - Debug
-    1 - Info
-    2 - Warning
-    3 - Error
-    4 - Critical
-     """
-    logging.basicConfig(level=logging.WARNING,
-                        format='%(asctime)s - %(levelname)s - %(message)s',
-                        filename=log_file_location,
-                        filemode='a')
-    # date_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-    # Console logging alleen voor ontwikkeling, uitzetten bij een release
-    # define a Handler which writes INFO messages or higher to the sys.stderr
-    console = logging.StreamHandler()
-    console.setLevel(logging.DEBUG)
-    # set a format which is simpler for console use
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    # tell the handler to use this format
-    console.setFormatter(formatter)
-    # add the handler to the root logger
-    logging.getLogger('').addHandler(console)
-    if lvl == 1:
-        return logging.info(msg)
-    elif lvl == 2:
-        return logging.warning(msg)
-    elif lvl == 3:
-        return logging.error(msg)
-    elif lvl == 4:
-        return logging.critical(msg)
-    else:
-        return logging.debug(msg)
+
+# def wdt_log(msg: str, lvl=0):
+#     """
+#     Log information to log file.
+#     Levels:
+#     0 - Debug
+#     1 - Info
+#     2 - Warning
+#     3 - Error
+#     4 - Critical
+#      """
+#     logging.basicConfig(level=logging.WARNING,
+#                         format='%(asctime)s - %(levelname)s - %(message)s',
+#                         filename=log_file_location,
+#                         filemode='a')
+#     # date_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+#     # Console logging alleen voor ontwikkeling, uitzetten bij een release
+#     # define a Handler which writes INFO messages or higher to the sys.stderr
+#     console = logging.StreamHandler()
+#     console.setLevel(logging.DEBUG)
+#     # set a format which is simpler for console use
+#     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+#     # tell the handler to use this format
+#     console.setFormatter(formatter)
+#     # add the handler to the root logger
+#     logging.getLogger('').addHandler(console)
+#     if lvl == 1:
+#         return logging.info(msg)
+#     elif lvl == 2:
+#         return logging.warning(msg)
+#     elif lvl == 3:
+#         return logging.error(msg)
+#     elif lvl == 4:
+#         return logging.critical(msg)
+#     else:
+#         return logging.debug(msg)
 
 
 

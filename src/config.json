@@ -20,7 +20,8 @@
     "power_options": "default",
     "support_info": false,
     "ntp_server": false,
-    "ntp_client": ""
+    "ntp_client": "",
+    "key": ""
   },
   "system_information": {
     "os_version": "",
