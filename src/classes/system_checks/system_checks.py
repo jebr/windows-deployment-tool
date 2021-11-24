@@ -1,11 +1,29 @@
-from ..basics.base_functions import powershell
 import platform
 import os
+import ctypes
+from ..basics.base_functions import powershell
 from ..system.system_information import WindowsInformation
 
 
 class SystemChecks:
     """" Windows Deployment Tool System Checks"""
+
+    @staticmethod
+    def is_windows_server() -> bool:
+        """ Returns True if the system is a Windows Server version """
+        windows_server = powershell(['(Get-WmiObject -class Win32_OperatingSystem).Caption'])
+        if 'server' in windows_server.lower():
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_started_as_admin() -> int:
+        """ Returns 1 if application is started with administrator privileges """
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
 
     @staticmethod
     def windows7_check() -> bool:

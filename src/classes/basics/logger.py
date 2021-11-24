@@ -45,3 +45,30 @@ class Logger:
         "returns time w/ format 2021-03-08T11:54:48.602655"
         now = datetime.now()
         return f"{now.isoformat()} - "
+
+
+# OLD LOGGER
+
+
+# Create temp folder
+# current_user = getpass.getuser()
+# if not os.path.exists(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT'):
+#     os.makedirs(f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT')
+#
+# # Set logging
+# logging.basicConfig(level=logging.INFO,
+#                     format='%(asctime)s - %(levelname)s - %(message)s',
+#                     filename=f'c:\\users\\{current_user}\\AppData\\Local\\Temp\\WDT\\WDT.log',
+#                     filemode='a')
+# date_time = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+# # logging.disable(logging.DEBUG)
+# # FIXME Console logging alleen voor ontwikkeling, uitzetten bij een release
+# # define a Handler which writes INFO messages or higher to the sys.stderr
+# console = logging.StreamHandler()
+# console.setLevel(logging.INFO)
+# # set a format which is simpler for console use
+# formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# # tell the handler to use this format
+# console.setFormatter(formatter)
+# # add the handler to the root logger
+# logging.getLogger('').addHandler(console)

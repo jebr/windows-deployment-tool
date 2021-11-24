@@ -1,10 +1,4 @@
-{
-  "application_information": {
-    "version": "3.0",
-    "developers": ["Jeroen Brauns", "Niels van den Bos"],
-    "releases_website": "https://github.com/jebr/windows-deployment-tool/releases",
-    "documentation_website": "https://windows-deployment-tool.readthedocs.io/"
-  },
+ {
   "support_information": {
     "manufacturer": "Heijmans Utiliteit Safety & Security",
     "supporthours": "24/7",

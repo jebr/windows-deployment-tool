@@ -3,9 +3,6 @@ import sys
 import os
 import functools
 import threading
-import logging
-from datetime import datetime
-from ..app_settings.app_settings import log_file_location
 
 
 class UnexpectedPowershellOutput(Exception):
